@@ -4,13 +4,17 @@ import { createNewRegionMaster } from '../services/MasterService';
 import { Link, useNavigate } from 'react-router-dom';
 
 const RegionMaster = () => {
+
   const [ledgerCode, setLedgerCode] = useState('');
   const [ledgerName, setLedgerName] = useState('');
   const [regionMasterId, setRegionMasterId] = useState('');
   const [regionName, setRegionName] = useState('');
   const [regionState, setRegionState] = useState('');
   const [country, setCountry] = useState('');
+  const [goodownCode, setGoodownCode] = useState('');
+  const [goodownName, setGoodownName] = useState('');
   const [errors, setErrors] = useState({});
+  
 
   const inputRefs = useRef({
     ledgerCode: null,
@@ -18,7 +22,9 @@ const RegionMaster = () => {
     regionMasterId: null,
     regionName: null,
     regionState: null,
-    country: null
+    country: null,
+    goodownCode: null,
+    goodownName: null,
   });
 
   const ledgerCodeRef = useRef(null);
@@ -35,29 +41,38 @@ const RegionMaster = () => {
 
   const handleKeyDown = (event) => {
     const { keyCode, target } = event;
-
+  
     if (keyCode === 13) { // Enter key
-      event.preventDefault();   // Prevent form submission
-      // Focus on next input element or the accept button if it's the last input
-      const currentIndex = Object.keys(inputRefs.current).indexOf(target.id);
-      const nextIndex = (currentIndex + 1) % Object.keys(inputRefs.current).length;
-      const nextInputRef = Object.values(inputRefs.current)[nextIndex];
-
-      if (target.id === 'country' && acceptButtonRef.current) {
-        acceptButtonRef.current.focus();
-      } else if (nextInputRef) {
+      event.preventDefault(); // Prevent form submission
+      const currentInputIndex = Object.keys(inputRefs.current).findIndex(
+        (key) => key === target.id
+      );
+      let nextInputIndex =
+        (currentInputIndex + 1) % Object.keys(inputRefs.current).length;
+      if (target.id === 'goodownName') {
+        acceptButtonRef.current.focus(); // Focus on accept button
+      } else {
+        const nextInputRef = Object.values(inputRefs.current)[nextInputIndex];
         nextInputRef.focus();
       }
     } else if (keyCode === 27) { // Escape key
-      // Focus on previous input element
-      const currentIndex = Object.keys(inputRefs.current).indexOf(target.id);
-      const prevIndex = (currentIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
-      const prevInputRef = Object.values(inputRefs.current)[prevIndex];
-      if (prevInputRef) {
+      if (target.id === 'acceptButton') {
+        inputRefs.current.goodownName.focus(); // Focus on Goodown Name
+      } else {
+        let currentInputIndex = Object.keys(inputRefs.current).findIndex(
+          (key) => key === target.id
+        );
+        let prevInputIndex =
+          (currentInputIndex - 1 + Object.keys(inputRefs.current).length) %
+          Object.keys(inputRefs.current).length;
+        const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
         prevInputRef.focus();
       }
     }
   };
+  
+  
+  
 
 
   const validateForm = () => {
@@ -99,12 +114,16 @@ const RegionMaster = () => {
       <div className='w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[750px] mt-10 border border-gray-500 border-b-0'>
         <h2 className='ml-[200px]'>Region Master</h2>
         <span className='cursor-pointer mt-[5px] mr-2'>
-          <IoClose />
+        <Link to={"/list"}><IoClose /></Link>
         </span>
       </div>
 
-      <div className='w-[550px] h-[30vh] border border-gray-500 ml-[750px]'>
+      <div className='w-[550px] h-[35vh] border border-gray-500 ml-[750px]'>
+
+
         <form onSubmit={saveRegionMaster}>
+
+          
           <div className='input-ldgr mt-3'>
             <label htmlFor="ledgerCode" className='text-sm mr-[73px] ml-2'>Ledger Code</label>
             : <input
@@ -199,17 +218,53 @@ const RegionMaster = () => {
               />
           </div>
 
-          <div className='mt-[350px]'>
+          <div className='input-ldgr'>
+            <label htmlFor="goodownCode" className='text-sm mr-[59px] ml-2'>Goodown Code</label>
+            : <input
+                type="text"
+                id='goodownCode'
+                name='goodownCode'
+                value={goodownCode}
+                onChange={(e) => setGoodownCode(e.target.value)}
+                onKeyDown={handleKeyDown}
+                ref={(input) => inputRefs.current.goodownCode = input}
+                className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
+                autoComplete='off'
+              />
+          </div>
+
+          <div className='input-ldgr'>
+            <label htmlFor="goodownCode" className='text-sm mr-[56px] ml-2'>Goodown Name</label>
+            : <input
+                type="text"
+                id='goodownCode'
+                name='goodownCode'
+                value={goodownName}
+                onChange={(e) => setGoodownName(e.target.value)}
+                onKeyDown={handleKeyDown}
+                ref={(input) => inputRefs.current.goodownName = input}
+                className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
+                autoComplete='off'
+              />
+          </div>
+
+          
+
+
+
+          <div className='mt-[300px]'>
             <button
               type='submit'
               ref={acceptButtonRef}
               className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'
             >A: Accept</button>
           </div>
+          
         </form>
+
       </div>
 
-      <div className='mt-[330px] ml-[495px]'>
+      <div className='mt-[300px] ml-[495px]'>
         <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>Back</Link>
       </div>
     </div>

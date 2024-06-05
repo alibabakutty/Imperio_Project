@@ -85,14 +85,17 @@ const AlterProductMaster = () => {
                             </div>
 
                             <div className='input-ldgr'>
+                                <label htmlFor="productUom" className='text-sm mr-[60px] ml-2'>Product UOM</label>
+                                : <input type="text" id='productUom' name='productUom' value={product.productUom} onChange={onInputChange} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                            </div>
+                            
+
+                            <div className='input-ldgr'>
                                 <label htmlFor="productCategory" className='text-sm mr-[36px] ml-2'>Product Category</label>
                                 : <input type="text" id='productCategory' name='productCategory' value={product.productCategory} onChange={onInputChange} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
-                            <div className='input-ldgr'>
-                                <label htmlFor="productUom" className='text-sm mr-[60px] ml-2'>Product UOM</label>
-                                : <input type="text" id='productUom' name='productUom' value={product.productUom} onChange={onInputChange} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
-                            </div>
+                            
 
                             <div className='input-ldgr    '  >
                                 <label htmlFor="productGroup" className='text-sm mr-[53px] ml-2'>Product Group</label>

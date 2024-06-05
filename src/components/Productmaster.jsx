@@ -76,14 +76,16 @@ const Productmaster = () => {
                 </div>
 
                 <div className='input-ldgr    '  >
+                    <label htmlFor="productUom" className='text-sm mr-[55px] ml-2'>Product UOM</label>
+                    : <input type="text" id='productUom' name='productUom' value={productUom} onChange={(e) => setProductUom(e.target.value)}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
+                </div>
+
+                <div className='input-ldgr    '  >
                     <label htmlFor="productCategory" className='text-sm mr-[30px] ml-2'>Product Category</label>
                     : <input type="text" id='productCategory' name='productCategory' value={productCategory} onChange={(e) => setProductCategory(e.target.value)}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
                 </div>
 
-                <div className='input-ldgr    '  >
-                    <label htmlFor="productUom" className='text-sm mr-[55px] ml-2'>Product UOM</label>
-                    : <input type="text" id='productUom' name='productUom' value={productUom} onChange={(e) => setProductUom(e.target.value)}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
-                </div>
+                
 
                 <div className='input-ldgr    '  >
                     <label htmlFor="productGroup" className='text-sm mr-[48.5px] ml-2'>Product Group</label>
