@@ -34,6 +34,8 @@ import AlterProductMaster from "./components/AlterProductMaster"
 import ExecutiveMasterAlteredCheck from "./message/ExecutiveMasterAlteredCheck"
 import DistributorMasterAlteredCheck from "./message/DistributorMasterAlteredCheck"
 import ProductMasterAlteredCheck from "./message/ProductMasterAlteredCheck"
+import GodownMaster from "./components/GodownMaster"
+import GodownMasterAddedCheck from "./message/GodownMasterAddedCheck"
 
 
 function App() {
@@ -62,6 +64,8 @@ function App() {
          {/* http://localhost:4000/product */}
          <Route path="/product" element = {<Productmaster />} />
 
+          {/* http://localhost:4000/goodown */}
+          <Route path="/godown" element = {<GodownMaster />} />
           
          {/* http://localhost:4000/addedRegion */}
          <Route path="/addedRegion" element = {<RegionMasterAddedCheck />} />
@@ -74,6 +78,9 @@ function App() {
 
          {/* http://localhost:4000/addedDistributor */}
          <Route path="addedProduct" element = {<ProductMasterAddedCheck />} />
+
+         {/* http://localhost:4000/addedGodown */}
+         <Route path="addedGodown" element = {<GodownMasterAddedCheck />} />
 
          {/* http://localhost:4000/display */}
          <Route path="/display" element = {<DisplayOFMasters /> } />

@@ -11,8 +11,8 @@ const RegionMaster = () => {
   const [regionName, setRegionName] = useState('');
   const [regionState, setRegionState] = useState('');
   const [country, setCountry] = useState('');
-  const [goodownCode, setGoodownCode] = useState('');
-  const [goodownName, setGoodownName] = useState('');
+  const [godownCode, setGodownCode] = useState('');
+  const [godownName, setGodownName] = useState('');
   const [errors, setErrors] = useState({});
   
   const inputRefs = useRef({
@@ -22,8 +22,8 @@ const RegionMaster = () => {
     regionName: null,
     regionState: null,
     country: null,
-    goodownCode: null,
-    goodownName: null,
+    godownCode: null,
+    godownName: null,
     acceptButton: null, // Added the accept button reference here
   });
 
@@ -54,12 +54,17 @@ const RegionMaster = () => {
         nextInputRef.focus();
       }
     } else if (keyCode === 27) { // Escape key
-      let currentInputIndex = Object.keys(inputRefs.current).findIndex(
-        (key) => key === target.id
-      );
-      let prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
-      const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-      prevInputRef.focus();
+      if (target.id === 'acceptButton') {
+        // If the escape key is pressed on the accept button, focus on godownName
+        inputRefs.current.godownName.focus();
+      } else {
+        let currentInputIndex = Object.keys(inputRefs.current).findIndex(
+          (key) => key === target.id
+        );
+        let prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+        const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+        prevInputRef.focus();
+      }
     }
   };
 
@@ -201,30 +206,30 @@ const RegionMaster = () => {
           </div>
 
           <div className='input-ldgr'>
-            <label htmlFor="goodownCode" className='text-sm mr-[59px] ml-2'>Goodown Code</label>
+            <label htmlFor="godownCode" className='text-sm mr-[66px] ml-2'>Godown Code</label>
             : <input
                 type="text"
-                id='goodownCode'
-                name='goodownCode'
-                value={goodownCode}
-                onChange={(e) => setGoodownCode(e.target.value)}
+                id='godownCode'
+                name='godownCode'
+                value={godownCode}
+                onChange={(e) => setGodownCode(e.target.value)}
                 onKeyDown={handleKeyDown}
-                ref={(input) => inputRefs.current.goodownCode = input}
+                ref={(input) => inputRefs.current.godownCode = input}
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
                 autoComplete='off'
               />
           </div>
 
           <div className='input-ldgr'>
-            <label htmlFor="goodownName" className='text-sm mr-[56px] ml-2'>Goodown Name</label>
+            <label htmlFor="godownName" className='text-sm mr-[64px] ml-2'>Godown Name</label>
             : <input
                 type="text"
-                id='goodownName'
-                name='goodownName'
-                value={goodownName}
-                onChange={(e) => setGoodownName(e.target.value)}
+                id='godownName'
+                name='godownName'
+                value={godownName}
+                onChange={(e) => setGodownName(e.target.value)}
                 onKeyDown={handleKeyDown}
-                ref={(input) => inputRefs.current.goodownName = input}
+                ref={(input) => inputRefs.current.godownName = input}
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
                 autoComplete='off'
               />
@@ -235,6 +240,7 @@ const RegionMaster = () => {
               type='submit'
               ref={(button) => { acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }}
               className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'
+              id='accptButton'
             >A: Accept</button>
           </div>
 

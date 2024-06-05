@@ -16,6 +16,8 @@ export const createNewDistributorMaster = (distributor) => axios.post(REST_API_B
 
 export const createNewProductMaster = (product) => axios.post(REST_API_BASE_URL+"/addProduct", product);
 
+export const createNewGodownMaster = (godown) => axios.post(REST_API_BASE_URL+"/addGodown", godown);
+
 // DISPLAY
 export const listOfRegions = () => {return axios.get(REST_API_BASE_URL+"/allRegion")};
 
