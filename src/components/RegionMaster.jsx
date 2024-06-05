@@ -15,7 +15,6 @@ const RegionMaster = () => {
   const [goodownName, setGoodownName] = useState('');
   const [errors, setErrors] = useState({});
   
-
   const inputRefs = useRef({
     ledgerCode: null,
     ledgerName: null,
@@ -25,6 +24,7 @@ const RegionMaster = () => {
     country: null,
     goodownCode: null,
     goodownName: null,
+    acceptButton: null, // Added the accept button reference here
   });
 
   const ledgerCodeRef = useRef(null);
@@ -47,48 +47,34 @@ const RegionMaster = () => {
       const currentInputIndex = Object.keys(inputRefs.current).findIndex(
         (key) => key === target.id
       );
-      let nextInputIndex =
-        (currentInputIndex + 1) % Object.keys(inputRefs.current).length;
-      if (target.id === 'goodownName') {
-        acceptButtonRef.current.focus(); // Focus on accept button
+      if (currentInputIndex === Object.keys(inputRefs.current).length - 2) { // Check if it's the last input field
+        acceptButtonRef.current.focus(); // Focus on the accept button
       } else {
-        const nextInputRef = Object.values(inputRefs.current)[nextInputIndex];
+        const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
         nextInputRef.focus();
       }
     } else if (keyCode === 27) { // Escape key
-      if (target.id === 'acceptButton') {
-        inputRefs.current.goodownName.focus(); // Focus on Goodown Name
-      } else {
-        let currentInputIndex = Object.keys(inputRefs.current).findIndex(
-          (key) => key === target.id
-        );
-        let prevInputIndex =
-          (currentInputIndex - 1 + Object.keys(inputRefs.current).length) %
-          Object.keys(inputRefs.current).length;
-        const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-        prevInputRef.focus();
-      }
+      let currentInputIndex = Object.keys(inputRefs.current).findIndex(
+        (key) => key === target.id
+      );
+      let prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+      const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+      prevInputRef.focus();
     }
   };
-  
-  
-  
-
 
   const validateForm = () => {
     const newErrors = {};
     if(!ledgerCode.trim()){
       newErrors.ledgerCode = 'Ledger Code is required.';
-    }if(!regionMasterId.trim()){
+    }
+    if(!regionMasterId.trim()){
       newErrors.regionMasterId = 'Region Master Id is required.';
     }
-
     setErrors(newErrors);
-
 
     return Object.keys(newErrors).length === 0;
   };
-
 
   const saveRegionMaster = (e) => {
     e.preventDefault();
@@ -114,16 +100,14 @@ const RegionMaster = () => {
       <div className='w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[750px] mt-10 border border-gray-500 border-b-0'>
         <h2 className='ml-[200px]'>Region Master</h2>
         <span className='cursor-pointer mt-[5px] mr-2'>
-        <Link to={"/list"}><IoClose /></Link>
+          <Link to={"/list"}><IoClose /></Link>
         </span>
       </div>
 
       <div className='w-[550px] h-[35vh] border border-gray-500 ml-[750px]'>
 
-
         <form onSubmit={saveRegionMaster}>
 
-          
           <div className='input-ldgr mt-3'>
             <label htmlFor="ledgerCode" className='text-sm mr-[73px] ml-2'>Ledger Code</label>
             : <input
@@ -137,7 +121,6 @@ const RegionMaster = () => {
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
                 autoComplete='off'
               />
-
               {errors.ledgerCode && <p className='text-red-500 text-xs ml-2'>{errors.ledgerCode}</p>}
           </div>
 
@@ -169,7 +152,6 @@ const RegionMaster = () => {
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
                 autoComplete='off'
               />
-
               {errors.regionMasterId && <p className='text-red-500 text-xs ml-2'></p>}
           </div>
 
@@ -234,11 +216,11 @@ const RegionMaster = () => {
           </div>
 
           <div className='input-ldgr'>
-            <label htmlFor="goodownCode" className='text-sm mr-[56px] ml-2'>Goodown Name</label>
+            <label htmlFor="goodownName" className='text-sm mr-[56px] ml-2'>Goodown Name</label>
             : <input
                 type="text"
-                id='goodownCode'
-                name='goodownCode'
+                id='goodownName'
+                name='goodownName'
                 value={goodownName}
                 onChange={(e) => setGoodownName(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -248,18 +230,14 @@ const RegionMaster = () => {
               />
           </div>
 
-          
-
-
-
           <div className='mt-[300px]'>
             <button
               type='submit'
-              ref={acceptButtonRef}
+              ref={(button) => { acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }}
               className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'
             >A: Accept</button>
           </div>
-          
+
         </form>
 
       </div>
