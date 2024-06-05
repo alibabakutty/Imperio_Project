@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { IoClose } from 'react-icons/io5'
 import { Link, useNavigate } from 'react-router-dom';
 import { createNewExecutiveMaster } from '../services/MasterService';
@@ -15,8 +15,17 @@ const ExecutiveMaster = () => {
     const [emailId, setEmailId] = useState('');
     const [status, setStatus] = useState('');
 
+    const inputRef = useRef(null);
+
 
     const navigator = useNavigate();
+
+
+    useEffect(() =>{
+        if(inputRef.current){
+            inputRef.current.focus();
+        }
+    }, []);
 
     function saveExecutiveMaster(e){
         e.preventDefault();
@@ -54,7 +63,7 @@ const ExecutiveMaster = () => {
 
                 <div className='input-ldgr  mr-4 mt-3 ' >
                     <label htmlFor="executiveCode" className='text-sm mr-[30px] ml-2'>Executive Code</label>
-                    : <input type="text" id='executiveCode' name='executiveCode' value={executiveCode} onChange={(e) => setExecutiveCode(e.target.value)} className='w-[300px] ml-[6px] h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ' autoComplete='off'  /> <br />
+                    : <input type="text" id='executiveCode' name='executiveCode' value={executiveCode} onChange={(e) => setExecutiveCode(e.target.value)} ref={inputRef} className='w-[300px] ml-[6px] h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ' autoComplete='off'  /> <br />
                     
                 </div>
 

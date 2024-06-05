@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { IoClose } from 'react-icons/io5'
 import { Link, useNavigate } from 'react-router-dom';
 import { createNewDistributorMaster } from '../services/MasterService';
@@ -20,8 +20,17 @@ const DistributorMaster = () => {
     const [contactPersonName, setContactPersonName] = useState('');
     const [contactMobileNo, setContactMobileNo] = useState('');
 
+    const inputRef = useRef(null);
+
 
     const navigator = useNavigate();
+
+
+    useEffect(() =>{
+        if(inputRef.current){
+            inputRef.current.focus();
+        }
+    }, []);
 
 
     function saveDsitributorMaster(e){
@@ -58,7 +67,7 @@ const DistributorMaster = () => {
 
             <div className='input-ldgr  mr-4 mt-3   '  >
             <label htmlFor="distributorCode" className='text-sm mr-[79px] ml-2'>Distributor Code</label>
-            : <input type="text" id='distributorCode' name='distributorCode' value={distributorCode} onChange={(e) => setDistributorCode(e.target.value)}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
+            : <input type="text" id='distributorCode' name='distributorCode' value={distributorCode} onChange={(e) => setDistributorCode(e.target.value)} ref={inputRef}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
             </div>
 
             <div className='input-ldgr    '  >

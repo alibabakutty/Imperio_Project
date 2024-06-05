@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { IoClose } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
@@ -17,6 +17,9 @@ const AlterRegionMaster = () => {
     });
 
 
+    const inputRef = useRef(null);
+
+
     const onInputChange = (e) => {
         setRegion({...region, [e.target.name]: e.target.value})
     };
@@ -29,6 +32,10 @@ const AlterRegionMaster = () => {
     }
 
     useEffect(() => {
+        if(inputRef.current){
+            inputRef.current.focus();
+        }
+        
         loadRegion();
     }, []);
 
@@ -60,14 +67,27 @@ const AlterRegionMaster = () => {
                         </span>
                     </div>
 
-                    <div className='w-[550px] h-[20vh] border border-gray-500 ml-[80px] '>
+                    <div className='w-[550px] h-[28vh] border border-gray-500 ml-[80px] '>
                         <form onSubmit={(e) => {onSubmit(e)}}>
-                            <div className='input-ldgr mt-3'>
-                                <label htmlFor="regionMasterId" className='text-sm ml-2 mr-[49px]'>Region Master ID</label>
-                                : <input type="text" id='regionMasterId' name='regionMasterId' value={region.regionMasterId} onChange={(e) => onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' /> <br />
+
+                            <div className='input-ldgr mt-3 ' >
+                                <label htmlFor="ledgerCode" className='text-sm mr-[73px] ml-2'>Ledger Code</label>
+                                : <input type="text" id='ledgerCode' name='ledgerCode' value={region.ledgerCode} onChange={(e) => onInputChange(e)}   ref={inputRef} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ' autoComplete='off'  />
+                                
                             </div>
 
-                            <div className='input-ldgr mt-1'>
+                            <div className='input-ldgr ' >
+                                <label htmlFor="ledgerName" className='text-sm mr-[70px] ml-2'>Ledger Name</label>
+                                : <input type="text" id='ledgerName' name='ledgerName' value={region.ledgerName} onChange={(e) => onInputChange(e)}   className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ' autoComplete='off'  />
+                                
+                            </div>
+
+                            <div className='input-ldgr '>
+                                <label htmlFor="regionMasterId" className='text-sm ml-2 mr-[49px]'>Region Master ID</label>
+                                : <input type="text" id='regionMasterId' name='regionMasterId' value={region.regionMasterId} onChange={(e) => onInputChange(e)} ref={inputRef} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' /> <br />
+                            </div>
+
+                            <div className='input-ldgr '>
                                 <label htmlFor="regionName" className='text-sm mr-[71px] ml-2'>Region Name</label>
                                 : <input type="text" id='regionName' name='regionName' value={region.regionName} onChange={(e) => onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
@@ -82,14 +102,14 @@ const AlterRegionMaster = () => {
                                 : <input type="text" id='country' name='country' value={region.country} onChange={(e) => onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
-                            <div className='mt-[400px]'>
+                            <div className='mt-[350px]'>
                                 <button type='submit' className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'   >A: Accept</button>
                             </div>
                         </form>
                         
                     </div>
 
-                    <div className='mt-[400px] ml-[490px]'>
+                    <div className='mt-[350px] ml-[490px]'>
                     <Link to={"/regionAlter"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>Back</Link>
                 </div>
 

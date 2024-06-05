@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import '../assets/css/font.css';
 
 const ListofMasters = () => {
+
+  const regionRef = useRef(null);
+
+
+  useEffect(() => {
+    // Add the 'focused' class to the "Region" link on load
+    if(regionRef.current){
+        regionRef.current.focus();
+    }
+});
+
   return (
     <div className='flex'>
 
@@ -20,7 +31,7 @@ const ListofMasters = () => {
 
           <p className='text-[13px] ml-[120px] mt-12 text-[#686D76]'>DOMSS MASTER</p>
 
-          <Link to="/region" className='block text-center text-sm focus:bg-yellow-500 outline-none mt-2 mb-1'>
+          <Link to="/region" ref={regionRef} className='block text-center text-sm focus:bg-yellow-500 outline-none mt-2 mb-1'>
             <p className='m-0'>Region Master</p>
           </Link>
 

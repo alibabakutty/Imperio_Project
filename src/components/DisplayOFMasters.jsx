@@ -1,7 +1,15 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
 const DisplayOFMasters = () => {
+
+    const regionRef = useRef(null);
+
+    useEffect(() =>{
+        if(regionRef.current){
+            regionRef.current.focus();
+        }
+    })
   return (
     <div className='flex'>
 
@@ -21,7 +29,7 @@ const DisplayOFMasters = () => {
 
                     <p className='text-[13px] ml-[120px] mt-12 text-[#686D76]'>DOMSS MASTER</p>
 
-                    <Link to="/regionFilter" className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mt-2 mb-1'>
+                    <Link to="/regionFilter" ref={regionRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mt-2 mb-1'>
                         <p className='m-0'>Region Master</p>
                     </Link>
 

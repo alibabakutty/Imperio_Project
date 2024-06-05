@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { IoClose } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
@@ -22,6 +22,8 @@ const AlterDistributorMaster = () => {
         contactMobileNo: ""
     });
 
+    const inputRef = useRef(null);
+
     const onInputChange = (e) => {
         setDistributor({...distributor, [e.target.name]: e.target.value})
     };
@@ -36,6 +38,10 @@ const AlterDistributorMaster = () => {
     };
 
     useEffect(() => {
+        if(inputRef.current){
+            inputRef.current.focus();
+        }
+        
         loadDistributor();
     }, []);
 
@@ -69,7 +75,7 @@ const AlterDistributorMaster = () => {
                         <form onSubmit={(e) => {onSubmit(e)}}>
                             <div className='input-ldgr mt-3'>
                                 <label htmlFor="distributorCode" className='text-sm ml-2 mr-[87px]'>Distributor Code</label>
-                                : <input type="text" id='distributorCode' name='distributorCode' value={distributor.distributorCode} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' /> <br />
+                                : <input type="text" id='distributorCode' name='distributorCode' value={distributor.distributorCode} onChange={(e) =>onInputChange(e)} ref={inputRef} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' /> <br />
                             </div>
 
                             <div className='input-ldgr mt-1'>

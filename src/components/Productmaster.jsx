@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { IoClose } from 'react-icons/io5'
 import { Link, useNavigate } from 'react-router-dom';
 import { createNewProductMaster } from '../services/MasterService';
@@ -12,15 +12,27 @@ const Productmaster = () => {
     const [productDescription, setProductDescription] = useState('');
     const [productCategory, setProductCategory] = useState('');
     const [productUom, setProductUom] = useState('');
+    const [productGroup, setProductGroup] = useState('');
+    const [standardCost, setStandardCost] = useState('');
+    const [sellingPrice, setSellingPrice] = useState('');
+
+    const inputRef = useRef(null);
 
     const navigator = useNavigate();
+
+
+    useEffect(() =>{
+        if(inputRef.current){
+            inputRef.current.focus();
+        }
+    }, []);
 
 
     function saveProductMaster(e){
 
         e.preventDefault();
 
-        const product = {productCode, productDescription, productCategory, productUom};
+        const product = {productCode, productDescription, productCategory, productUom, productGroup, standardCost, sellingPrice};
 
         console.log(product);
 
@@ -47,15 +59,15 @@ const Productmaster = () => {
             </span>
         </div>
 
-        <div className='w-[550px] h-[20vh] border border-gray-500 ml-[750px]  '>
+        <div className='w-[550px] h-[30vh] border border-gray-500 ml-[750px]  '>
 
 
             <form>
                 
 
                 <div className='input-ldgr mt-3   '  >
-                    <label htmlFor="productCode" className='text-sm mr-[53px] ml-2'>Product Code</label>
-                    : <input type="text" id='productCode' name='productCode' value={productCode} onChange={(e) => setProductCode(e.target.value)}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
+                    <label htmlFor="productCode" className='text-sm mr-[53.5px] ml-2'>Product Code</label>
+                    : <input type="text" id='productCode' name='productCode' value={productCode} onChange={(e) => setProductCode(e.target.value)} ref={inputRef}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
                 </div>
 
                 <div className='input-ldgr    '  >
@@ -69,11 +81,26 @@ const Productmaster = () => {
                 </div>
 
                 <div className='input-ldgr    '  >
-                    <label htmlFor="productUom" className='text-sm mr-[54px] ml-2'>Product UOM</label>
+                    <label htmlFor="productUom" className='text-sm mr-[55px] ml-2'>Product UOM</label>
                     : <input type="text" id='productUom' name='productUom' value={productUom} onChange={(e) => setProductUom(e.target.value)}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
                 </div>
 
-                <div className='mt-[400px] '>
+                <div className='input-ldgr    '  >
+                    <label htmlFor="productGroup" className='text-sm mr-[48.5px] ml-2'>Product Group</label>
+                    : <input type="text" id='productGroup' name='productGroup' value={productGroup} onChange={(e) => setProductGroup(e.target.value)}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
+                </div>
+
+                <div className='input-ldgr    '  >
+                    <label htmlFor="standardCost" className='text-sm mr-[51px] ml-2'>Standard Cost</label>
+                    : <input type="text" id='standardCost' name='standardCost' value={standardCost} onChange={(e) => setStandardCost(e.target.value)}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
+                </div>
+
+                <div className='input-ldgr    '  >
+                    <label htmlFor="sellingPrice" className='text-sm mr-[62px] ml-2'>Selling Price</label>
+                    : <input type="text" id='sellingPrice' name='sellingPrice' value={sellingPrice} onChange={(e) => setSellingPrice(e.target.value)}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
+                </div>
+
+                <div className='mt-[380px] '>
                     <button type='submit' className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' onClick={saveProductMaster}   >A: Accept</button>
                 </div>
 
@@ -81,7 +108,7 @@ const Productmaster = () => {
             
         </div>
 
-        <div className='mt-[400px] ml-[495px]'>
+        <div className='mt-[380px] ml-[495px]'>
 
             <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>Back</Link>
 

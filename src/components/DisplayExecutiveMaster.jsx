@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { IoClose } from 'react-icons/io5';
 import { Link, useParams } from 'react-router-dom';
 
@@ -17,11 +17,16 @@ const DisplayExecutiveMaster = () => {
         status: ""
     });
 
-    const onInputChange = (e) => {
-        setExecutive({...executive, [e.target.name]: e.target.value})
-    };
+    const inputRef = useRef(null);
+    
+
+
 
     useEffect(() => {
+        if(inputRef.current){
+            inputRef.current.focus();
+        }
+        
         loadExecutive();
     }, []);
 
@@ -54,32 +59,32 @@ const DisplayExecutiveMaster = () => {
                         <form>
                             <div className='input-ldgr mt-3'>
                                 <label htmlFor="executiveCode" className='text-sm ml-2 mr-[49px]'>Executive Code</label>
-                                : <input type="text" id='executiveCode' name='executiveCode' value={executive.executiveCode} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' /> <br />
+                                : <input type="text" id='executiveCode' name='executiveCode' value={executive.executiveCode} ref={inputRef}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' /> <br />
                             </div>
 
                             <div className='input-ldgr mt-1'>
                                 <label htmlFor="executiveMaster" className='text-sm mr-[39.5px] ml-2'>Executive Master</label>
-                                : <input type="text" id='executiveMaster' name='executiveMaster' value={executive.executiveMaster} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='executiveMaster' name='executiveMaster' value={executive.executiveMaster}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="dateOfJoin" className='text-sm mr-[69px] ml-2'>Date Of Join</label>
-                                : <input type="text" id='dateOfJoin' name='dateOfJoin' value={executive.dateOfJoin} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='dateOfJoin' name='dateOfJoin' value={executive.dateOfJoin}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="mobileNo" className='text-sm mr-[83.5px] ml-2'>Mobile No</label>
-                                : <input type="text" id='mobileNo' name='mobileNo' value={executive.mobileNo} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='mobileNo' name='mobileNo' value={executive.mobileNo}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="emailId" className='text-sm mr-[97.5px] ml-2'>Email Id</label>
-                                : <input type="text" id='emailId' name='emailId' value={executive.emailId} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='emailId' name='emailId' value={executive.emailId}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="status" className='text-sm mr-[106.5px] ml-2'>Status</label>
-                                : <input type="text" id='status' name='status' value={executive.status} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='status' name='status' value={executive.status}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>  
                         </form>
                         

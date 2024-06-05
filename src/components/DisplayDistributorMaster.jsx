@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { IoClose } from 'react-icons/io5';
 import { Link, useParams } from 'react-router-dom';
 
@@ -20,11 +20,16 @@ const DisplayDistributorMaster = () => {
         contactMobileNo: ""
     });
 
-    const onInputChange = (e) => {
-        setDistributor({...distributor, [e.target.name]: e.target.value})
-    };
+
+    const inputRef = useRef(null);
+
+    
 
     useEffect(() => {
+        if(inputRef.current){
+            inputRef.current.focus();
+        }
+        
         loadDistributor();
     }, []);
 
@@ -58,52 +63,52 @@ const DisplayDistributorMaster = () => {
                         <form>
                             <div className='input-ldgr mt-3'>
                                 <label htmlFor="executiveCode" className='text-sm ml-2 mr-[87px]'>Distributor Code</label>
-                                : <input type="text" id='executiveCode' name='executiveCode' value={distributor.distributorCode} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' /> <br />
+                                : <input type="text" id='executiveCode' name='executiveCode' value={distributor.distributorCode} ref={inputRef} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' /> <br />
                             </div>
 
                             <div className='input-ldgr mt-1'>
                                 <label htmlFor="executiveMaster" className='text-sm mr-[20px] ml-2'>Distributor Company Name</label>
-                                : <input type="text" id='executiveMaster' name='executiveMaster' value={distributor.distributorCompanyName} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='executiveMaster' name='executiveMaster' value={distributor.distributorCompanyName}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="dateOfJoin" className='text-sm mr-[38px] ml-2'>Distributor Owner Name</label>
-                                : <input type="text" id='dateOfJoin' name='dateOfJoin' value={distributor.distributorOwnerName} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='dateOfJoin' name='dateOfJoin' value={distributor.distributorOwnerName}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="mobileNo" className='text-sm mr-[125px] ml-2'>Mobile No</label>
-                                : <input type="text" id='mobileNo' name='mobileNo' value={distributor.mobileNo} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='mobileNo' name='mobileNo' value={distributor.mobileNo}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="emailId" className='text-sm mr-[92px] ml-2'>Executive Code</label>
-                                : <input type="text" id='emailId' name='emailId' value={distributor.executiveCode} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='emailId' name='emailId' value={distributor.executiveCode}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="status" className='text-sm mr-[82px] ml-2'>Executive Master</label>
-                                : <input type="text" id='status' name='status' value={distributor.executiveMaster} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='status' name='status' value={distributor.executiveMaster}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="status" className='text-sm mr-[108px] ml-2'>Region Code</label>
-                                : <input type="text" id='status' name='status' value={distributor.regionCode} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='status' name='status' value={distributor.regionCode}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="status" className='text-sm mr-[99px] ml-2'>Region Master</label>
-                                : <input type="text" id='status' name='status' value={distributor.regionMaster} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='status' name='status' value={distributor.regionMaster}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="status" className='text-sm mr-[53px] ml-2'>Contact Person Name</label>
-                                : <input type="text" id='status' name='status' value={distributor.contactPersonName} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='status' name='status' value={distributor.contactPersonName}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="status" className='text-sm mr-[75px] ml-2'>Contact Mobile No</label>
-                                : <input type="text" id='status' name='status' value={distributor.contactMobileNo} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='status' name='status' value={distributor.contactMobileNo}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>  
                         </form>
                         
