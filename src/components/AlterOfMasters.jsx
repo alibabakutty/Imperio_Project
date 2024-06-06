@@ -45,6 +45,10 @@ const AlterOfMasters = () => {
             <p className='m-0'>Product Master</p>
           </Link>
 
+          <Link to="/godownAlter" className='block text-center text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
+            <p className='m-0'>Godown Master</p>
+          </Link>
+
           
         </div>
         <div className='mt-[70px]'>

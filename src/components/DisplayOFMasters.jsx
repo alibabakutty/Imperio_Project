@@ -45,6 +45,10 @@ const DisplayOFMasters = () => {
                         <p className='m-0'>Product Master</p>
                     </Link>
 
+                    <Link to="/godownFilter" className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mt-1 mb-1'>
+                        <p className='m-0'>Godown Master</p>
+                    </Link>
+
 
                 </div>
 

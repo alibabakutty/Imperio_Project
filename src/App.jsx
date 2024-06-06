@@ -36,6 +36,11 @@ import DistributorMasterAlteredCheck from "./message/DistributorMasterAlteredChe
 import ProductMasterAlteredCheck from "./message/ProductMasterAlteredCheck"
 import GodownMaster from "./components/GodownMaster"
 import GodownMasterAddedCheck from "./message/GodownMasterAddedCheck"
+import GodownFilter from "./components/GodownFilter"
+import GodownAlter from "./components/GodownAlter"
+import DisplayGodownMaster from "./components/DisplayGodownMaster"
+import AlterGodownMaster from "./components/AlterGodownMaster"
+import GodownMasterAlteredCheck from "./message/GodownMasterAlteredCheck"
 
 
 function App() {
@@ -97,6 +102,9 @@ function App() {
           {/* http://localhost:4000/productFilter */}
           <Route path="/productFilter" element={<ProductFilter />} />
 
+          {/* http://localhost:4000/godownFilter */}
+          <Route path="/godownFilter" element = {<GodownFilter />} />
+
           {/* http://localhost:4000/display */}
           <Route path="/alter" element = {<AlterOfMasters />} />
 
@@ -112,6 +120,9 @@ function App() {
           {/* http://localhost:4000/productAlter */}
           <Route path="/productAlter" element={<ProductAlter />} />
 
+          {/* http://localhost:4000/godownAlter */}
+          <Route path="/godownAlter" element = {<GodownAlter />} />
+
 
          {/* http://localhost:4000/displayRegion */}
          <Route path="displayRegion/:regionMasterId" element = {<DisplayRegionMaster />} />
@@ -125,6 +136,9 @@ function App() {
          {/* http://localhost:4000/displayProduct */}
          <Route path="displayProduct/:productCode" element={<DisplayProductMaster />} />
 
+          {/* http://localhost:4000/displayGodown */}
+          <Route path="displayGodown/:godownCode" element = {<DisplayGodownMaster />} />
+
          {/* http://localhost:4000/alterRegionMaster */}
          <Route path="alterRegionMaster/:regionMasterId" element = {<AlterRegionMaster />} />
 
@@ -137,6 +151,9 @@ function App() {
          {/* http://localhost:4000/alterProductMaster */}
          <Route path="alterProductMaster/:productCode" element = {<AlterProductMaster />} />
 
+         {/* http://localhost:4000/alterGodownMaster */}
+         <Route path="alterGodownMaster/:godownCode" element = {<AlterGodownMaster />} />
+
          {/* http://localhost:4000/alteredRegion */}
          <Route path="/alteredRegion" element = {<RegionMasterAlteredCheck />} />
 
@@ -148,6 +165,9 @@ function App() {
 
          {/* http://localhost:4000/alteredProduct */}
          <Route path="/alteredProduct" element = {<ProductMasterAlteredCheck /> } />
+
+         {/* http://localhost:4000/alteredGodown */}
+         <Route path="/alteredGodown" element = {<GodownMasterAlteredCheck />} />
 
 
           

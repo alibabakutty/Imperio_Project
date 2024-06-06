@@ -27,5 +27,7 @@ export const listOfDistributors = () => {return axios.get(REST_API_BASE_URL+"/al
 
 export const listOfProducts = () => {return axios.get(REST_API_BASE_URL+"/allProduct")};
 
+export const listOfGodowns = () => {return axios.get(REST_API_BASE_URL+"/allGodown")};
+
 
 // ALTER
