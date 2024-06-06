@@ -3,6 +3,7 @@ import { IoClose } from 'react-icons/io5'
 import { Link, useNavigate } from 'react-router-dom';
 import { createNewDistributorMaster } from '../services/MasterService';
 import '../assets/css/font.css'
+import axios from 'axios';
 
 
 const DistributorMaster = () => {
@@ -20,6 +21,14 @@ const DistributorMaster = () => {
     const [contactPersonName, setContactPersonName] = useState('');
     const [contactMobileNo, setContactMobileNo] = useState('');
 
+    const [errors, setErrors] = useState({});
+
+
+    const[executiveSuggestions, setExecutiveSuggestions] = useState({});
+
+    const [filteredExecutiveCodeSuggestions, setFilteredExecutiveCodeSuggestions] = useState([]);
+    const [filteredExecutiveMasterSuggestions, setFilteredExecutiveMasterSuggestions] = useState([]);
+
     const inputRef = useRef(null);
 
 
@@ -30,11 +39,75 @@ const DistributorMaster = () => {
         if(inputRef.current){
             inputRef.current.focus();
         }
+
+
+        //fetch executive suggestions
+        const fetchExecutiveSuggestions = async () =>{
+            try{
+                const response = await axios.get('http://localhost:8080/api/master/allExecutive');
+                setExecutiveSuggestions(response.data);
+            }catch(error){
+                console.error('Error fetching executive data:', error);
+            }
+        };
+
+        fetchExecutiveSuggestions();
     }, []);
+
+
+    const handleExecutiveCodeInputChange = (e) =>{
+        const value = e.target.value;
+        setExecutiveCode(value);
+
+        if(value.trim() !== ''){
+            const filteredSuggestions = executiveSuggestions.filter((executive) => executive.executiveCode.toLowerCase().includes(value.toLowerCase()));
+            setFilteredExecutiveCodeSuggestions(filteredSuggestions);
+        }else{
+            setFilteredExecutiveCodeSuggestions([]);
+        }
+    };
+
+
+    const handleExecutiveNameInputChange = (e) =>{
+        const value = e.target.value;
+        setExecutiveMaster(value);
+
+        if(value.trim() !== ''){
+            const filteredSuggestions = executiveSuggestions.filter((executive) => executive.executiveMaster.toLowerCase().includes(value.toLowerCase()));
+            setFilteredExecutiveMasterSuggestions(filteredSuggestions);
+        }else{
+            setFilteredExecutiveMasterSuggestions([]);
+        }
+    };
+
+
+    const selectExecutive = (executive) =>{
+        setExecutiveCode(executive.executiveCode);
+        setExecutiveMaster(executive.executiveMaster);
+        setFilteredExecutiveCodeSuggestions([]);
+        setFilteredExecutiveMasterSuggestions([]);
+    }
+
+
+    const validateForm = () =>{
+        const newErrors = {};
+        if(!distributorCode.trim()){
+            newErrors.distributorCode = 'Distributor Code is required!';
+        }
+        setErrors(newErrors);
+
+
+        return Object.keys(newErrors).length === 0;
+    }
 
 
     function saveDsitributorMaster(e){
         e.preventDefault();
+
+
+        if(!validateForm()){
+            return;
+        }
 
         const distributor = {distributorCode, distributorCompanyName, distributorOwnerName, mobileNo, executiveCode, executiveMaster, regionCode, regionMaster, contactPersonName, contactMobileNo};
 
@@ -47,7 +120,7 @@ const DistributorMaster = () => {
         }).catch((error) => {
             console.error('Error catching distributor master:', error);
         })
-    }
+    };
 
   return (
     <div className='w-1/2 border h-[100vh]'>
@@ -59,7 +132,7 @@ const DistributorMaster = () => {
             </span>
         </div>
 
-        <div className='w-[550px] h-[42vh] border border-gray-500 ml-[750px]'>
+        <div className='w-[550px] h-[45vh] border border-gray-500 ml-[750px]'>
 
 
             <form>
@@ -68,6 +141,7 @@ const DistributorMaster = () => {
             <div className='input-ldgr  mr-4 mt-3   '  >
             <label htmlFor="distributorCode" className='text-sm mr-[79px] ml-2'>Distributor Code</label>
             : <input type="text" id='distributorCode' name='distributorCode' value={distributorCode} onChange={(e) => setDistributorCode(e.target.value)} ref={inputRef}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
+            {errors.distributorCode && <p className='text-red-500 text-xs ml-2'>{errors.distributorCode}</p>}
             </div>
 
             <div className='input-ldgr    '  >
@@ -88,6 +162,17 @@ const DistributorMaster = () => {
             <div className='input-ldgr    '  >
                 <label htmlFor="executiveCode" className='text-sm  mr-[84px] ml-2'>Executive Code</label>
                 : <input type="text" id='executiveCode' name='executiveCode' value={executiveCode} onChange={(e) => setExecutiveCode(e.target.value)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
+
+                {filteredExecutiveCodeSuggestions.length > 0 && (
+                    <div>
+                        <div>
+                            <p>List Of Executive Codes</p>
+                        </div>
+                        <ul>
+                            
+                        </ul>
+                    </div>
+                )}
             </div>
 
             <div className='input-ldgr    '  >
@@ -115,7 +200,7 @@ const DistributorMaster = () => {
                 : <input type="text" id='contactMobileNo' name='contactMobileNo' value={contactMobileNo} onChange={(e) => setContactMobileNo(e.target.value)}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
             </div>
 
-            <div className='mt-[260px] '>
+            <div className='mt-[250px] '>
                 <button type='submit' className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' onClick={saveDsitributorMaster}   >A: Accept</button>
             </div>
 
@@ -125,7 +210,7 @@ const DistributorMaster = () => {
             
         </div>
 
-        <div className='mt-[260px] ml-[495px]'>
+        <div className='mt-[230px] ml-[495px]'>
 
 
             <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>Back</Link>
