@@ -55,7 +55,7 @@ const Productmaster = () => {
         <div className='w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[750px] mt-10 border border-gray-500 border-b-0'>
             <h2 className='ml-[200px]'>Product Master</h2>
             <span className='cursor-pointer mt-[5px] mr-2'>
-                <IoClose />
+                <Link to={"/list"}><IoClose /></Link>
             </span>
         </div>
 
@@ -102,7 +102,7 @@ const Productmaster = () => {
                     : <input type="text" id='sellingPrice' name='sellingPrice' value={sellingPrice} onChange={(e) => setSellingPrice(e.target.value)}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
                 </div>
 
-                <div className='mt-[380px] '>
+                <div className='mt-[330px] '>
                     <button type='submit' className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' onClick={saveProductMaster}   >A: Accept</button>
                 </div>
 
@@ -110,7 +110,7 @@ const Productmaster = () => {
             
         </div>
 
-        <div className='mt-[380px] ml-[495px]'>
+        <div className='mt-[330px] ml-[495px]'>
 
             <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>Back</Link>
 

@@ -147,7 +147,7 @@ const RegionMaster = () => {
       return;
     }
 
-    const region = { ledgerCode, ledgerName, regionMasterId, regionName, regionState, country };
+    const region = { ledgerCode, ledgerName, regionMasterId, regionName, regionState, country, godownCode, godownName };
 
     console.log(region);
 
@@ -168,7 +168,7 @@ const RegionMaster = () => {
         </span>
       </div>
 
-      <div className='w-[550px] h-[45vh] border border-gray-500 ml-[750px]'>
+      <div className='w-[550px] h-[36vh] border border-gray-500 ml-[750px]'>
 
         <form onSubmit={saveRegionMaster}>
 
@@ -271,7 +271,7 @@ const RegionMaster = () => {
                 id='godownCode'
                 name='godownCode'
                 value={godownCode}
-                onChange={handleGodownCodeInputChange}
+                onChange={(e) =>{handleGodownCodeInputChange(e); setGodownCode(e.target.value)}}
                 onKeyDown={handleKeyDown}
                 ref={(input) => inputRefs.current.godownCode = input}
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
@@ -285,7 +285,7 @@ const RegionMaster = () => {
                   </div>
                   <ul className='suggestions w-full h-[20vh] text-center mt-2'>
                     {filteredGodownCodeSuggestions.map((godown, index) =>(
-                      <li key={index} tabIndex={0} onClick={() => selectGodown(godown)} onKeyDown={(e) => e.key === 'Enter' && selectGodown(godown)} className='suggestion-item focus:bg-[#FEB941] outline-none'>
+                      <li key={index} tabIndex={0} onClick={() => selectGodown(godown)} onKeyDown={(e) => e.key === 'Enter' && selectGodown(godown)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
                         {godown.godownCode.toUpperCase()}
                       </li>
                     ))}
@@ -302,7 +302,7 @@ const RegionMaster = () => {
                 id='godownName'
                 name='godownName'
                 value={godownName}
-                onChange={handleGodownNameInputChange}
+                onChange={(e) => {handleGodownNameInputChange(e); setGodownName(e.target.value)}}
                 onKeyDown={handleKeyDown}
                 ref={(input) => inputRefs.current.godownName = input}
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
@@ -317,7 +317,7 @@ const RegionMaster = () => {
                   </div>
                   <ul className='suggestions w-full h-[20vh] text-center mt-2'>
                     {filteredGodownNameSuggestions.map((godown, index) => (
-                      <li key={index} tabIndex={0} onClick={() => selectGodown(godown)} onKeyDown={(e) => e.key === 'Enter' && selectGodown(godown)} className='suggestion-item focus:bg-[#FEB941] outline-none'>
+                      <li key={index} tabIndex={0} onClick={() => selectGodown(godown)} onKeyDown={(e) => e.key === 'Enter' && selectGodown(godown)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
                         {godown.godownName.toUpperCase()}
                       </li>
                     ))}
@@ -327,7 +327,7 @@ const RegionMaster = () => {
 
           </div>
 
-          <div className='mt-[310px]'>
+          <div className='mt-[300px]'>
             <button
               type='submit'
               ref={(button) => { acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }}
@@ -340,7 +340,7 @@ const RegionMaster = () => {
 
       </div>
 
-      <div className='mt-[240px] ml-[495px]'>
+      <div className='mt-[290px] ml-[495px]'>
         <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>Back</Link>
       </div>
     </div>
