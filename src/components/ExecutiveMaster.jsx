@@ -41,8 +41,23 @@ const ExecutiveMaster = () => {
         if(executiveCodeRef.current){
             executiveCodeRef.current.focus();
         }
+
+        // Add event listener for Ctrl + B to go back
+        const handleCtrlB = (event) => {
+            if(event.ctrlKey && event.key === 'b'){
+                event.preventDefault();
+                navigator('/list')
+            }
+        };
+
+        document.addEventListener('keydown', handleCtrlB);
+
+        // Cleanup event listener on component unmount
+        return () => {
+            document.removeEventListener('keydown', handleCtrlB);
+        };
         
-    }, []);
+    }, [navigator]);
 
 
     const handleKeyDown = (event) => {
@@ -176,7 +191,7 @@ const ExecutiveMaster = () => {
 
             
 
-            <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>Back</Link>
+            <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>B: Back</Link>
 
         </div>
 

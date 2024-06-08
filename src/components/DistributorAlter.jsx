@@ -51,7 +51,7 @@ const DistributorAlter = () => {
 
       <div className='w-[45%] h-[100vh] bg-[#EEEEEE] flex flex-col items-center justify-start'>
         <div className='w-[50%] h-16 flex flex-col justify-center items-center border border-black bg-white border-b-0 '>
-          <p className='text-[13px] font-semibold underline underline-offset-4 decoration-gray-400'>Distributor Display</p>
+          <p className='text-[13px] font-semibold underline underline-offset-4 decoration-gray-400'>Distributor Alter</p>
           <input type="text" id='executiveCode' name='executiveCode' value={distributorCode} onChange={(e) => setDistributorCode(e.target.value)} ref={inputRef} className='w-[250px] ml-2 mt-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' />
         </div>
 

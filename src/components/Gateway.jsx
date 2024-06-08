@@ -5,6 +5,13 @@ import '../assets/css/font.css'
 const Gateway = () => {
 
     const createRef = useRef(null);
+    const displayRef = useRef(null);
+    const alterRef = useRef(null);
+    const vouchersRef = useRef(null);
+    const dayBookRef = useRef(null);
+
+
+    const links = [createRef, displayRef, alterRef, vouchersRef, dayBookRef];
 
 
     useEffect(() => {
@@ -12,7 +19,29 @@ const Gateway = () => {
         if(createRef.current){
             createRef.current.focus();
         }
-    })
+
+        const handleKeyDown = (event) => {
+            const currentIndex = links.findIndex(link => link.current === document.activeElement);
+
+            if(event.key === 'ArrowDown'){
+                event.preventDefault();
+
+                const nextIndex = (currentIndex + 1) % links.length;
+                links[nextIndex].current.focus();
+            }else if(event.key === 'ArrowUp'){
+                event.preventDefault();
+                const prevIndex = (currentIndex - 1 + links.length) % links.length;
+                links[prevIndex].current.focus();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+
+    }, [links])
   return (
     <div className='flex'>
 
@@ -34,21 +63,21 @@ const Gateway = () => {
                     <p className='m-0'>Create</p>
                 </Link>
 
-                <Link to="/display" className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
+                <Link to="/display" ref={displayRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
                     <p className='m-0'>Display</p>
                 </Link>
 
-                <Link to="/alter" className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
+                <Link to="/alter" ref={alterRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
                     <p className='m-0'>Alter</p>
                 </Link>
 
                 <p className='text-[12px] text-center mt-3 mb-2 text-[#686D76]'>TRANSACTIONS</p>
 
-                <Link to="/list" className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
+                <Link  ref={vouchersRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
                     <p className='m-0'>Vouchers</p>
                 </Link>
 
-                <Link to="/list" className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
+                <Link  ref={dayBookRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
                     <p className='m-0'>DayBook</p>
                 </Link>
 

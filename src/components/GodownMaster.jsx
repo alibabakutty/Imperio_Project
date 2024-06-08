@@ -8,20 +8,93 @@ const GodownMaster = () => {
   const [godownCode, setGodownCode] = useState('');
   const [godownName, setGodownName] = useState('');
 
-  const inputRef = useRef(null);
+  const [errors, setErrors] = useState({});
+
+  const inputRefs = useRef({
+    godownCode: null,
+    godownName: null
+  });
+
+  const godownCodeRef = useRef(null);
+  const acceptButtonRef = useRef(null);
 
   const navigator = useNavigate();
 
   useEffect(() => {
-    if(inputRef.current){
-      inputRef.current.focus();
+    // Focus on the first input element after the component mounts
+    if(godownCodeRef.current){
+      godownCodeRef.current.focus();
     }
 
-  }, []);
+    // Add event listener for Ctrl + B to go back
+    const handleCtrlB = (event) => {
+      if(event.ctrlKey && event.key === 'b'){
+        event.preventDefault();
+        navigator('/list');
+      }
+    };
+
+    document.addEventListener('keydown', handleCtrlB);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      document.removeEventListener('keydown', handleCtrlB);
+    };
+
+  }, [navigator]);
+
+
+  const handleKeyDown = (event) => {
+    const {keyCode, target} = event;
+
+
+    if(keyCode === 13){
+      event.preventDefault();
+
+      const inputs = Object.keys(inputRefs.current);
+
+      const currentInputIndex = inputs.findIndex((key) => key === target.id);
+      
+
+      if(currentInputIndex < inputs.length - 1){
+        const nextInputRef = inputRefs.current[inputs[currentInputIndex + 1]];
+        nextInputRef.focus();
+      }else{
+        acceptButtonRef.focus();
+      }
+    }else if(keyCode === 27){
+      const inputs = Object.keys(inputRefs.current);
+      const currentInputIndex = inputs.findIndex((key) => key === target.id);
+
+      if(currentInputIndex > 0){
+        const prevInputRef = inputRefs.current[inputs[currentInputIndex - 1]];
+        prevInputRef.focus();
+      }else{
+        inputRefs.current[inputs[inputs.length - 1]].focus();
+      }
+    }
+
+  };
+
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if(!godownCode.trim()){
+      newErrors.godownCode = 'Godown Code is required!.';
+    }
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  }
 
 
   function saveGodownMaster(e){
     e.preventDefault();
+
+    if(!validateForm()){
+      return;
+    }
 
     const godown = {godownCode, godownName};
 
@@ -58,10 +131,14 @@ const GodownMaster = () => {
                 name='godownCode'
                 value={godownCode}
                onChange={(e) => setGodownCode(e.target.value)}
-                ref={inputRef}
+                onKeyDown={handleKeyDown}
+                ref={(input) => {godownCodeRef.current = input; inputRefs.current.godownCode = input; }}
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
                 autoComplete='off'
               />
+
+
+              {errors.godownCode && <p className='text-red-500 text-xs ml-2'>{errors.godownCode}</p>}
               
           </div>
 
@@ -73,6 +150,8 @@ const GodownMaster = () => {
                 name='godownName'
                 value={godownName}
                 onChange={(e) => setGodownName(e.target.value)}
+                onKeyDown={handleKeyDown}
+                ref={(input) => inputRefs.current.godownName = input}
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
                 autoComplete='off'
               />
@@ -83,7 +162,7 @@ const GodownMaster = () => {
           <div className='mt-[445px]'>
             <button
               type='submit'
-              
+              ref={(button) => {acceptButtonRef.current = button; inputRefs.current.acceptButton = button;}}
               className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'
               id='accptButton'
               onClick={saveGodownMaster}
@@ -95,7 +174,7 @@ const GodownMaster = () => {
       </div>
 
       <div className='mt-[430px] ml-[495px]'>
-        <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>Back</Link>
+        <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>B: Back</Link>
       </div>
     </div>
 

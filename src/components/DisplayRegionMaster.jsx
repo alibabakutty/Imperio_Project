@@ -14,7 +14,9 @@ const DisplayRegionMaster = () => {
         regionMasterId: "",
         regionName: "",
         regionState: "",
-        country: ""
+        country: "",
+        godownCode: "",
+        godownName: ""
     });
 
 
@@ -58,12 +60,12 @@ const DisplayRegionMaster = () => {
                         </span>
                     </div>
 
-                    <div className='w-[550px] h-[26vh] border border-gray-500 ml-[80px] '>
+                    <div className='w-[550px] h-[35vh] border border-gray-500 ml-[80px] '>
                         <form>
 
                             <div className='input-ldgr mt-3 ' >
                                 <label htmlFor="ledgerCode" className='text-sm mr-[73px] ml-2'>Ledger Code</label>
-                                : <input type="text" id='ledgerCode' name='ledgerCode' value={region.ledgerCode}    className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ' autoComplete='off'  />
+                                : <input type="text" id='ledgerCode' name='ledgerCode' value={region.ledgerCode}  ref={inputRef}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ' autoComplete='off'  />
                                 
                             </div>
 
@@ -92,11 +94,22 @@ const DisplayRegionMaster = () => {
                                 <label htmlFor="country" className='text-sm mr-[106px] ml-2'>Country</label>
                                 : <input type="text" id='country' name='country' value={region.country}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
+
+                            <div className='input-ldgr'>
+                                <label htmlFor="godownCode" className='text-sm mr-[66.5px] ml-2'>Godown Code</label>
+                                : <input type="text" id='godownCode' name='godownCode' value={region.godownCode}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                            </div>
+                            
+                            <div className='input-ldgr'>
+                                <label htmlFor="godownName" className='text-sm mr-[65px] ml-2'>Godown Name</label>
+                                : <input type="text" id='godownName' name='godownName' value={region.godownName}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                            </div>
+
                         </form>
                         
                     </div>
 
-                    <div className='mt-[360px] ml-[30px]'>
+                    <div className='mt-[300px] ml-[30px]'>
                     <Link to={"/regionFilter"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>Back</Link>
                 </div>
 

@@ -84,7 +84,24 @@ const DistributorMaster = () => {
          };
          fetchRegionSuggestions();
 
-    }, []);
+
+         // Add event listener for Ctrl + B to go back
+         const handleKeyDown = (event) => {
+            if(event.ctrlKey && event.key === 'b'){
+                navigator('/list');
+            }
+         };
+
+
+         document.addEventListener('keydown', handleKeyDown);
+
+
+         // Cleanup event listener on component unmount
+         return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+         };
+
+    }, [navigator]);
 
 
     const handleExecutiveCodeInputChange = (e) =>{
@@ -355,7 +372,7 @@ const DistributorMaster = () => {
         <div className='mt-[230px] ml-[495px]'>
 
 
-            <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>Back</Link>
+            <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>B: Back</Link>
 
         </div>
 

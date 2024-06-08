@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { listOfDistributors } from '../services/MasterService';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const DistributorFilter = () => {
 
@@ -12,7 +12,10 @@ const DistributorFilter = () => {
 
   const [filteredDistributors, setFilteredDistributors] = useState([]);
 
+  const [selectedIndex,  setSelectedIndex] = useState(0);
+
   const inputRef = useRef(null);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -32,6 +35,31 @@ const DistributorFilter = () => {
   useEffect(() => {
     filterDistributors();
   }, [distributorCode]);
+
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if(e.key === 'ArrowDown'){
+        setSelectedIndex(prevIndex => (prevIndex + 1) % (filteredDistributors.length + 2));
+      }else if(e.key === 'ArrowUp'){
+        setSelectedIndex(prevIndex => (prevIndex - 1) + (filteredDistributors.length + 2));
+      }else if(e.key === 'Enter'){
+        if(selectedIndex === 0){
+          navigate('/distributor');
+        }else if(selectedIndex === 1){
+          navigate('/display');
+        }else if(filteredDistributors[selectedIndex - 2]){
+          navigate(`/displayDistributor/${filteredDistributors[selectedIndex - 2].distributorCode}`);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [filteredDistributors, selectedIndex, navigate]);
 
 
   const filterDistributors = () => {

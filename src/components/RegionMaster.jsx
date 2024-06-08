@@ -45,6 +45,8 @@ const RegionMaster = () => {
       ledgerCodeRef.current.focus();
     }
 
+    
+
 
     // Fetch godown suggestions
     const fetchGodownSuggestions = async () =>{
@@ -57,9 +59,23 @@ const RegionMaster = () => {
     };
 
     fetchGodownSuggestions();
+
+    // Add event listener for Ctrl + B to go back
+    const handleKeyDown = (event) => {
+      if(event.ctrlKey && event.key === 'b'){
+        navigate('/list');
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
     
 
-  }, []);
+  }, [navigate]);
 
   const handleKeyDown = (event) => {
     const { keyCode, target } = event;
@@ -168,7 +184,7 @@ const RegionMaster = () => {
         </span>
       </div>
 
-      <div className='w-[550px] h-[36vh] border border-gray-500 ml-[750px]'>
+      <div className='w-[550px] h-[40vh] border border-gray-500 ml-[750px]'>
 
         <form onSubmit={saveRegionMaster}>
 
@@ -216,7 +232,7 @@ const RegionMaster = () => {
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
                 autoComplete='off'
               />
-              {errors.regionMasterId && <p className='text-red-500 text-xs ml-2'></p>}
+              {errors.regionMasterId && <p className='text-red-500 text-xs ml-2'>{errors.regionMasterId}</p>}
           </div>
 
           <div className='input-ldgr'>
@@ -327,7 +343,7 @@ const RegionMaster = () => {
 
           </div>
 
-          <div className='mt-[300px]'>
+          <div className='mt-[280px]'>
             <button
               type='submit'
               ref={(button) => { acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }}
@@ -340,8 +356,8 @@ const RegionMaster = () => {
 
       </div>
 
-      <div className='mt-[290px] ml-[495px]'>
-        <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>Back</Link>
+      <div className='mt-[250px] ml-[495px]'>
+        <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>B: Back</Link>
       </div>
     </div>
   )
