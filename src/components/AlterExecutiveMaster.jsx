@@ -19,7 +19,18 @@ const AlterExecutiveMaster = () => {
     });
 
 
-    const inputRef = useRef(null);
+    const inputRefs = useRef({
+        executiveCode: null,
+        executiveMaster: null,
+        dateOfJoin: null,
+        mobileNo: null,
+        emailId: null,
+        status: null,
+        acceptButton: null
+    });
+
+    const executiveCodeRef = useRef(null);
+    const acceptButtonRef = useRef(null);
 
     const onInputChange = (e) => {
         setExecutive({...executive, [e.target.name]: e.target.value})
@@ -32,12 +43,40 @@ const AlterExecutiveMaster = () => {
     }
 
     useEffect(() => {
-        if(inputRef.current){
-            inputRef.current.focus();
+        if(executiveCodeRef.current){
+            executiveCodeRef.current.focus();
         }
         
         loadExecutive();
     }, []);
+
+
+    const handleKeyDown = (event) => {
+        const {keyCode, target} = event;
+
+        if(keyCode === 13){
+            event.preventDefault();
+
+            const currentInputIndex = Object.keys(inputRefs.current).findIndex( (key) => key === target.id );
+
+            if(currentInputIndex === Object.keys(inputRefs.current).length - 2){
+                acceptButtonRef.current.focus();
+            }else{
+                const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
+                nextInputRef.focus();
+            }
+        }else if(keyCode === 27){
+            if(target.id === 'acceptButton'){
+                inputRefs.current.status.focus();
+            }else{
+                let currentInputIndex = Object.keys(inputRefs.current).findIndex( (key) => key === target.id );
+
+                let prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+                const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+                prevInputRef.focus();
+            }
+        }
+    };
 
     const loadExecutive = async () => {
         try{
@@ -69,36 +108,36 @@ const AlterExecutiveMaster = () => {
                         <form onSubmit={(e) => {onSubmit(e)}}>
                             <div className='input-ldgr mt-3'>
                                 <label htmlFor="executiveCode" className='text-sm ml-2 mr-[49px]'>Executive Code</label>
-                                : <input type="text" id='executiveCode' name='executiveCode' value={executive.executiveCode} onChange={(e) =>onInputChange(e)} ref={inputRef} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' /> <br />
+                                : <input type="text" id='executiveCode' name='executiveCode' value={executive.executiveCode} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => {executiveCodeRef.current = input; inputRefs.current.executiveCode = input;}} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' /> 
                             </div>
 
                             <div className='input-ldgr mt-1'>
                                 <label htmlFor="executiveMaster" className='text-sm mr-[39.5px] ml-2'>Executive Master</label>
-                                : <input type="text" id='executiveMaster' name='executiveMaster' value={executive.executiveMaster} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='executiveMaster' name='executiveMaster' value={executive.executiveMaster} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.executiveMaster = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="dateOfJoin" className='text-sm mr-[69px] ml-2'>Date Of Join</label>
-                                : <input type="text" id='dateOfJoin' name='dateOfJoin' value={executive.dateOfJoin} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='dateOfJoin' name='dateOfJoin' value={executive.dateOfJoin} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.dateOfJoin = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="mobileNo" className='text-sm mr-[83.5px] ml-2'>Mobile No</label>
-                                : <input type="text" id='mobileNo' name='mobileNo' value={executive.mobileNo} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='mobileNo' name='mobileNo' value={executive.mobileNo} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.mobileNo = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="emailId" className='text-sm mr-[97.5px] ml-2'>Email Id</label>
-                                : <input type="text" id='emailId' name='emailId' value={executive.emailId} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='emailId' name='emailId' value={executive.emailId} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.emailId = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="status" className='text-sm mr-[106.5px] ml-2'>Status</label>
-                                : <input type="text" id='status' name='status' value={executive.status} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='status' name='status' value={executive.status} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.status = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='mt-[345px]'>
-                                <button type='submit' className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' >A: Accept</button>
+                                <button type='submit' id='acceptButton' ref={(button) => {acceptButtonRef.current = button; inputRefs.current.acceptButton = button;}} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' >A: Accept</button>
                             </div>  
                         </form>
                         

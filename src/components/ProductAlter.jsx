@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { listOfProducts } from '../services/MasterService';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ProductAlter = () => {
 
@@ -12,7 +12,11 @@ const ProductAlter = () => {
 
   const [filteredProducts, setFilteredProducts] = useState([]);
 
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
   const inputRef = useRef(null);
+
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -34,6 +38,31 @@ const ProductAlter = () => {
   }, [productCode]);
 
 
+  useEffect(() =>{
+
+    const handleKeyDown = (e) => {
+      if(e.key === 'ArrowDown'){
+        setSelectedIndex(prevIndex => (prevIndex + 1) % (filteredProducts.length + 2));
+      }else if(e.key === 'ArrowUp'){
+        setSelectedIndex(prevIndex => (prevIndex - 1 + (filteredProducts.length + 2)) % (filteredProducts.length + 2));
+      }else if(e.key === 'Enter'){
+        if(selectedIndex === 0){
+          navigate('/product');
+        }else if(selectedIndex === 1){
+          navigate('/alter')
+        }else if(filteredProducts[selectedIndex - 2]){
+          navigate(`/alterProductMaster/${filteredProducts[selectedIndex - 2].productCode}`);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [filteredProducts, selectedIndex, navigate]);
+
   const filterProduct = () =>{
     if(productCode === ""){
       setFilteredProducts(product);
@@ -41,6 +70,7 @@ const ProductAlter = () => {
       const filtered = product.filter(prod => prod.productCode.toLowerCase().includes(productCode.toLowerCase()));
       setFilteredProducts(filtered);
     }
+    setSelectedIndex(filteredProducts.length > 0 ? 2 : 0);
   }
 
 
@@ -64,12 +94,12 @@ const ProductAlter = () => {
                   </tr>
               </thead>
               <div className='border border-b-gray-500 w-[347px]'>
-                  <Link className='block text-center text-[14px] focus:bg-[#FEB941] outline-none' to={"/product"}><p className='ml-[285px] text-[14px]'>Create</p></Link>
-                  <Link className='block text-center text-[14px] focus:bg-[#FEB941] outline-none' to={"/alter"}><p className='ml-[287px] text-[14px] '>Back</p></Link>
+                  <Link className={`block text-center text-[14px] focus:bg-[#FEB941] outline-none ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`} to={"/product"}><p className='ml-[285px] text-[14px]'>Create</p></Link>
+                  <Link className={`block text-center text-[14px] focus:bg-[#FEB941] outline-none ${selectedIndex === 1 ? 'bg-[#FEB941]' : ''}`} to={"/alter"}><p className='ml-[287px] text-[14px] '>Back</p></Link>
               </div>
               <tbody>
-                  {filteredProducts.map(prod => (
-                      <tr key={prod.productCode}>
+                  {filteredProducts.map((prod, index) => (
+                      <tr key={prod.productCode} className={selectedIndex === index + 2 ? 'bg-[#FEB941]' : ''}>
                             <Link className='block text-center text-[14px] focus:bg-[#FEB941] outline-none' to={`/alterProductMaster/${prod.productCode}`}>
                               <td className='flex justify-center items-center capitalize'>{prod.productCode}</td>
                             </Link>

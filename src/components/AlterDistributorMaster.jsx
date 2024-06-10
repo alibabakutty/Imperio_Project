@@ -22,7 +22,22 @@ const AlterDistributorMaster = () => {
         contactMobileNo: ""
     });
 
-    const inputRef = useRef(null);
+    const inputRefs = useRef({
+        distributorCode: null,
+        distributorCompanyName: null,
+        distributorOwnerName: null,
+        mobileNo: null,
+        executiveCode: null,
+        executiveMaster: null,
+        regionCode: null,
+        regionMaster: null,
+        contactPersonName: null,
+        contactMobileNo: null,
+        acceptButton: null
+    });
+
+    const distributorCodeRef = useRef(null);
+    const acceptButtonRef = useRef(null);
 
     const onInputChange = (e) => {
         setDistributor({...distributor, [e.target.name]: e.target.value})
@@ -38,12 +53,40 @@ const AlterDistributorMaster = () => {
     };
 
     useEffect(() => {
-        if(inputRef.current){
-            inputRef.current.focus();
+        if(distributorCodeRef.current){
+            distributorCodeRef.current.focus();
         }
         
         loadDistributor();
     }, []);
+
+    const handleKeyDown = (event) => {
+        const {keyCode, target} = event;
+
+        if(keyCode === 13){
+            event.preventDefault();
+
+            const currentInputIndex = Object.keys(inputRefs.current).findIndex( (key) => key === target.id );
+
+            if(currentInputIndex === Object.keys(inputRefs.current).length - 2){
+                acceptButtonRef.current.focus();
+            }else{
+                const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
+                nextInputRef.focus();
+            }
+        }else if(keyCode === 27){
+            if(target.id === 'acceptButton'){
+                inputRefs.current.contactMobileNo.focus();
+            }else{
+                let currentInputIndex = Object.keys(inputRefs.current).findIndex( (key) => key === target.id );
+
+                let prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+
+                const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+                prevInputRef.focus();
+            }
+        }
+    };
 
     const loadDistributor = async () => {
         try{
@@ -75,56 +118,56 @@ const AlterDistributorMaster = () => {
                         <form onSubmit={(e) => {onSubmit(e)}}>
                             <div className='input-ldgr mt-3'>
                                 <label htmlFor="distributorCode" className='text-sm ml-2 mr-[87px]'>Distributor Code</label>
-                                : <input type="text" id='distributorCode' name='distributorCode' value={distributor.distributorCode} onChange={(e) =>onInputChange(e)} ref={inputRef} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' /> <br />
+                                : <input type="text" id='distributorCode' name='distributorCode' value={distributor.distributorCode} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => {distributorCodeRef.current = input; inputRefs.current.distributorCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' /> <br />
                             </div>
 
                             <div className='input-ldgr mt-1'>
                                 <label htmlFor="distributorCompanyName" className='text-sm mr-[20px] ml-2'>Distributor Company Name</label>
-                                : <input type="text" id='distributorCompanyName' name='distributorCompanyName' value={distributor.distributorCompanyName} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='distributorCompanyName' name='distributorCompanyName' value={distributor.distributorCompanyName} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.distributorCompanyName = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="distributorOwnerName" className='text-sm mr-[38px] ml-2'>Distributor Owner Name</label>
-                                : <input type="text" id='distributorOwnerName' name='distributorOwnerName' value={distributor.distributorOwnerName} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='distributorOwnerName' name='distributorOwnerName' value={distributor.distributorOwnerName} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.distributorOwnerName = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="mobileNo" className='text-sm mr-[125px] ml-2'>Mobile No</label>
-                                : <input type="text" id='mobileNo' name='mobileNo' value={distributor.mobileNo} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='mobileNo' name='mobileNo' value={distributor.mobileNo} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.mobileNo = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="executiveCode" className='text-sm mr-[92px] ml-2'>Executive Code</label>
-                                : <input type="text" id='executiveCode' name='executiveCode' value={distributor.executiveCode} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='executiveCode' name='executiveCode' value={distributor.executiveCode} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.executiveCode = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="executiveMaster" className='text-sm mr-[82px] ml-2'>Executive Master</label>
-                                : <input type="text" id='executiveMaster' name='executiveMaster' value={distributor.executiveMaster} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='executiveMaster' name='executiveMaster' value={distributor.executiveMaster} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.executiveMaster = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="regionCode" className='text-sm mr-[108px] ml-2'>Region Code</label>
-                                : <input type="text" id='regionCode' name='regionCode' value={distributor.regionCode} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='regionCode' name='regionCode' value={distributor.regionCode} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.regionCode = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="regionMaster" className='text-sm mr-[99px] ml-2'>Region Master</label>
-                                : <input type="text" id='regionMaster' name='regionMaster' value={distributor.regionMaster} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='regionMaster' name='regionMaster' value={distributor.regionMaster} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.regionMaster = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="contactPersonName" className='text-sm mr-[53px] ml-2'>Contact Person Name</label>
-                                : <input type="text" id='contactPersonName' name='contactPersonName' value={distributor.contactPersonName} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='contactPersonName' name='contactPersonName' value={distributor.contactPersonName} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.contactPersonName = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='input-ldgr'>
                                 <label htmlFor="contactMobileNo" className='text-sm mr-[75px] ml-2'>Contact Mobile No</label>
-                                : <input type="text" id='contactMobileNo' name='contactMobileNo' value={distributor.contactMobileNo} onChange={(e) =>onInputChange(e)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
+                                : <input type="text" id='contactMobileNo' name='contactMobileNo' value={distributor.contactMobileNo} onChange={(e) =>onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.contactMobileNo = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'  />
                             </div>
 
                             <div className='mt-[261px]'>
-                                <button type='submit' className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'   >A: Accept</button>
+                                <button type='submit' id='acceptButton' ref={(button) => {acceptButtonRef.current = button; inputRefs.current.acceptButton = button}} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'   >A: Accept</button>
                             </div>  
                         </form>
                         
