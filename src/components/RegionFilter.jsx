@@ -9,6 +9,7 @@ const RegionFilter = () => {
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     const inputRef = useRef(null);
+    const dropdownRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -17,7 +18,7 @@ const RegionFilter = () => {
         listOfRegions()
             .then((response) => {
                 setRegion(response.data);
-                setFilteredRegions(response.data); // Initially set filteredRegions to all regions
+                setFilteredRegions(response.data.slice(0, 15)); // Initially show only the first 15 regions
             })
             .catch(error => {
                 console.error(error);
@@ -31,16 +32,18 @@ const RegionFilter = () => {
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === 'ArrowDown') {
-                setSelectedIndex(prevIndex => (prevIndex + 1) % (filteredRegions.length + 2)); // +2 for Create and Back
+                setSelectedIndex(prevIndex => (prevIndex + 1) % (filteredRegions.length + 3)); // +3 for Create, Back, and Select other regions
             } else if (e.key === 'ArrowUp') {
-                setSelectedIndex(prevIndex => (prevIndex - 1 + (filteredRegions.length + 2)) % (filteredRegions.length + 2)); // +2 for Create and Back
+                setSelectedIndex(prevIndex => (prevIndex - 1 + (filteredRegions.length + 3)) % (filteredRegions.length + 3)); // +3 for Create, Back, and Select other regions
             } else if (e.key === 'Enter') {
                 if (selectedIndex === 0) {
                     navigate('/region');
                 } else if (selectedIndex === 1) {
                     navigate('/display');
-                } else if (filteredRegions[selectedIndex - 2]) {
-                    navigate(`/displayRegion/${filteredRegions[selectedIndex - 2].regionMasterId}`);
+                } else if (selectedIndex === 2) {
+                    dropdownRef.current.focus();
+                } else if (filteredRegions[selectedIndex - 3]) {
+                    navigate(`/displayRegion/${filteredRegions[selectedIndex - 3].regionMasterId}`);
                 }
             }
         };
@@ -54,12 +57,17 @@ const RegionFilter = () => {
 
     const filterRegions = () => {
         if (regionMasterId === "") {
-            setFilteredRegions(region);
+            setFilteredRegions(region.slice(0, 15)); // Reset to show the first 15 regions
         } else {
-            const filtered = region.filter(reg => reg.regionMasterId.toLowerCase().includes(regionMasterId.toLowerCase()));
+            const filtered = region.filter(reg => reg.regionMasterId.toLowerCase().includes(regionMasterId.toLowerCase())).slice(0, 15);
             setFilteredRegions(filtered);
         }
-        setSelectedIndex(filteredRegions.length > 0 ? 2 : 0); // Reset selected index to the first element in the filtered list
+        setSelectedIndex(filteredRegions.length > 0 ? 3 : 0); // Reset selected index to the first element in the filtered list
+    };
+
+    const handleDropdownChange = (e) => {
+        const selectedRegionId = e.target.value;
+        navigate(`/displayRegion/${selectedRegionId}`);
     };
 
     return (
@@ -86,7 +94,7 @@ const RegionFilter = () => {
                         </div>
                         <tbody>
                             {filteredRegions.map((reg, index) => (
-                                <tr key={reg.regionMasterId} className={selectedIndex === index + 2 ? 'bg-[#FEB941]' : ''}>
+                                <tr key={reg.regionMasterId} className={selectedIndex === index + 3 ? 'bg-[#FEB941]' : ''}>
                                     <td className='block text-center text-[14px] focus:bg-[#FEB941] outline-none capitalize'>
                                         <Link to={`/displayRegion/${reg.regionMasterId}`} className='block'>{reg.regionMasterId}</Link>
                                     </td>
@@ -94,6 +102,20 @@ const RegionFilter = () => {
                             ))}
                         </tbody>
                     </table>
+
+                    {region.length > 15 && (
+                        <div className='mt-2'>
+                            <label htmlFor="regionDropdown" className="block text-center text-[14px] mb-1"></label>
+                            <select id="regionDropdown" ref={dropdownRef} className={`w-full border border-gray-600 bg-white p-1 focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ${selectedIndex === 2 ? 'bg-[#FEB941]' : ''}`} onChange={handleDropdownChange}>
+                                <option value="" className='block text-center text-[14px]'>Select Other Regions</option>
+                                {region.slice(15).map(reg => (
+                                    <option key={reg.regionMasterId} value={reg.regionMasterId} className='block text-center text-[14px]'>
+                                        {reg.regionMasterId}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
                 </div>
             </div>
 

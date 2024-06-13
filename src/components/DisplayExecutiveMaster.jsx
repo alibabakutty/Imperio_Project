@@ -38,6 +38,25 @@ const DisplayExecutiveMaster = () => {
         }
         
         loadExecutive();
+
+
+        const handleCtrlB = (event) => {
+            if(event.ctrlKey && event.key === 'b'){
+                event.preventDefault();
+
+                if(backButtonRef.current){
+                    backButtonRef.current.click();
+                }
+            }
+        };
+
+
+        document.addEventListener('keydown', handleCtrlB);
+
+        return () => {
+            document.removeEventListener('keydown', handleCtrlB);
+        };
+
     }, []);
 
 
@@ -131,7 +150,7 @@ const DisplayExecutiveMaster = () => {
                     </div>
 
                     <div className='mt-[345px] ml-[30px]'>
-                    <Link to={"/executiveFilter"} id='backButton' ref={(button) => {backButtonRef.current = button; inputRefs.current.backButton = button; }} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>Back</Link>
+                    <Link to={"/executiveFilter"} id='backButton' ref={(button) => {backButtonRef.current = button; inputRefs.current.backButton = button; }} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>B: Back</Link>
                 </div>
 
                     

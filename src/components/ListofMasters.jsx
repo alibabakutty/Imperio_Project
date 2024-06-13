@@ -85,7 +85,7 @@ const ListofMasters = () => {
           
         </div>
         <div className='mt-[70px]'>
-            <Link to="/" ref={backButtonRef} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>B: Back</Link>
+            <Link to="/" ref={backButtonRef} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>Back</Link>
           </div>
       </div>
 

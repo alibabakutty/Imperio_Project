@@ -41,6 +41,22 @@ const DisplayDistributorMaster = () => {
       distributorCodeRef.current.focus();
     }
     loadDistributor();
+
+
+    const handleCtrlB = (event) => {
+      if(event.ctrlKey && event.key === 'b'){
+        event.preventDefault();
+        if(backButtonRef.current){
+          backButtonRef.current.click();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleCtrlB);
+
+    return () => {
+      document.removeEventListener('keydown', handleCtrlB);
+    }
   }, []);
 
   const handleKeyDown = (event) => {
@@ -137,7 +153,7 @@ const DisplayDistributorMaster = () => {
               }}
               className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'
             >
-              Back
+              B: Back
             </Link>
           </div>
         </div>

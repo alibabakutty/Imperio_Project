@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { IoClose } from 'react-icons/io5'
+import React, { useEffect, useRef, useState } from 'react';
+import { IoClose } from 'react-icons/io5';
 import { createNewRegionMaster } from '../services/MasterService';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -16,12 +16,13 @@ const RegionMaster = () => {
   const [godownName, setGodownName] = useState('');
 
   const [errors, setErrors] = useState({});
-
   const [godownSuggestions, setGodownSuggestions] = useState([]);
   const [filteredGodownCodeSuggestions, setFilteredGodownCodeSuggestions] = useState([]);
-  const [filteredGodownNameSuggestions, setFilteredGodownNameSuggestions] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
+  // const [selectedIndex, setSelectedIndex] = useState(0);
   
+
   const inputRefs = useRef({
     ledgerCode: null,
     ledgerName: null,
@@ -31,124 +32,137 @@ const RegionMaster = () => {
     country: null,
     godownCode: null,
     godownName: null,
-    acceptButton: null, // Added the accept button reference here
+    acceptButton: null,
   });
 
   const ledgerCodeRef = useRef(null);
   const acceptButtonRef = useRef(null);
-
   const navigate = useNavigate();
+  // const dropdownRef = useRef(null);
 
   useEffect(() => {
-    // Focus on the first input element after the component mounts
     if (ledgerCodeRef.current) {
       ledgerCodeRef.current.focus();
     }
 
-    
-
-
-    // Fetch godown suggestions
-    const fetchGodownSuggestions = async () =>{
-      try{
+    const fetchGodownSuggestions = async () => {
+      try {
         const response = await axios.get('http://localhost:8080/api/master/allGodown');
         setGodownSuggestions(response.data);
-      }catch(error){
+      } catch (error) {
         console.error('Error fetching godown data:', error);
       }
     };
 
     fetchGodownSuggestions();
 
-    // Add event listener for Ctrl + B to go back
     const handleKeyDown = (event) => {
-      if(event.ctrlKey && event.key === 'b'){
-        navigate('/list');
+      const { ctrlKey, key } = event;
+      if ((ctrlKey && key === 'q') || key === 'Escape') {
+        event.preventDefault();
+        setShowModal(true);
+      }
+    };
+
+    const handleCtrlA = (event) => {
+      if (event.ctrlKey && event.key === 'a') {
+        event.preventDefault();
+        acceptButtonRef.current.click();
+        saveRegionMaster(event);
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', handleCtrlA);
 
-    // Cleanup event listener on component unmount
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keydown', handleCtrlA);
     };
-    
-
   }, [navigate]);
 
   const handleKeyDown = (event) => {
     const { keyCode, target } = event;
-  
-    if (keyCode === 13) { // Enter key
-      event.preventDefault(); // Prevent form submission
+
+    if (keyCode === 13) {
+      event.preventDefault();
       const currentInputIndex = Object.keys(inputRefs.current).findIndex(
         (key) => key === target.id
       );
-      if (currentInputIndex === Object.keys(inputRefs.current).length - 2) { // Check if it's the last input field
-        acceptButtonRef.current.focus(); // Focus on the accept button
+      if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
+        acceptButtonRef.current.focus();
       } else {
         const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
         nextInputRef.focus();
       }
-    } else if (keyCode === 27) { // Escape key
-      if (target.id === 'acceptButton') {
-        // If the escape key is pressed on the accept button, focus on godownName
-        inputRefs.current.godownName.focus();
-      } else {
-        let currentInputIndex = Object.keys(inputRefs.current).findIndex(
-          (key) => key === target.id
-        );
-        let prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
-        const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-        prevInputRef.focus();
-      }
+    } else if (keyCode === 27) {
+      setShowModal(true);
+    } else if (keyCode === 8 && target.value === '') {
+      const currentInputIndex = Object.keys(inputRefs.current).findIndex(
+        (key) => key === target.id
+      );
+      const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+      const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+      prevInputRef.focus();
     }
   };
 
-
-  const handleGodownCodeInputChange = (e) =>{
+  const handleGodownCodeInputChange = (e) => {
     const value = e.target.value;
     setGodownCode(value);
 
-    if(value.trim() !== ''){
-      const filteredSuggestions = godownSuggestions.filter((godown) => godown.godownCode.toLowerCase().includes(value.toLowerCase()));
+    if (value.trim() !== '') {
+      const filteredSuggestions = godownSuggestions.filter((godown) =>
+        godown.godownCode.toLowerCase().includes(value.toLowerCase())
+      );
       setFilteredGodownCodeSuggestions(filteredSuggestions);
-    }else{
+
+      const exactMatch = godownSuggestions.find((godown) =>
+        godown.godownCode.toLowerCase() === value.toLowerCase()
+      );
+      if (exactMatch) {
+        setGodownName(exactMatch.godownName);
+      }
+    } else {
       setFilteredGodownCodeSuggestions([]);
+      setGodownName('');
     }
   };
 
-
-  const handleGodownNameInputChange = (e) =>{
+  const handleGodownNameInputChange = (e) => {
     const value = e.target.value;
     setGodownName(value);
 
-    if(value.trim() !== ''){
-      const filteredSuggestions = godownSuggestions.filter((godown) => godown.godownName.toLowerCase().includes(value.toLowerCase()));
-      setFilteredGodownNameSuggestions(filteredSuggestions)
-    }else{
-      setFilteredGodownNameSuggestions([]);
+    if (value.trim() !== '') {
+      const filteredSuggestions = godownSuggestions.filter((godown) =>
+        godown.godownName.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredGodownCodeSuggestions(filteredSuggestions);
+
+      const exactMatch = godownSuggestions.find((godown) =>
+        godown.godownName.toLowerCase() === value.toLowerCase()
+      );
+      if (exactMatch) {
+        setGodownCode(exactMatch.godownCode);
+      }
+    } else {
+      setFilteredGodownCodeSuggestions([]);
+      setGodownCode('');
     }
   };
 
-  
-
-
-  const selectGodown = (godown) =>{
+  const selectGodown = (godown) => {
     setGodownCode(godown.godownCode);
     setGodownName(godown.godownName);
     setFilteredGodownCodeSuggestions([]);
-    setFilteredGodownNameSuggestions([]);
-
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if(!ledgerCode.trim()){
+    if (!ledgerCode.trim()) {
       newErrors.ledgerCode = 'Ledger Code is required.';
     }
-    if(!regionMasterId.trim()){
+    if (!regionMasterId.trim()) {
       newErrors.regionMasterId = 'Region Master Id is required.';
     }
     setErrors(newErrors);
@@ -159,7 +173,7 @@ const RegionMaster = () => {
   const saveRegionMaster = (e) => {
     e.preventDefault();
 
-    if(!validateForm()){
+    if (!validateForm()) {
       return;
     }
 
@@ -175,12 +189,21 @@ const RegionMaster = () => {
     });
   };
 
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const handleModalConfirm = () => {
+    navigate('/list');
+  };
+
+
   return (
     <div className='w-1/2 border h-[100vh]'>
       <div className='w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[750px] mt-10 border border-gray-500 border-b-0'>
         <h2 className='ml-[200px]'>Region Master</h2>
         <span className='cursor-pointer mt-[5px] mr-2'>
-          <Link to={"/list"}><IoClose /></Link>
+          <Link to={"/list"} ><IoClose /></Link>
         </span>
       </div>
 
@@ -287,7 +310,7 @@ const RegionMaster = () => {
                 id='godownCode'
                 name='godownCode'
                 value={godownCode}
-                onChange={(e) =>{handleGodownCodeInputChange(e); setGodownCode(e.target.value)}}
+                onChange={(e) => { handleGodownCodeInputChange(e); setGodownCode(e.target.value) }}
                 onKeyDown={handleKeyDown}
                 ref={(input) => inputRefs.current.godownCode = input}
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
@@ -295,14 +318,14 @@ const RegionMaster = () => {
               />
 
               {filteredGodownCodeSuggestions.length > 0 && (
-                <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{position: 'absolute', top: '40px', left: '1028px'}}>
+                <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '40px', left: '1028px' }}>
                   <div className='text-center bg-[#003285] text-[13.5px] text-white'>
                     <p>List Of Godown Codes</p>
                   </div>
                   <ul className='suggestions w-full h-[20vh] text-center mt-2'>
-                    {filteredGodownCodeSuggestions.map((godown, index) =>(
+                    {filteredGodownCodeSuggestions.map((godown, index) => (
                       <li key={index} tabIndex={0} onClick={() => selectGodown(godown)} onKeyDown={(e) => e.key === 'Enter' && selectGodown(godown)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
-                        {godown.godownCode.toUpperCase()}
+                        {godown.godownCode.toUpperCase()} - {godown.godownName.toUpperCase()}
                       </li>
                     ))}
                   </ul>
@@ -318,29 +341,13 @@ const RegionMaster = () => {
                 id='godownName'
                 name='godownName'
                 value={godownName}
-                onChange={(e) => {handleGodownNameInputChange(e); setGodownName(e.target.value)}}
+                onChange={(e) => { handleGodownNameInputChange(e); setGodownName(e.target.value) }}
                 onKeyDown={handleKeyDown}
                 ref={(input) => inputRefs.current.godownName = input}
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
                 autoComplete='off'
               />
-
-
-              {filteredGodownNameSuggestions.length > 0 && (
-                <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{position: 'absolute', top: '40px', left: '1028px'}}>
-                  <div className='text-center bg-[#003285] text-[13.5px] text-white'>
-                    <p>List Of Godown Names</p>
-                  </div>
-                  <ul className='suggestions w-full h-[20vh] text-center mt-2'>
-                    {filteredGodownNameSuggestions.map((godown, index) => (
-                      <li key={index} tabIndex={0} onClick={() => selectGodown(godown)} onKeyDown={(e) => e.key === 'Enter' && selectGodown(godown)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
-                        {godown.godownName.toUpperCase()}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
+              
           </div>
 
           <div className='mt-[280px]'>
@@ -357,10 +364,58 @@ const RegionMaster = () => {
       </div>
 
       <div className='mt-[250px] ml-[495px]'>
-        <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>B: Back</Link>
+        <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800' >Q: Quit</Link>
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed z-10 inset-0 overflow-y-auto">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+
+            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="sm:flex sm:items-start">
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                      Quit Confirmation
+                    </h3>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-500">
+                        Are you sure you want to quit without saving changes?
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button
+                  type="button"
+                  onClick={handleModalConfirm}
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-slate-600 text-base font-medium text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Yes, Quit
+                </button>
+                <button
+                  type="button"
+                  onClick={handleModalClose}
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
     </div>
-  )
-}
+  );
+};
 
 export default RegionMaster;

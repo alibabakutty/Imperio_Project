@@ -16,7 +16,8 @@ const AlterProductMaster = () => {
         productUom: "",
         productGroup: "",
         standardCost: "",
-        sellingPrice: ""
+        sellingPrice: "",
+        discount: ""
       });
 
 
@@ -28,6 +29,7 @@ const AlterProductMaster = () => {
         productGroup: null,
         standardCost: null,
         sellingPrice: null,
+        discount: null,
         acceptButton: null
     });
 
@@ -73,7 +75,7 @@ const AlterProductMaster = () => {
           }
         } else if (keyCode === 27) {
           if (target.id === 'acceptButton') {
-            inputRefs.current.sellingPrice.focus();
+            inputRefs.current.discount.focus();
           } else {
             const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
             const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
@@ -110,9 +112,9 @@ const AlterProductMaster = () => {
                         </span>
                     </div>
 
-                    <div className='w-[550px] h-[32vh] border border-gray-500 ml-[80px]'>
+                    <div className='w-[550px] h-[36vh] border border-gray-500 ml-[80px]'>
                         <form onSubmit={onSubmit}>
-                            {['productCode', 'productDescription', 'productCategory', 'productUom', 'productGroup', 'standardCost', 'sellingPrice'].map((field) => (
+                            {['productCode', 'productDescription', 'productCategory', 'productUom', 'productGroup', 'standardCost', 'sellingPrice', 'discount' ].map((field) => (
                                 <div key={field} className='input-ldgr flex items-center mt-1'>
                                     <label htmlFor={field} className='text-sm ml-2 mr-2 w-[140px]'>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</label>
                                     <span className='mr-2'>:</span>
@@ -128,11 +130,12 @@ const AlterProductMaster = () => {
                                             inputRefs.current[field] = input;
                                           }}
                                         className='w-[300px] h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
+                                        autoComplete='off'
                                     />
                                 </div>
                             ))}
 
-                            <div className='mt-[310px]'>
+                            <div className='mt-[290px]'>
                                 <button
                                     type='submit'
                                     id='acceptButton'
@@ -150,7 +153,7 @@ const AlterProductMaster = () => {
 
 
 
-                    <div className='mt-[315px] ml-[480px]'>
+                    <div className='mt-[295px] ml-[480px]'>
                     <Link to={"/productFilter"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>Back</Link>
                 </div>
 

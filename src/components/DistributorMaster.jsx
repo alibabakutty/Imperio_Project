@@ -8,7 +8,6 @@ import axios from 'axios';
 const DistributorMaster = () => {
 
 
-
     const [distributorCode, setDistributorCode] = useState('');
     const [distributorCompanyName, setDistributorCompanyName] = useState('');
     const [distributorOwnerName, setDistributorOwnerName] = useState('');
@@ -19,17 +18,14 @@ const DistributorMaster = () => {
     const [regionMaster, setRegionMaster] = useState('');
     const [contactPersonName, setContactPersonName] = useState('');
     const [contactMobileNo, setContactMobileNo] = useState('');
-
     const [errors, setErrors] = useState({});
-
-
-    const[executiveSuggestions, setExecutiveSuggestions] = useState({});
-    const [regionSuggestions, setRegionSuggestions] = useState({});
-
+    const [executiveSuggestions, setExecutiveSuggestions] = useState([]);
+    const [regionSuggestions, setRegionSuggestions] = useState([]);
     const [filteredExecutiveCodeSuggestions, setFilteredExecutiveCodeSuggestions] = useState([]);
     const [filteredExecutiveMasterSuggestions, setFilteredExecutiveMasterSuggestions] = useState([]);
     const [filteredRegionCodeSuggestions, setFilteredRegionCodeSuggestions] = useState([]);
     const [filteredRegionMasterSuggestions, setFilteredRegionMasterSuggestions] = useState([]);
+    const [showModal, setShowModal] = useState(false);
 
     const inputRefs = useRef({
         distributorCode: null,
@@ -42,192 +38,209 @@ const DistributorMaster = () => {
         regionMaster: null,
         contactPersonName: null,
         contactMobileNo: null,
-        acceptButton: null
+        acceptButton: null,
     });
-
 
     const distributorCodeRef = useRef(null);
     const acceptButtonRef = useRef(null);
 
-
     const navigator = useNavigate();
 
-
-    useEffect(() =>{
-        if(distributorCodeRef.current){
+    useEffect(() => {
+        if (distributorCodeRef.current) {
             distributorCodeRef.current.focus();
         }
 
-
-        //fetch executive suggestions
-        const fetchExecutiveSuggestions = async () =>{
-            try{
+        const fetchExecutiveSuggestions = async () => {
+            try {
                 const responseExecutive = await axios.get('http://localhost:8080/api/master/allExecutive');
                 setExecutiveSuggestions(responseExecutive.data);
-            }catch(error){
+            } catch (error) {
                 console.error('Error fetching executive data:', error);
             }
         };
 
         fetchExecutiveSuggestions();
 
-
-        //fetch region suggestions
-        const fetchRegionSuggestions = async () =>{
-            try{
+        const fetchRegionSuggestions = async () => {
+            try {
                 const responseRegion = await axios.get('http://localhost:8080/api/master/allRegion');
                 setRegionSuggestions(responseRegion.data);
-                console.log(responseRegion.data);
-            }catch(error){
+            } catch (error) {
                 console.error('Error fetching region data:', error);
             }
-         };
-         fetchRegionSuggestions();
+        };
 
+        fetchRegionSuggestions();
 
-         // Add event listener for Ctrl + B to go back
-         const handleKeyDown = (event) => {
-            if(event.ctrlKey && event.key === 'b'){
-                navigator('/list');
+        const handleKeyDown = (event) => {
+            const { ctrlKey, key } = event;
+            if ((ctrlKey && key === 'q') || key === 'Escape') {
+                event.preventDefault();
+                setShowModal(true);
             }
-         };
+        };
 
+        const handleCtrlA = (event) => {
+            if (event.ctrlKey && event.key === 'a') {
+                event.preventDefault();
+                acceptButtonRef.current.click();
+                saveDsitributorMaster(event);
+            }
+        };
 
-         document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keydown', handleCtrlA);
 
-
-         // Cleanup event listener on component unmount
-         return () => {
+        return () => {
             document.removeEventListener('keydown', handleKeyDown);
-         };
-
+            document.removeEventListener('keydown', handleCtrlA);
+        };
     }, [navigator]);
 
-
-    const handleExecutiveCodeInputChange = (e) =>{
+    const handleExecutiveCodeInputChange = (e) => {
         const executiveCodeValue = e.target.value;
         setExecutiveCode(executiveCodeValue);
 
-        if(executiveCodeValue.trim() !== ''){
-            const filteredSuggestions = executiveSuggestions.filter((executive) => executive.executiveCode.toLowerCase().includes(executiveCodeValue.toLowerCase()));
+        if (executiveCodeValue.trim() !== '') {
+            const filteredSuggestions = executiveSuggestions.filter((executive) =>
+                executive.executiveCode.toLowerCase().includes(executiveCodeValue.toLowerCase())
+            );
             setFilteredExecutiveCodeSuggestions(filteredSuggestions);
-        }else{
+        } else {
             setFilteredExecutiveCodeSuggestions([]);
         }
     };
 
-
-    const handleExecutiveNameInputChange = (e) =>{
+    const handleExecutiveNameInputChange = (e) => {
         const executiveNameValue = e.target.value;
         setExecutiveMaster(executiveNameValue);
 
-        if(executiveNameValue.trim() !== ''){
-            const filteredSuggestions = executiveSuggestions.filter((executive) => executive.executiveMaster.toLowerCase().includes(executiveNameValue.toLowerCase()));
+        if (executiveNameValue.trim() !== '') {
+            const filteredSuggestions = executiveSuggestions.filter((executive) =>
+                executive.executiveMaster.toLowerCase().includes(executiveNameValue.toLowerCase())
+            );
             setFilteredExecutiveMasterSuggestions(filteredSuggestions);
-        }else{
+        } else {
             setFilteredExecutiveMasterSuggestions([]);
         }
     };
 
-
-    const selectExecutive = (executive) =>{
+    const selectExecutive = (executive) => {
         setExecutiveCode(executive.executiveCode);
         setExecutiveMaster(executive.executiveMaster);
         setFilteredExecutiveCodeSuggestions([]);
         setFilteredExecutiveMasterSuggestions([]);
-    }
-
+    };
 
     const handleRegionCodeInputChange = (e) => {
         const regionCodeValue = e.target.value;
         setRegionCode(regionCodeValue);
 
-        if(regionCodeValue.trim() !== ''){
-            const filteredSuggestions = regionSuggestions.filter((region) => region.regionMasterId.toLowerCase().includes(regionCodeValue.toLowerCase()));
+        if (regionCodeValue.trim() !== '') {
+            const filteredSuggestions = regionSuggestions.filter((region) =>
+                region.regionMasterId.toLowerCase().includes(regionCodeValue.toLowerCase())
+            );
             setFilteredRegionCodeSuggestions(filteredSuggestions);
-        }else{
+        } else {
             setFilteredRegionCodeSuggestions([]);
         }
     };
-
 
     const handleRegionMasterInputChange = (e) => {
         const regionMasterValue = e.target.value;
         setRegionMaster(regionMasterValue);
 
-
-        if(regionMasterValue.trim() !== ''){
-            const filteredSuggestions = regionSuggestions.filter((region) => region.regionName.toLowerCase().includes(regionMasterValue.toLowerCase()));
+        if (regionMasterValue.trim() !== '') {
+            const filteredSuggestions = regionSuggestions.filter((region) =>
+                region.regionName.toLowerCase().includes(regionMasterValue.toLowerCase())
+            );
             setFilteredRegionMasterSuggestions(filteredSuggestions);
-        }else{
+        } else {
             setFilteredRegionMasterSuggestions([]);
         }
     };
-
 
     const selectRegion = (region) => {
         setRegionCode(region.regionMasterId);
         setRegionMaster(region.regionName);
         setFilteredRegionCodeSuggestions([]);
         setFilteredRegionMasterSuggestions([]);
-    }
+    };
 
-
-    const validateForm = () =>{
+    const validateForm = () => {
         const newErrors = {};
-        if(!distributorCode.trim()){
+        if (!distributorCode.trim()) {
             newErrors.distributorCode = 'Distributor Code is required!';
         }
         setErrors(newErrors);
 
-
         return Object.keys(newErrors).length === 0;
-    }
+    };
 
-
-    function saveDsitributorMaster(e){
+    function saveDsitributorMaster(e) {
         e.preventDefault();
 
-
-        if(!validateForm()){
+        if (!validateForm()) {
             return;
         }
 
-        const distributor = {distributorCode, distributorCompanyName, distributorOwnerName, mobileNo, executiveCode, executiveMaster, regionCode, regionMaster, contactPersonName, contactMobileNo};
+        const distributor = {
+            distributorCode,
+            distributorCompanyName,
+            distributorOwnerName,
+            mobileNo,
+            executiveCode,
+            executiveMaster,
+            regionCode,
+            regionMaster,
+            contactPersonName,
+            contactMobileNo,
+        };
 
-        console.log(distributor);
-
-
-        createNewDistributorMaster(distributor).then((response) =>{
-            console.log(response.data);
-            navigator('/addedDistributor');
-        }).catch((error) => {
-            console.error('Error catching distributor master:', error);
-        })
-    };
-
+        createNewDistributorMaster(distributor)
+            .then((response) => {
+                console.log(response.data);
+                navigator('/addedDistributor');
+            })
+            .catch((error) => {
+                console.error('Error catching distributor master:', error);
+            });
+    }
 
     const handleKeyDown = (event) => {
-        const {keyCode, target} = event;
+        const { keyCode, target } = event;
 
-        if(keyCode === 13){      //Enter Key
-            event.preventDefault();    //prevent form submission
-            const currentInputIndex = Object.keys(inputRefs.current).findIndex( (key) => key === target.id );
+        if (keyCode === 13) {
+            event.preventDefault();
 
-            if(currentInputIndex === Object.keys(inputRefs.current).length - 2){
+            const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
+
+            if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
                 acceptButtonRef.current.focus();
-            }else{
+            } else {
                 const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
                 nextInputRef.focus();
             }
-        }else if(keyCode === 27){
-            let currentInputIndex = Object.keys(inputRefs.current).findIndex( (key) => key === target.id );
+        } else if (keyCode === 27) {
+            setShowModal(true);
+        } else if (keyCode === 8 && target.value === '') {
+            event.preventDefault();
 
+            const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key ===  target.id);
             const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
-            let prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+            const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
             prevInputRef.focus();
         }
-    }
+    };
+
+    const handleModalClose = () => {
+        setShowModal(false);
+      };
+    
+      const handleModalConfirm = () => {
+        navigator('/list');
+      };
 
   return (
     <div className='w-1/2 border h-[100vh]'>
@@ -372,9 +385,57 @@ const DistributorMaster = () => {
         <div className='mt-[230px] ml-[495px]'>
 
 
-            <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>B: Back</Link>
+            <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>Q: Quit</Link>
 
         </div>
+
+
+        {/* Modal */}
+      {showModal && (
+        <div className="fixed z-10 inset-0 overflow-y-auto">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+
+            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="sm:flex sm:items-start">
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                      Quit Confirmation
+                    </h3>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-500">
+                        Are you sure you want to quit without saving changes?
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button
+                  type="button"
+                  onClick={handleModalConfirm}
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-slate-600 text-base font-medium text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Yes, Quit
+                </button>
+                <button
+                  type="button"
+                  onClick={handleModalClose}
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
 
     </div>
