@@ -1,10 +1,12 @@
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import { IoClose } from 'react-icons/io5';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 
 const DisplayProductMaster = () => {
   const { productCode } = useParams();
+  
+  const navigate = useNavigate();
 
   const [product, setProduct] = useState({
     productCode: "",
@@ -32,6 +34,16 @@ const DisplayProductMaster = () => {
   const productCodeRef = useRef(null);
   const backButtonRef = useRef(null);
 
+  const [showModal, setShowModal] = useState(false);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setProduct(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
   useEffect(() => {
     if (productCodeRef.current) {
       productCodeRef.current.focus();
@@ -40,53 +52,58 @@ const DisplayProductMaster = () => {
     loadProduct();
 
 
-    const handleCtrlB = (event) => {
-        if(event.ctrlKey && event.key === 'b'){
-            event.preventDefault();
+    const handleKeyDown = (event) => {
+      const { ctrlKey, key } = event;
+      if ((ctrlKey && key === 'q') || key === 'Escape') {
+          event.preventDefault();
+          setShowModal(true);
+      }
+  };
 
-            if(backButtonRef.current){
-                backButtonRef.current.click();
-            }
-        }
-    };
+  const handleCtrlA = (event) => {
+      if (event.ctrlKey && event.key === 'a') {
+          event.preventDefault();
+          backButtonRef.current.click();
+      }
+  };
 
+  document.addEventListener('keydown', handleKeyDown);
+  document.addEventListener('keydown', handleCtrlA);
 
-    document.addEventListener('keydown', handleCtrlB);
+  return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keydown', handleCtrlA);
+  };
 
-
-    return () => {
-        document.removeEventListener('keydown', handleCtrlB);
-    }
   }, []);
 
   const handleKeyDown = (event) => {
-    const { keyCode, target } = event;
+        const { keyCode, target } = event;
 
-    if (keyCode === 13) { // Enter key
-      event.preventDefault(); // Prevent form submission
-      const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-        (key) => key === target.id
-      );
-      if (currentInputIndex === Object.keys(inputRefs.current).length - 2) { // Check if it's the last input field
-        backButtonRef.current.focus(); // Focus on the back button
-      } else {
-        const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
-        nextInputRef.focus();
-      }
-    } else if (keyCode === 27) { // Escape key
-      if (target.id === 'backButton') {
-        // If the escape key is pressed on the back button, focus on the sellingPrice
-        inputRefs.current.discount.focus();
-      } else {
-        let currentInputIndex = Object.keys(inputRefs.current).findIndex(
-          (key) => key === target.id
-        );
-        let prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
-        const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-        prevInputRef.focus();
-      }
-    }
-  };
+        if (keyCode === 13) {
+            event.preventDefault();
+            const currentInputIndex = Object.keys(inputRefs.current).findIndex(
+                (key) => key === target.id
+            );
+            if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
+                backButtonRef.current.focus();
+            } else {
+                const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
+                nextInputRef.focus();
+            }
+        } else if (keyCode === 27) {
+            setShowModal(true);
+        } else if (keyCode === 8 && target.value === '') {
+            event.preventDefault();
+            const currentInputIndex = Object.keys(inputRefs.current).findIndex(
+                (key) => key === target.id
+            );
+            if (currentInputIndex > 0) {
+                const prevInputRef = Object.values(inputRefs.current)[currentInputIndex - 1];
+                prevInputRef.focus();
+            }
+        }
+    };
 
   const loadProduct = async () => {
     try {
@@ -96,6 +113,15 @@ const DisplayProductMaster = () => {
       console.error("Error fetching the product data", error);
     }
   };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+};
+
+const handleModalConfirm = () => {
+    navigate('/productFilter'); 
+};
+
 
   return (
     <div>
@@ -114,27 +140,27 @@ const DisplayProductMaster = () => {
             <form>
               <div className='input-ldgr mt-3'>
                 <label htmlFor="productCode" className='text-sm ml-2 mr-[59px]'>Product Code</label>
-                : <input type="text" id='productCode' name='productCode' value={product.productCode} onKeyDown={handleKeyDown} ref={(input) => { productCodeRef.current = input; inputRefs.current.productCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' readOnly /> <br />
+                : <input type="text" id='productCode' name='productCode' value={product.productCode} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => { productCodeRef.current = input; inputRefs.current.productCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' /> 
               </div>
 
               <div className='input-ldgr mt-1'>
                 <label htmlFor="productDescription" className='text-sm mr-[22px] ml-2'>Product Description</label>
-                : <input type="text" id='productDescription' name='productDescription' value={product.productDescription} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productDescription = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' readOnly />
+                : <input type="text" id='productDescription' name='productDescription' value={product.productDescription} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productDescription = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
               </div>
 
               <div className='input-ldgr'>
                 <label htmlFor="productUom" className='text-sm mr-[60px] ml-2'>Product UOM</label>
-                : <input type="text" id='productUom' name='productUom' value={product.productUom} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productUom = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' readOnly />
+                : <input type="text" id='productUom' name='productUom' value={product.productUom} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productUom = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
               </div>
 
               <div className='input-ldgr'>
                 <label htmlFor="productCategory" className='text-sm mr-[36px] ml-2'>Product Category</label>
-                : <input type="text" id='productCategory' name='productCategory' value={product.productCategory} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productCategory = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' readOnly />
+                : <input type="text" id='productCategory' name='productCategory' value={product.productCategory} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productCategory = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
               </div>
 
               <div className='input-ldgr'>
                 <label htmlFor="productGroup" className='text-sm mr-[55px] ml-2'>Product Group</label>
-                : <input type="text" id='productGroup' name='productGroup' value={product.productGroup} onChange={(e) => setProduct({ ...product, productGroup: e.target.value })} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productGroup = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                : <input type="text" id='productGroup' name='productGroup' value={product.productGroup}  onChange={(e) => setProduct({ ...product, productGroup: e.target.value })} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productGroup = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
               </div>
 
               <div className='input-ldgr'>
@@ -149,17 +175,63 @@ const DisplayProductMaster = () => {
 
                 <div className='input-ldgr'>
                     <label htmlFor="discount" className='text-sm mr-[92.5px] ml-2'>Discount</label>
-                    : <input type="text" id='discount' name='discount' value={product.discount} onChange={(e) => setDiscount(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.discount = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                    : <input type="text" id='discount' name='discount' value={product.discount} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.discount = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                 </div>
 
             </form>
           </div>
 
           <div className='mt-[305px] ml-[30px]'>
-            <Link to={"/productFilter"} id='backButton' ref={(button) => { backButtonRef.current = button; inputRefs.current.backButton = button; }} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>B: Back</Link>
+            <Link to={"/productFilter"} id='backButton' ref={(button) => { backButtonRef.current = button; inputRefs.current.backButton = button; }} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>Q: Quit</Link>
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      {showModal && (
+                <div className="fixed z-10 inset-0 overflow-y-auto">
+                    <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+                            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+                        </div>
+                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <div className="sm:flex sm:items-start">
+                                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                        <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                            Quit Confirmation
+                                        </h3>
+                                        <div className="mt-2">
+                                            <p className="text-sm text-gray-500">
+                                                Are you sure you want to quit without saving changes?
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                <button
+                                    type="button"
+                                    onClick={handleModalConfirm}
+                                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-slate-600 text-base font-medium text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                >
+                                    Yes, Quit
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleModalClose}
+                                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            
     </div>
   );
 };

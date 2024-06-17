@@ -129,28 +129,7 @@ const RegionMaster = () => {
     }
   };
 
-  const handleGodownNameInputChange = (e) => {
-    const value = e.target.value;
-    setGodownName(value);
-
-    if (value.trim() !== '') {
-      const filteredSuggestions = godownSuggestions.filter((godown) =>
-        godown.godownName.toLowerCase().includes(value.toLowerCase())
-      );
-      setFilteredGodownCodeSuggestions(filteredSuggestions);
-
-      const exactMatch = godownSuggestions.find((godown) =>
-        godown.godownName.toLowerCase() === value.toLowerCase()
-      );
-      if (exactMatch) {
-        setGodownCode(exactMatch.godownCode);
-      }
-    } else {
-      setFilteredGodownCodeSuggestions([]);
-      setGodownCode('');
-    }
-  };
-
+  
   const selectGodown = (godown) => {
     setGodownCode(godown.godownCode);
     setGodownName(godown.godownName);
@@ -341,7 +320,7 @@ const RegionMaster = () => {
                 id='godownName'
                 name='godownName'
                 value={godownName}
-                onChange={(e) => { handleGodownNameInputChange(e); setGodownName(e.target.value) }}
+                onChange={(e) => { setGodownName(e.target.value) }}
                 onKeyDown={handleKeyDown}
                 ref={(input) => inputRefs.current.godownName = input}
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'

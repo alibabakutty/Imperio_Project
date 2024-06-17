@@ -73,7 +73,7 @@ const Gateway = () => {
 
                 <p className='text-[12px] text-center mt-3 mb-2 text-[#686D76]'>TRANSACTIONS</p>
 
-                <Link  ref={vouchersRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
+                <Link to="/paymentVoucher"  ref={vouchersRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
                     <p className='m-0'>Vouchers</p>
                 </Link>
 

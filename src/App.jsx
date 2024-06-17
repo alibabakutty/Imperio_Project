@@ -41,6 +41,9 @@ import GodownAlter from "./components/GodownAlter"
 import DisplayGodownMaster from "./components/DisplayGodownMaster"
 import AlterGodownMaster from "./components/AlterGodownMaster"
 import GodownMasterAlteredCheck from "./message/GodownMasterAlteredCheck"
+import PaymentVoucher from "./components/PaymentVoucher"
+import VoucherTypeMaster from "./components/VoucherTypeMaster"
+import VoucherTypeMasterAddedCheck from "./message/VoucherTypeMasterAddedCheck"
 
 
 function App() {
@@ -71,6 +74,9 @@ function App() {
 
           {/* http://localhost:4000/goodown */}
           <Route path="/godown" element = {<GodownMaster />} />
+
+          {/* http://localhost:4000/voucherTypeMaster */}
+          <Route path="/voucherType" element = {<VoucherTypeMaster />} />
           
          {/* http://localhost:4000/addedRegion */}
          <Route path="/addedRegion" element = {<RegionMasterAddedCheck />} />
@@ -86,6 +92,9 @@ function App() {
 
          {/* http://localhost:4000/addedGodown */}
          <Route path="addedGodown" element = {<GodownMasterAddedCheck />} />
+
+         {/* http://localhost:4000/addedVoucherType */}
+         <Route path="addedVoucherType" element = {<VoucherTypeMasterAddedCheck />} />
 
          {/* http://localhost:4000/display */}
          <Route path="/display" element = {<DisplayOFMasters /> } />
@@ -168,6 +177,12 @@ function App() {
 
          {/* http://localhost:4000/alteredGodown */}
          <Route path="/alteredGodown" element = {<GodownMasterAlteredCheck />} />
+
+
+         {/* VOUCHERS */}
+         {/* http://localhost:4000/paymentVoucher */}
+         <Route path="/paymentVoucher" element = {<PaymentVoucher />} />
+
 
 
           
