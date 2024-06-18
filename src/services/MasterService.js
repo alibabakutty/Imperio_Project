@@ -18,7 +18,7 @@ export const createNewProductMaster = (product) => axios.post(REST_API_BASE_URL+
 
 export const createNewGodownMaster = (godown) => axios.post(REST_API_BASE_URL+"/addGodown", godown);
 
-export const createNewVoucherTypeMaster = (voucher) => axios.post(REST_API_BASE_URL+"/addVoucherType", voucher);
+export const createNewVoucherTypeMaster = (voucher) => axios.post(REST_API_BASE_URL+"/addVoucherTypeMaster", voucher);
 
 // DISPLAY
 export const listOfRegions = () => {return axios.get(REST_API_BASE_URL+"/allRegion")};

@@ -44,6 +44,7 @@ import GodownMasterAlteredCheck from "./message/GodownMasterAlteredCheck"
 import PaymentVoucher from "./components/PaymentVoucher"
 import VoucherTypeMaster from "./components/VoucherTypeMaster"
 import VoucherTypeMasterAddedCheck from "./message/VoucherTypeMasterAddedCheck"
+import ConditionalRenderingP from "./components/ConditionalRenderingP"
 
 
 function App() {
@@ -182,6 +183,9 @@ function App() {
          {/* VOUCHERS */}
          {/* http://localhost:4000/paymentVoucher */}
          <Route path="/paymentVoucher" element = {<PaymentVoucher />} />
+
+
+         <Route path="/conditional" element = {<ConditionalRenderingP /> } />
 
 
 

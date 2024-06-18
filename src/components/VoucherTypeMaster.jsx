@@ -10,6 +10,16 @@ const VoucherTypeMaster = () => {
     const [voucherType, setVoucherType] = useState('');
     const [methodOfVoucherNumbering, setMethodVoucherNumbering] = useState('automatic');
     const [alterAdditionalNumberingDetails, setAlterAdditionalNumberingDetails] = useState('no');
+    const [startingNumber, setStartingNumber] = useState(1);
+    const [widthOfNumericalPart, setWidthOfNumericalPart] = useState('');
+    const [prefillWithZero, setPrefillWithZero] = useState('no');
+    const [restartNumberingApplicationForm, setRestartNumberingApplicationForm] = useState('1-Apr-24');
+    const [restartNumberingStartingNumber, setRestartNumberingStartingNumber] = useState(1);
+    const [restartNumberingPeriodicity, setRestartNumberingPeriodicity] = useState('Yearly');
+    const [prefixDetailsApplicationForm, setPrefixDetailsApplicationForm] = useState('1-Apr-24');
+    const [prefixDetailsParticulars, setPrefixDetailsParticulars] = useState('');
+    const [suffixDetailsApplicationForm, setSuffixDetailsApplicationForm] = useState('1-Apr-24');
+    const [suffixDetailsParticulars, setSuffixDetailsParticulars] = useState('');
     const [printingVoucherAfterSaving, setPrintingVoucherAfterSaving] = useState('no');
     const [nameOfClass, setNameOfClass] = useState('');
 
@@ -24,12 +34,23 @@ const VoucherTypeMaster = () => {
         voucherType: null,
         methodOfVoucherNumbering: null,
         alterAdditionalNumberingDetails: null,
+        startingNumber: null,
+        widthOfNumericalPart: null,
+        prefillWithZero: null,
+        restartNumberingApplicationForm: null,
+        restartNumberingStartingNumber: null,
+        restartNumberingPeriodicity: null,
+        prefixDetailsApplicationForm: null,
+        prefixDetailsParticulars: null,
+        suffixDetailsApplicationForm: null,
+        suffixDetailsParticulars: null,
         printingVoucherAfterSaving: null,
         nameOfClass: null,
         acceptButton: null
     });
 
     const voucherTypeNameRef = useRef(null);
+    const startingNumberRef = useRef(null);
     const acceptButtonRef = useRef(null);
 
     const navigate = useNavigate();
@@ -39,6 +60,11 @@ const VoucherTypeMaster = () => {
 
         if(voucherTypeNameRef.current){
             voucherTypeNameRef.current.focus();
+        }
+
+
+        if (showSubFormModal) {
+            startingNumberRef.current.focus();
         }
 
         const fetchVoucherTypeNameSuggestions = async () => {
@@ -78,7 +104,7 @@ const VoucherTypeMaster = () => {
             document.removeEventListener('keydown', handleCtrlA);
           };
 
-    }, []);
+    }, [showSubFormModal]);
 
 
     const handleKeyDown = (event) => {
@@ -184,7 +210,7 @@ const VoucherTypeMaster = () => {
         }
 
 
-        const voucher = {voucherTypeName, voucherType, methodOfVoucherNumbering, alterAdditionalNumberingDetails, printingVoucherAfterSaving, nameOfClass };
+        const voucher = {voucherTypeName, voucherType, methodOfVoucherNumbering, alterAdditionalNumberingDetails, startingNumber, widthOfNumericalPart, prefillWithZero, restartNumberingApplicationForm, restartNumberingStartingNumber, restartNumberingPeriodicity, prefixDetailsApplicationForm, prefixDetailsParticulars, suffixDetailsApplicationForm, suffixDetailsParticulars, printingVoucherAfterSaving, nameOfClass };
 
         console.log(voucher);
 
@@ -210,12 +236,33 @@ const VoucherTypeMaster = () => {
       };
 
       const handleSubFormSave = () => {
+        setStartingNumber(startingNumber);
+        setWidthOfNumericalPart(widthOfNumericalPart);
+        setPrefillWithZero(prefillWithZero);
+        setRestartNumberingApplicationForm(restartNumberingApplicationForm);
+        setRestartNumberingStartingNumber(restartNumberingStartingNumber);
+        setRestartNumberingPeriodicity(restartNumberingPeriodicity);
+        setPrefixDetailsApplicationForm(prefixDetailsApplicationForm);
+        setPrefixDetailsParticulars(prefixDetailsParticulars);
+        setSuffixDetailsApplicationForm(suffixDetailsApplicationForm);
+        setSuffixDetailsParticulars(suffixDetailsParticulars);
         setShowSubFormModal(false);
+
       };
 
       const handleSubFormCancel = () => {
-        setShowSubFormModal(false);
+        setStartingNumber(1);
+        setWidthOfNumericalPart('');
+        setPrefillWithZero('no');
+        setRestartNumberingApplicationForm('1-Apr-24');
+        setRestartNumberingStartingNumber(1);
+        setRestartNumberingPeriodicity('yearly');
+        setPrefixDetailsApplicationForm('1-Apr-24');
+        setPrefixDetailsParticulars('')
+        setSuffixDetailsApplicationForm('1-Apr-24');
+        setSuffixDetailsParticulars('');
         setAlterAdditionalNumberingDetails('no');
+        setShowSubFormModal(false);
       };
 
     
@@ -287,107 +334,128 @@ const VoucherTypeMaster = () => {
 
                                             <span className='hidden sm:inline-block' aria-hidden="true">&#8203;</span>
 
-                                            <div className='inline-block bg-white transform'>
-                                                <div className='mt-2 w-[1100px] h-[98vh] '>
-                                                    <div className='ml-5'>
-                                                        <label htmlFor="startingNumber" className='mr-14'>Starting Number</label>
-                                                        : <input type="text" id='startingNumber' name='startingNumber' className='w-[200px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                                                    </div>
+                                            <form action="">
 
-                                                    <div className='ml-5'>
-                                                        <label htmlFor="widthOfNumericalPart" className='mr-[11px]'>Width of Numerical Part</label>
-                                                        : <input type="text" id='widthOfNumericalPart' name='widthOfNumericalPart' className='w-[200px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                                                    </div>
 
-                                                    <div className='ml-5'>
-                                                        <label htmlFor="prefillWithZero" className='mr-[64.5px]'>Prefil with Zero</label>
-                                                        : <input type="text" id='prefillWithZero' name='prefillWithZero' className='w-[200px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                                                    </div>
-
-                                                    <div className='flex justify-evenly text-center border border-gray-400 w-[99%] h-[88.5vh] ml-[5px]'>
-                                                        <div className='w-[360px] border border-r-slate-400'>
-                                                            <div className='border border-b-slate-400'>
-                                                                <p>Restart Numbering</p>
-                                                            </div>
-
-                                                            <div className='flex justify-evenly'>
-                                                                <p className=''>Applicable Form</p>
-                                                                <p>Starting Number</p>
-                                                                <p>Periodicity</p>
-                                                            </div>
-
-                                                            <div className='flex justify-evenly'>
-                                                                <div>
-                                                                    <label htmlFor="restartNumberingApplicationForm"></label>
-                                                                    <input type="text" id='restartNumberingApplicationForm' name='restartNumberingApplicationForm' className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                                                                </div>
-
-                                                                <div>
-                                                                    <label htmlFor="restartNumberingStartingNumber"></label>
-                                                                    <input type="text" id='restartNumberingStartingNumber' name='restartNumberingStartingNumber' className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                                                                </div>
-
-                                                                <div>
-                                                                    <label htmlFor="restartNumberingPeriodicity"></label>
-                                                                    <input type="text" id='restartNumberingPeriodicity' name='restartNumberingPeriodicity' className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                                                                </div>
-                                                            </div>
-
+                                                <div className='inline-block bg-white transform'>
+                                                    <div className='mt-2 w-[1100px] h-[93vh] '>
+                                                        <div className='ml-2'>
+                                                            <label htmlFor="startingNumber" className='mr-14'>Starting Number</label>
+                                                            : <input type="text" id='startingNumber' name='startingNumber' value={startingNumber} onChange={(e) => setStartingNumber(e.target.value)} ref={(input) => {inputRefs.current.startingNumber = input; startingNumberRef.current = input; }} className='w-[80px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                         </div>
 
-                                                        <div className='w-[360px] border border-r-slate-400'>
-
-                                                            <div className='border border-b-slate-400'>
-                                                                <p>Prefix Details</p>
-                                                            </div>
-
-                                                            <div className='flex justify-evenly'>
-                                                                <p>Application Form</p>
-                                                                <p>Particulars</p>
-                                                                
-                                                            </div>
-
-                                                            <div className='flex justify-evenly'>
-                                                                <div>
-                                                                    <label htmlFor="prefixDetailsApplicationForm"></label>
-                                                                    <input type="text" id='prefixDetailsApplicationForm' name='prefixDetailsApplicationForm' className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                                                                </div>
-
-                                                                <div>
-                                                                    <label htmlFor="prefixDetailsParticulars"></label>
-                                                                    <input type="text" id='prefixDetailsParticulars' name='prefixDetailsParticulars' className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                                                                </div>
-                                                            </div>
-
+                                                        <div className='ml-2'>
+                                                            <label htmlFor="widthOfNumericalPart" className='mr-[11px]'>Width of Numerical Part</label>
+                                                            : <input type="text" id='widthOfNumericalPart' name='widthOfNumericalPart' value={widthOfNumericalPart} onChange={(e) => setWidthOfNumericalPart(e.target.value)} ref={(input) => inputRefs.current.widthOfNumericalPart = input} className='w-[80px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                         </div>
 
-                                                        <div>
+                                                        <div className='ml-2'>
+                                                            <label htmlFor="prefillWithZero" className='mr-[64.5px]'>Prefil with Zero</label>
+                                                            : <input type="text" id='prefillWithZero' name='prefillWithZero' value={prefillWithZero} onChange={(e) => setPrefillWithZero(e.target.value)} ref={(input) => inputRefs.current.prefillWithZero = input} className='w-[80px] ml-2 mb-1 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                        </div>
 
-                                                            <div className='w-[360px] border border-b-slate-400'>
-                                                                <p>Suffix Details</p>
-                                                            </div>
-
-                                                            <div className='flex justify-evenly'>
-                                                                <p>Application Form</p>
-                                                                <p>Particulars</p>
-                                                            </div>
-
-                                                            <div className='flex justify-evenly'>
-                                                                <div>
-                                                                    <label htmlFor="suffixDetailsApplicationForm"></label>
-                                                                    <input type="text" id='suffixDetailsApplicationForm' name='suffixDetailsApplicationForm' className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                        <div className='flex justify-evenly text-center border border-gray-400 w-[99%] h-[83vh] ml-[5px]'>
+                                                            <div className='w-[360px] border border-r-slate-400'>
+                                                                <div className='border border-b-slate-400'>
+                                                                    <p>Restart Numbering</p>
                                                                 </div>
 
-                                                                <div>
-                                                                    <label htmlFor="suffixDetailsParticulars"></label>
-                                                                    <input type="text" id='suffixDetailsParticulars' name='suffixDetailsParticulars' className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                <div className='flex justify-evenly'>
+                                                                    <p className=''>Applicable Form</p>
+                                                                    <p>Starting Number</p>
+                                                                    <p>Periodicity</p>
                                                                 </div>
+
+                                                                <div className='flex justify-evenly'>
+                                                                    <div>
+                                                                        <label htmlFor="restartNumberingApplicationForm"></label>
+                                                                        <input type="text" id='restartNumberingApplicationForm' name='restartNumberingApplicationForm' value={restartNumberingApplicationForm} onChange={(e) => setRestartNumberingApplicationForm(e.target.value)} ref={(input) => inputRefs.current.restartNumberingApplicationForm = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <label htmlFor="restartNumberingStartingNumber"></label>
+                                                                        <input type="text" id='restartNumberingStartingNumber' name='restartNumberingStartingNumber' value={restartNumberingStartingNumber} onChange={(e) => setRestartNumberingStartingNumber(e.target.value)} ref={(input) => inputRefs.current.restartNumberingStartingNumber = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <label htmlFor="restartNumberingPeriodicity"></label>
+                                                                        {/* <input type="text" id='restartNumberingPeriodicity' name='restartNumberingPeriodicity' value={restartNumberingPeriodicity} onChange={(e) => setRestartNumberingPeriodicity(e.target.value)} ref={(input) => inputRefs.current.restartNumberingPeriodicity = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' /> */}
+                                                                        <select name="restartNumberingPeriodicity" id="restartNumberingPeriodicity" value={restartNumberingPeriodicity} onChange={(e) => setRestartNumberingPeriodicity(e.target.value)} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'>
+                                                                            <option value="daily">Daily</option>
+                                                                            <option value="monthly">Monthly</option>
+                                                                            <option value="never">Never</option>
+                                                                            <option value="weekly">Weekly</option>
+                                                                            <option value="yearly">Yearly</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
                                                             </div>
 
+                                                            <div className='w-[360px] border border-r-slate-400'>
+
+                                                                <div className='border border-b-slate-400'>
+                                                                    <p>Prefix Details</p>
+                                                                </div>
+
+                                                                <div className='flex justify-evenly'>
+                                                                    <p>Application Form</p>
+                                                                    <p>Particulars</p>
+                                                                    
+                                                                </div>
+
+                                                                <div className='flex justify-evenly'>
+                                                                    <div>
+                                                                        <label htmlFor="prefixDetailsApplicationForm"></label>
+                                                                        <input type="text" id='prefixDetailsApplicationForm' name='prefixDetailsApplicationForm' value={prefixDetailsApplicationForm} onChange={(e) => setPrefixDetailsApplicationForm(e.target.value)} ref={(input) => inputRefs.current.prefixDetailsApplicationForm = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <label htmlFor="prefixDetailsParticulars"></label>
+                                                                        <input type="text" id='prefixDetailsParticulars' name='prefixDetailsParticulars' value={prefixDetailsParticulars} onChange={(e) => setPrefixDetailsParticulars(e.target.value)} ref={(input) => inputRefs.current.prefixDetailsParticulars = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div>
+
+                                                                <div className='w-[360px] border border-b-slate-400'>
+                                                                    <p>Suffix Details</p>
+                                                                </div>
+
+                                                                <div className='flex justify-evenly'>
+                                                                    <p>Application Form</p>
+                                                                    <p>Particulars</p>
+                                                                </div>
+
+                                                                <div className='flex justify-evenly'>
+                                                                    <div>
+                                                                        <label htmlFor="suffixDetailsApplicationForm"></label>
+                                                                        <input type="text" id='suffixDetailsApplicationForm' name='suffixDetailsApplicationForm' value={suffixDetailsApplicationForm} onChange={(e) => setSuffixDetailsApplicationForm(e.target.value)} ref={(input) => inputRefs.current.suffixDetailsApplicationForm = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <label htmlFor="suffixDetailsParticulars"></label>
+                                                                        <input type="text" id='suffixDetailsParticulars' name='suffixDetailsParticulars' value={suffixDetailsParticulars} onChange={(e) => setSuffixDetailsParticulars(e.target.value)} ref={(input) => inputRefs.current.suffixDetailsParticulars = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
                                                         </div>
                                                     </div>
+
+                                                    <div>
+                                                        <button type='submit' onClick={handleSubFormSave} className='text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[315px]'>Save</button>
+                                                        <button type='button' onClick={handleSubFormCancel} className='text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[260px]'>Cancel</button>
+                                                    </div>
+
                                                 </div>
-                                            </div>
+
+                                                
+
+
+                                            </form>
 
                                         </div>
 

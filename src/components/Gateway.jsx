@@ -77,7 +77,7 @@ const Gateway = () => {
                     <p className='m-0'>Vouchers</p>
                 </Link>
 
-                <Link  ref={dayBookRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
+                <Link to="/conditional"  ref={dayBookRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
                     <p className='m-0'>DayBook</p>
                 </Link>
 
