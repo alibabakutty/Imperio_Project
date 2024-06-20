@@ -81,7 +81,7 @@ const AlterRegionMaster = () => {
       if (event.ctrlKey && event.key === 'a') {
         event.preventDefault();
         acceptButtonRef.current.click();
-        saveRegionMaster(event);
+        onSubmit(event);
       }
     };
 
@@ -94,6 +94,27 @@ const AlterRegionMaster = () => {
     };
 
   }, [navigate]);
+
+  useEffect(() => {
+
+    if(showModal){
+      const handleModalKeyDown = (event) => {
+        if(event.key.toLowerCase() === 'y'){
+          handleModalConfirm();
+        }else if(event.key === 'n'){
+          handleModalClose();
+        }
+      }
+
+      document.addEventListener('keydown', handleModalKeyDown);
+
+      return() => {
+        document.removeEventListener('keydown', handleModalKeyDown);
+      }
+    };
+
+
+  }, [showModal]);
 
   const handleKeyDown = (event) => {
     const { keyCode, target } = event;

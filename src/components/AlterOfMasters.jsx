@@ -9,9 +9,10 @@ const AlterOfMasters = () => {
   const distributorRef = useRef(null);
   const productRef = useRef(null);
   const godownRef = useRef(null);
+  const voucherTypeRef = useRef(null);
   const backButtonRef = useRef(null);
 
-  const links = [regionRef, executiveRef, distributorRef, productRef, godownRef, backButtonRef];
+  const links = [regionRef, executiveRef, distributorRef, productRef, godownRef, voucherTypeRef, backButtonRef];
 
 
   useEffect(() =>{
@@ -82,6 +83,10 @@ const AlterOfMasters = () => {
 
           <Link to="/godownAlter" ref={godownRef} className='block text-center text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
             <p className='m-0'>Godown Master</p>
+          </Link>
+
+          <Link to="/voucherTypeAlter" ref={voucherTypeRef} className='block text-center text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
+            <p className='m-0'>Voucher Type Master</p>
           </Link>
 
           

@@ -8,9 +8,10 @@ const DisplayOFMasters = () => {
     const distributorRef = useRef(null);
     const productRef = useRef(null);
     const godownRef = useRef(null);
+    const voucherTypeRef = useRef(null);
     const backButtonRef = useRef(null);
 
-    const links = [regionRef, executiveRef, distributorRef, productRef, godownRef, backButtonRef];
+    const links = [regionRef, executiveRef, distributorRef, productRef, godownRef, voucherTypeRef, backButtonRef];
 
 
     useEffect(() =>{
@@ -76,6 +77,10 @@ const DisplayOFMasters = () => {
 
                     <Link to="/godownFilter" ref={godownRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mt-1 mb-1'>
                         <p className='m-0'>Godown Master</p>
+                    </Link>
+
+                    <Link to="/voucherTypeFilter" ref={voucherTypeRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mt-1 mb-1'>
+                        <p className='m-0'>Voucher Type Master</p>
                     </Link>
 
 

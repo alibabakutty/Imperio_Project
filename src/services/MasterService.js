@@ -31,5 +31,9 @@ export const listOfProducts = () => {return axios.get(REST_API_BASE_URL+"/allPro
 
 export const listOfGodowns = () => {return axios.get(REST_API_BASE_URL+"/allGodown")};
 
+export const listOfVoucherTypeNames = () => {return axios.get(REST_API_BASE_URL+"/allVoucherTypeMaster")};
+
+export const listOfVoucherTypes = () => {return axios.get(REST_API_BASE_URL+"/allVoucherTypes")};
+
 
 // ALTER

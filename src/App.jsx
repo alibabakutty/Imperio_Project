@@ -45,6 +45,11 @@ import PaymentVoucher from "./components/PaymentVoucher"
 import VoucherTypeMaster from "./components/VoucherTypeMaster"
 import VoucherTypeMasterAddedCheck from "./message/VoucherTypeMasterAddedCheck"
 import ConditionalRenderingP from "./components/ConditionalRenderingP"
+import VoucherTypeFilter from "./components/VoucherTypeFilter"
+import DisplayVoucherTypeMaster from "./components/DisplayVoucherTypeMaster"
+import VoucherTypeAlter from "./components/VoucherTypeAlter"
+import AlterVoucherTypeMaster from "./components/AlterVoucherTypeMaster"
+import VoucherTypeMasterAlteredCheck from "./message/VoucherTypeMasterAlteredCheck"
 
 
 function App() {
@@ -115,7 +120,10 @@ function App() {
           {/* http://localhost:4000/godownFilter */}
           <Route path="/godownFilter" element = {<GodownFilter />} />
 
-          {/* http://localhost:4000/display */}
+          {/* http://localhost:4000/voucherTypeFilter */}
+          <Route path="/voucherTypeFilter" element = {<VoucherTypeFilter />} />
+
+          {/* http://localhost:4000/alter */}
           <Route path="/alter" element = {<AlterOfMasters />} />
 
           {/* http://localhost:4000/regionAlter */}
@@ -133,6 +141,9 @@ function App() {
           {/* http://localhost:4000/godownAlter */}
           <Route path="/godownAlter" element = {<GodownAlter />} />
 
+          {/* http://localhost:4000/voucherTypeAlter */}
+          <Route path="/voucherTypeAlter" element = {<VoucherTypeAlter />} />
+
 
          {/* http://localhost:4000/displayRegion */}
          <Route path="displayRegion/:regionMasterId" element = {<DisplayRegionMaster />} />
@@ -149,6 +160,12 @@ function App() {
           {/* http://localhost:4000/displayGodown */}
           <Route path="displayGodown/:godownCode" element = {<DisplayGodownMaster />} />
 
+          {/* http://localhost:4000/displayVoucherTypeName */}
+          <Route path="displayVoucherTypeName/:voucherTypeName" element = {<DisplayVoucherTypeMaster />} />
+
+          {/* http://localhost:4000/displayVoucherType */}
+          <Route path="displayVoucherType/:voucherType" element = {<DisplayVoucherTypeMaster />} />
+
          {/* http://localhost:4000/alterRegionMaster */}
          <Route path="alterRegionMaster/:regionMasterId" element = {<AlterRegionMaster />} />
 
@@ -164,6 +181,10 @@ function App() {
          {/* http://localhost:4000/alterGodownMaster */}
          <Route path="alterGodownMaster/:godownCode" element = {<AlterGodownMaster />} />
 
+         {/* http://localhost:4000/alterVoucherTypeMaster */}
+         <Route path="alterVoucherTypeMaster/:voucherTypeName" element = {<AlterVoucherTypeMaster />} />
+
+
          {/* http://localhost:4000/alteredRegion */}
          <Route path="/alteredRegion" element = {<RegionMasterAlteredCheck />} />
 
@@ -178,6 +199,9 @@ function App() {
 
          {/* http://localhost:4000/alteredGodown */}
          <Route path="/alteredGodown" element = {<GodownMasterAlteredCheck />} />
+
+         {/* http://localhost:4000/alteredVoucherTypeMaster */}
+         <Route path="/alteredVoucherTypeMaster" element = {<VoucherTypeMasterAlteredCheck />} />
 
 
          {/* VOUCHERS */}

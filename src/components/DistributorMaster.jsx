@@ -46,7 +46,7 @@ const DistributorMaster = () => {
 
     const distributorCodeRef = useRef(null);
     const acceptButtonRef = useRef(null);
-    const dropdownRef = useRef(null);
+    // const dropdownRef = useRef(null);
 
     const navigator = useNavigate();
 
@@ -103,6 +103,27 @@ const DistributorMaster = () => {
             document.removeEventListener('keydown', handleCtrlA);
         };
     }, [navigator]);
+
+    useEffect(() => {
+
+        if(showModal){
+          const handleModalKeyDown = (event) => {
+            if(event.key.toLowerCase() === 'y'){
+              handleModalConfirm();
+            }else if(event.key === 'n'){
+              handleModalClose();
+            }
+          }
+    
+          document.addEventListener('keydown', handleModalKeyDown);
+    
+          return() => {
+            document.removeEventListener('keydown', handleModalKeyDown);
+          }
+        };
+    
+    
+      }, [showModal]);
 
     const handleExecutiveInputChange = (e) => {
         const executiveValue = e.target.value;
@@ -271,10 +292,10 @@ const DistributorMaster = () => {
         setShowAllRegionSuggestions((prevShowAll) => !prevShowAll);
     };
 
-    const handleDropdownChange = (e) => {
-        const selectedRegionId = e.target.value;
-        navigator(`/displayRegion/${selectedRegionId}`);
-    };
+    // const handleDropdownChange = (e) => {
+    //     const selectedRegionId = e.target.value;
+    //     navigator(`/displayRegion/${selectedRegionId}`);
+    // };
 
 
   return (
