@@ -31,6 +31,7 @@ const VoucherTypeMaster = () => {
     const [showModal, setShowModal] = useState(false);
     const [showSubFormModal, setShowSubFormModal] = useState(false);
 
+
     const inputRefs = useRef({
         voucherTypeName: null,
         voucherType: null,
@@ -50,114 +51,115 @@ const VoucherTypeMaster = () => {
         nameOfClass: null,
         acceptButton: null
     });
-
+    
     const voucherTypeNameRef = useRef(null);
     const startingNumberRef = useRef(null);
     const acceptButtonRef = useRef(null);
-    const optionsRef = useRef(null);    // Ref to store the periodicity options div
-    const voucherNumberingOptionsRef = useRef(null);    // Ref to store the voucher numbering options div
+    const optionsRef = useRef(null);
+    const voucherNumberingOptionsRef = useRef(null);
     const subFormSaveButtonRef = useRef(null);
     const subFormCancelButtonRef = useRef(null);
+    const yesQuitButtonRef = useRef(null);
+    const cancelModalConfirmRef = useRef(null);
 
 
     const navigate = useNavigate();
 
 
     useEffect(() => {
-
         if(voucherTypeNameRef.current){
             voucherTypeNameRef.current.focus();
         }
-
-
+    
         if (showSubFormModal) {
             startingNumberRef.current.focus();
         }
-
+    
         const fetchVoucherTypeNameSuggestions = async () => {
-            try{
+            try {
                 const response = await axios.get('http://localhost:8080/api/master/allVoucherTypes');
                 setVoucherTypeSuggestions(response.data);
-                console.log(response.data);
-            }catch(error){
+            } catch (error) {
                 console.error('Error fetching voucher type names:', error);
             }
-        }
-
+        };
+    
         fetchVoucherTypeNameSuggestions();
-
-
+    
         const handleKeyDown = (event) => {
             const { ctrlKey, key } = event;
             if ((ctrlKey && key === 'q') || key === 'Escape') {
-              event.preventDefault();
-              setShowModal(true);
+                event.preventDefault();
+                setShowModal(true);
             }
-          };
-      
-          const handleCtrlA = (event) => {
+        };
+    
+        const handleCtrlA = (event) => {
             if (event.ctrlKey && event.key === 'a') {
-              event.preventDefault();
-              acceptButtonRef.current.click();
-              saveVoucherTypeMaster(event);
+                event.preventDefault();
+                acceptButtonRef.current.click();
+                saveVoucherTypeMaster(event);
             }
-          };
-
-
-          const handleSubFormShortcuts = (event) => {
-            if(showSubFormModal){
-                if(event.ctrlKey && event.key === 's'){
+        };
+    
+        const handleSubFormShortcuts = (event) => {
+            if (showSubFormModal) {
+                if (event.ctrlKey && event.key === 's') {
                     event.preventDefault();
-
-                    if(subFormSaveButtonRef.current){
+                    if (subFormSaveButtonRef.current) {
                         subFormSaveButtonRef.current.click();
                     }
-                }else if(event.ctrlKey && event.key === 'c'){
+                } else if (event.ctrlKey && event.key === 'c') {
                     event.preventDefault();
-
-                    if(subFormCancelButtonRef.current){
+                    if (subFormCancelButtonRef.current) {
                         subFormCancelButtonRef.current.click();
                     }
                 }
             }
-          };
-      
-          document.addEventListener('keydown', handleKeyDown);
-          document.addEventListener('keydown', handleCtrlA);
-          document.addEventListener('keydown', handleSubFormShortcuts);
-      
-          return () => {
+        };
+    
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keydown', handleCtrlA);
+        document.addEventListener('keydown', handleSubFormShortcuts);
+    
+        return () => {
             document.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('keydown', handleCtrlA);
             document.removeEventListener('keydown', handleSubFormShortcuts);
-          };
-
+        };
     }, [showSubFormModal]);
+    
 
 
     useEffect(() => {
+        if (showModal) {
+            yesQuitButtonRef.current.focus();
+            const handleModalKeyDown = (event) => {
+                if (event.key.toLowerCase() === 'y') {
+                    handleModalConfirm();
+                } else if (event.key === 'n') {
+                    handleModalClose();
+                }else if(event.key === 'ArrowLeft'){
+                    cancelModalConfirmRef.current.focus();
+                }else if(event.key === 'ArrowRight'){
+                    yesQuitButtonRef.current.focus();
+                }
+            };
+    
+            document.addEventListener('keydown', handleModalKeyDown);
+    
+            return () => {
+                document.removeEventListener('keydown', handleModalKeyDown);
+            };
+        }
+    }, [showModal]);
+    
+    
 
-        if(showModal){
-          const handleModalKeyDown = (event) => {
-            if(event.key.toLowerCase() === 'y'){
-              handleModalConfirm();
-            }else if(event.key === 'n'){
-              handleModalClose();
-            }
-          }
-    
-          document.addEventListener('keydown', handleModalKeyDown);
-    
-          return() => {
-            document.removeEventListener('keydown', handleModalKeyDown);
-          }
-        };
-    
-    
-      }, [showModal]);
 
+      
 
-      const handleFormKeyDown = (event) => {
+    const handleFormKeyDown = (event) => {
         const { keyCode, target } = event;
     
         switch (keyCode) {
@@ -166,22 +168,20 @@ const VoucherTypeMaster = () => {
                 const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
     
                 if (target.id === 'alterAdditionalNumberingDetails') {
-                    // Move directly to printingVoucherAfterSaving when Enter is pressed on alterAdditionalNumberingDetails
                     if (inputRefs.current.printingVoucherAfterSaving && inputRefs.current.printingVoucherAfterSaving.focus) {
                         inputRefs.current.printingVoucherAfterSaving.focus();
                     }
                 } else if (target.id === 'suffixDetailsParticulars') {
-                    // Move focus to subform save button
                     if (subFormSaveButtonRef.current && subFormSaveButtonRef.current.focus) {
                         subFormSaveButtonRef.current.focus();
                     }
-                }else if(target.id === 'subFormSaveButton'){
-                    // Handle the subform save button press
+                } else if (target.id === 'subFormSaveButton') {
                     handleSubFormSave();
-
-                }else {
+                    if (inputRefs.current.printingVoucherAfterSaving && inputRefs.current.printingVoucherAfterSaving.focus) {
+                        inputRefs.current.printingVoucherAfterSaving.focus();
+                    }
+                } else {
                     const nextInputIndex = currentInputIndex + 1;
-    
                     if (nextInputIndex < Object.keys(inputRefs.current).length) {
                         const nextInputRef = Object.values(inputRefs.current)[nextInputIndex];
                         if (nextInputRef && nextInputRef.focus) {
@@ -211,40 +211,29 @@ const VoucherTypeMaster = () => {
                 break;
     
             default:
-                // For handling 'Y' or 'N' keys for alterAdditionalNumberingDetails
                 if (target.id === 'alterAdditionalNumberingDetails') {
                     if (keyCode === 89 || keyCode === 121) { // Y or y
                         setAlterAdditionalNumberingDetails('no');
                         setShowSubFormModal(true);
                     } else if (keyCode === 78 || keyCode === 110) { // N or n
                         setAlterAdditionalNumberingDetails('no');
-                        // Move to the next input field
                         const nextInputRef = inputRefs.current.printingVoucherAfterSaving;
                         if (nextInputRef && nextInputRef.focus) {
                             nextInputRef.focus();
                         }
                     }
-                } else if (target.id === 'printingVoucherAfterSaving') { // For handling 'Y' or 'N' keys for printingVoucherAfterSaving
+                } else if (target.id === 'printingVoucherAfterSaving') {
                     if (keyCode === 89 || keyCode === 121) { // Y or y
+                        setPrintingVoucherAfterSaving('yes');
+                    } else if (keyCode === 78 || keyCode === 110) { // N or n
                         setPrintingVoucherAfterSaving('no');
-                        // Move to the next input field
-                        const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
-                        const nextInputIndex = currentInputIndex + 1;
-                        if (nextInputIndex < Object.keys(inputRefs.current).length) {
-                            const nextInputRef = Object.values(inputRefs.current)[nextInputIndex];
-                            if (nextInputRef && nextInputRef.focus) {
-                                nextInputRef.focus();
-                            }
-                        } else if (nextInputIndex === Object.keys(inputRefs.current).length - 1) {
-                            if (acceptButtonRef.current && acceptButtonRef.current.focus) {
-                                acceptButtonRef.current.focus();
-                            }
-                        }
                     }
                 }
                 break;
         }
     };
+    
+    
     
     
     
@@ -759,6 +748,7 @@ const VoucherTypeMaster = () => {
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
                   type="button"
+                  ref={yesQuitButtonRef}
                   onClick={handleModalConfirm}
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-slate-600 text-base font-medium text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:ml-3 sm:w-auto sm:text-sm"
                 >
@@ -766,6 +756,7 @@ const VoucherTypeMaster = () => {
                 </button>
                 <button
                   type="button"
+                  ref={cancelModalConfirmRef}
                   onClick={handleModalClose}
                   className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                 >

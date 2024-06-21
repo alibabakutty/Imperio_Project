@@ -7,9 +7,9 @@ const AlterProductMaster = () => {
 
   let navigate = useNavigate();
 
-    const {productCode} = useParams();                  //Use productCode from URL parameters
+    const {productCode} = useParams();                  
 
-    const [product, setProduct] = useState({
+    const [product, setProduct] = useState({   //Use productCode from URL parameters
         productCode: "",
         productDescription: "",
         productCategory: "",
@@ -36,18 +36,28 @@ const AlterProductMaster = () => {
 
     const productCodeRef = useRef(null);
     const acceptButtonRef = useRef(null);
+    const yesQuitButtonRef = useRef(null);
+    const cancelModalConfirmRef = useRef(null);
 
     const [showModal, setShowModal] = useState(false);
 
     const onInputChange = (e) => {
-        setProduct({...product, [e.target.name]: e.target.value})
+      const {name,value} = e.target;
+      setProduct({
+        ...product, [name]: name === 'standardCost' || name === 'sellingPrice' || name === 'discount' ? parseFloat(value) : value // Parse fields to number
+      });
     };
 
 
     const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:8080/api/master/alterProductMaster/${productCode}`, product);
+      await axios.put(`http://localhost:8080/api/master/alterProductMaster/${productCode}`, {
+        ...product,
+        standardCost: parseFloat(product.standardCost),   //Ensure it's a number
+        sellingPrice: parseFloat(product.sellingPrice),
+        discount: parseFloat(discount)
+      });
       navigate("/alteredProduct");
     } catch (error) {
       console.error("Error updating the product", error);
@@ -91,11 +101,16 @@ const AlterProductMaster = () => {
     useEffect(() => {
 
       if(showModal){
+        yesQuitButtonRef.current.focus();
         const handleModalKeyDown = (event) => {
           if(event.key.toLowerCase() === 'y'){
             handleModalConfirm();
           }else if(event.key === 'n'){
             handleModalClose();
+          }else if(event.key === 'ArrowLeft'){
+            cancelModalConfirmRef.current.focus();
+          }else if(event.key === 'ArrowRight'){
+            yesQuitButtonRef.current.focus();
           }
         }
   
@@ -188,7 +203,7 @@ const AlterProductMaster = () => {
                                             if (field === 'productCode') productCodeRef.current = input;
                                             inputRefs.current[field] = input;
                                           }}
-                                        className='w-[300px] h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
+                                        className={`h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ${field === 'standardCost' || field === 'sellingPrice' || field === 'discount' ? 'w-[150px]' : 'w-[300px]'}`}
                                         autoComplete='off'
                                     />
                                 </div>
@@ -251,6 +266,7 @@ const AlterProductMaster = () => {
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
                   type="button"
+                  ref={yesQuitButtonRef}
                   onClick={handleModalConfirm}
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-slate-600 text-base font-medium text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:ml-3 sm:w-auto sm:text-sm"
                 >
@@ -258,6 +274,7 @@ const AlterProductMaster = () => {
                 </button>
                 <button
                   type="button"
+                  ref={cancelModalConfirmRef}
                   onClick={handleModalClose}
                   className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                 >

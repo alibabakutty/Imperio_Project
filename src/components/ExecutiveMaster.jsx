@@ -32,6 +32,8 @@ const ExecutiveMaster = () => {
 
     const executiveCodeRef = useRef(null);
     const acceptButtonRef = useRef(null);
+    const yesQuitButtonRef = useRef(null);
+    const cancelModalConfirmRef = useRef(null);
 
 
     const navigator = useNavigate();
@@ -64,11 +66,16 @@ const ExecutiveMaster = () => {
     useEffect(() => {
 
         if(showModal){
+            yesQuitButtonRef.current.focus();
           const handleModalKeyDown = (event) => {
             if(event.key.toLowerCase() === 'y'){
               handleModalConfirm();
             }else if(event.key === 'n'){
               handleModalClose();
+            }else if(event.key === 'ArrowLeft'){
+                cancelModalConfirmRef.current.focus();
+            }else if(event.key === 'ArrowRight'){
+                yesQuitButtonRef.current.focus();
             }
           }
     
@@ -150,7 +157,39 @@ const ExecutiveMaster = () => {
 
     const handleModalConfirm = () => {
         navigator('/list');
-    }
+    };
+
+
+    //Function to format date input
+    const formatDateInput = (value) => {
+        const datePattern = /(\d{1,2})[./-](\d{1,2})[./-](\d{2})/;
+        const match = value.match(datePattern);
+
+        if(match){
+            const day = match[1];
+            const month = match[2];
+            const year = match[3];
+
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            const formattedMonth = months[parseInt(month, 10) - 1];
+
+            if(formattedMonth){
+                return `${day}-${formattedMonth}-20${year}`;
+            }
+        }
+        return value;
+    };
+
+    //Handle date input change
+    const handleDateInputChange = (e) => {
+        const value = e.target.value;
+
+        //Format the input value using formatDateInput function
+        const formattedValue = formatDateInput(value);
+        setDateOfJoin(formattedValue);
+    };
+    
 
 
 
@@ -187,7 +226,7 @@ const ExecutiveMaster = () => {
 
                 <div className='input-ldgr    '  >
                     <label htmlFor="dateOfJoin" className='text-sm mr-[54px] ml-2'>Date of Join</label>
-                    : <input type="text" id='dateOfJoin' name='dateOfJoin' value={dateOfJoin} onChange={(e) => setDateOfJoin(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.dateOfJoin = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
+                    : <input type="text" id='dateOfJoin' name='dateOfJoin' value={dateOfJoin} onChange={(e) => {setDateOfJoin(e.target.value); handleDateInputChange(e); }} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.dateOfJoin = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
                 </div>
 
                 <div className='input-ldgr    '  >
@@ -251,8 +290,8 @@ const ExecutiveMaster = () => {
                         </div>
 
                         <div className='bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse'>
-                            <button type='button' onClick={handleModalConfirm} className='w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-slate-600 text-base font-medium text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring- ring-offset-2 focus:ring-slate-500 sm:ml-3 sm:w-auto sm:text-sm'>Yes, Quit</button>
-                            <button type='button' onClick={handleModalClose} className='mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm'>Cancel</button>
+                            <button type='button' onClick={handleModalConfirm} ref={yesQuitButtonRef} className='w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-slate-600 text-base font-medium text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring- ring-offset-2 focus:ring-slate-500 sm:ml-3 sm:w-auto sm:text-sm'>Yes, Quit</button>
+                            <button type='button' onClick={handleModalClose} ref={cancelModalConfirmRef} className='mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm'>Cancel</button>
                         </div>
                     </div>
                 </div>

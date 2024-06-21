@@ -36,6 +36,8 @@ const Productmaster = () => {
 
     const productCodeRef = useRef(null);
     const acceptButtonRef = useRef(null);
+    const yesQuitButtonRef = useRef(null);
+    const cancelModalConfirmRef = useRef(null);
 
     const navigate = useNavigate();
 
@@ -90,11 +92,16 @@ const Productmaster = () => {
     useEffect(() => {
 
       if(showModal){
+        yesQuitButtonRef.current.focus();
         const handleModalKeyDown = (event) => {
           if(event.key.toLowerCase() === 'y'){
             handleModalConfirm();
           }else if(event.key === 'n'){
             handleModalClose();
+          }else if(event.key === 'ArrowLeft'){
+            cancelModalConfirmRef.current.focus();
+          }else if(event.key === 'ArrowRight'){
+            yesQuitButtonRef.current.focus();
           }
         }
   
@@ -166,6 +173,40 @@ const Productmaster = () => {
         return Object.keys(newErrors).length === 0;
     };
 
+
+    const handleStandardCostChange = (e) => {
+      const value = Number(e.target.value);
+      setStandardCost(value);
+      calculateSellingPriceAndDiscount(value, sellingPrice);
+    };
+
+    const handleSellingPriceChange = (e) => {
+      const value = Number(e.target.value);
+      setSellingPrice(value);
+      calculateDiscount(standardCost, value);
+    };
+
+    const handleDiscountChange = (e) => {
+      const value = Number(e.target.value);
+      setDiscount(value);
+      calculateSellingPrice(standardCost, value);
+    };
+
+    const calculateSellingPriceAndDiscount = (standardCost, sellingPrice) => {
+      const discount = ((sellingPrice - standardCost) / sellingPrice) * 100;
+      setDiscount(discount.toFixed(2));
+    };
+
+    const calculateDiscount = (standardCost, sellingPrice) => {
+      const discount = ((sellingPrice - standardCost) / sellingPrice) * 100;
+      setDiscount(discount.toFixed(2));
+    };
+
+    const calculateSellingPrice = (standardCost, discount) => {
+      const sellingPrice = standardCost / (1 - discount / 100);
+      setSellingPrice(sellingPrice.toFixed(2));
+    };
+
     const saveProductMaster = (e) => {
         e.preventDefault();
 
@@ -173,7 +214,7 @@ const Productmaster = () => {
             return;
         }
 
-        const product = { productCode, productDescription, productCategory, uom, productGroup, standardCost, sellingPrice, discount };
+        const product = { productCode, productDescription, productCategory, uom, productGroup, standardCost: Number(standardCost), sellingPrice, discount };
 
         console.log(product);
 
@@ -269,17 +310,17 @@ const Productmaster = () => {
 
                     <div className='input-ldgr'>
                         <label htmlFor="standardCost" className='text-sm mr-[51px] ml-2'>Standard Cost</label>
-                        : <input type="text" id='standardCost' name='standardCost' value={standardCost} onChange={(e) => setStandardCost(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.standardCost = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='standardCost' name='standardCost' value={standardCost} onChange={handleStandardCostChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.standardCost = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                     </div>
 
                     <div className='input-ldgr'>
                         <label htmlFor="sellingPrice" className='text-sm mr-[62px] ml-2'>Selling Price</label>
-                        : <input type="text" id='sellingPrice' name='sellingPrice' value={sellingPrice} onChange={(e) => setSellingPrice(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.sellingPrice = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='sellingPrice' name='sellingPrice' value={sellingPrice} onChange={handleSellingPriceChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.sellingPrice = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                     </div>
 
                     <div className='input-ldgr'>
                         <label htmlFor="discount" className='text-sm mr-[87px] ml-2'>Discount</label>
-                        : <input type="text" id='discount' name='discount' value={discount} onChange={(e) => setDiscount(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.discount = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='discount' name='discount' value={discount} onChange={handleDiscountChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.discount = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                     </div>
 
                     <div className='mt-[302px]'>
@@ -321,6 +362,7 @@ const Productmaster = () => {
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
                   type="button"
+                  ref={yesQuitButtonRef}
                   onClick={handleModalConfirm}
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-slate-600 text-base font-medium text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:ml-3 sm:w-auto sm:text-sm"
                 >
@@ -328,6 +370,7 @@ const Productmaster = () => {
                 </button>
                 <button
                   type="button"
+                  ref={cancelModalConfirmRef}
                   onClick={handleModalClose}
                   className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                 >
