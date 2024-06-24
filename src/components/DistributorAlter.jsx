@@ -47,6 +47,7 @@ const DistributorFilter = () => {
       } else if (e.key === 'Enter') {
           if (selectedIndex === 0) {
               navigate('/distributor');
+              e.preventDefault();
           } else if (selectedIndex === 1) {
               navigate('/alter');
           } else if (filteredDistributors[selectedIndex - 2]) {

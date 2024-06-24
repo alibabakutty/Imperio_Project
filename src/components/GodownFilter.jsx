@@ -47,6 +47,7 @@ const GodownFilter = () => {
       }else if(e.key === 'Enter'){
         if(selectedIndex === 0){
           navigate('/godown')
+          e.preventDefault();
         }else if(selectedIndex === 1){
           navigate('/display');
         }else if(filteredGodowns[selectedIndex - 2]){

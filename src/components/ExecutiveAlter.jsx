@@ -35,6 +35,7 @@ const ExecutiveFilter = () => {
             } else if (e.key === 'Enter') {
                 if (selectedIndex === 0) {
                     navigate('/executive');
+                    e.preventDefault();
                 } else if (selectedIndex === 1) {
                     navigate('/alter');
                 } else if (filteredExecutives[selectedIndex - 2]) {

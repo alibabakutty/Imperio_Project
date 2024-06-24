@@ -44,6 +44,7 @@ const VoucherTypeFilter = () => {
             }else if(e.key === 'Enter'){
                 if(selectedIndex === 0){
                     navigate("/voucherType")
+                    e.preventDefault();
                 }else if(selectedIndex === 1){
                     navigate('/display');
                 }else if(filteredVoucherNames[selectedIndex - 2]){

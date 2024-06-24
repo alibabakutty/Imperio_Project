@@ -14,9 +14,11 @@ const ProductFilter = () => {
 
   useEffect(() => {
     inputRef.current.focus();
+
     listOfProducts().then((response) => {
       setProduct(response.data);
-      setFilteredProducts(response.data);
+      setFilteredProducts(response.data.slice(0, 15)); //Initially show only the 15 products
+
     }).catch(error => {
       console.error(error);
     });
@@ -27,47 +29,57 @@ const ProductFilter = () => {
   }, [productCode]);
 
   useEffect(() => {
+    
     const handleKeyDown = (e) => {
-      if (e.key === 'ArrowDown') {
-        setSelectedIndex(prevIndex => (prevIndex + 1) % (filteredProducts.length + 3));
-      } else if (e.key === 'ArrowUp') {
-        setSelectedIndex(prevIndex => (prevIndex - 1 + (filteredProducts.length + 3)) % (filteredProducts.length + 3));
-      } else if (e.key === 'Enter') {
-        if (selectedIndex === 0) {
+      const totalItems = product.length > 15 ? filteredProducts.length + 3 : filteredProducts.length + 2;   //+2 for create, back, and +1 for dropdown if exists
+
+      if(e.key === 'ArrowDown'){
+        setSelectedIndex(prevIndex => (prevIndex + 1) % totalItems );
+        e.preventDefault();
+      }else if(e.key === 'ArrowUp'){
+        setSelectedIndex(prevIndex => (prevIndex - 1 + totalItems) % totalItems );
+        e.preventDefault();
+      }else if(e.key === 'Enter'){
+        if(selectedIndex === 0){
           navigate('/product');
-        } else if (selectedIndex === 1) {
+          e.preventDefault();
+        }else if(selectedIndex === 1){
           navigate('/display');
-        } else if (selectedIndex === 2) {
+          e.preventDefault();
+        }else if(product.length > 15 && selectedIndex === filteredProducts.length + 2){
           dropdownRef.current.focus();
-        } else if (filteredProducts[selectedIndex - 3]) {
-          navigate(`/displayProduct/${filteredProducts[selectedIndex - 3].productCode}`);
+        }else if(filteredProducts[selectedIndex - 2]){
+          navigate(`/displayProduct/${filteredProducts[selectedIndex - 2].productCode}`);   //Navigate to the selected product
         }
       }
     };
+
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [filteredProducts, selectedIndex, navigate]);
+  }, [filteredProducts, selectedIndex, navigate, product.length]);
 
+  
   const filterProducts = () => {
-    if (productCode === "") {
-      setFilteredProducts(product);
-    } else {
-      const filtered = product.filter(prod => prod.productCode.toLowerCase().includes(productCode.toLowerCase()));
-      setFilteredProducts(filtered);
+    let filtered = [];
+
+    if(productCode === ''){
+      filtered = product.slice(0, 15);   //Reset to show first 15 products
+    }else{
+      filtered = product.filter(prod => prod.productCode.toLowerCase().includes(productCode.toLowerCase()));
+      filtered = filtered.slice(0, 15);  //Limit to 15 products
     }
-    setSelectedIndex(filteredProducts.length > 0 ? 3 : 0);
+
+    setFilteredProducts(filtered);
+    setSelectedIndex(2);  //Reset selected index to the first element in the filtered list
   };
 
   const handleDropdownChange = (e) => {
     const selectedProductCode = e.target.value;
     navigate(`/displayProduct/${selectedProductCode}`);
   };
-
-  const topProducts = filteredProducts.slice(0, 15);
-  const remainingProducts = filteredProducts.slice(15);
 
   return (
     <div className='flex'>
@@ -98,21 +110,22 @@ const ProductFilter = () => {
             </thead>
             <div className='border border-b-gray-500 w-[347px]'>
               <Link
-                className={`block text-center text-[14px] focus:bg-[#FEB941] outline-none ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`}
+                className={`block text-center text-[14px] ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`}
                 to={"/product"}
               >
                 <p className='ml-[285px] text-[14px]'>Create</p>
               </Link>
+
               <Link
-                className={`block text-center text-[14px] focus:bg-[#FEB941] outline-none ${selectedIndex === 1 ? 'bg-[#FEB941]' : ''}`}
+                className={`block text-center text-[14px] ${selectedIndex === 1 ? 'bg-[#FEB941]' : ''}`}
                 to={"/display"}
               >
                 <p className='ml-[287px] text-[14px] '>Back</p>
               </Link>
             </div>
             <tbody>
-              {topProducts.map((prod, index) => (
-                <tr key={prod.productCode} className={selectedIndex === index + 3 ? 'bg-[#FEB941]' : ''}>
+              {filteredProducts.map((prod, index) => (
+                <tr key={prod.productCode} className={selectedIndex === index + 2 ? 'bg-[#FEB941]' : ''}>
                   <td className='flex justify-center items-center capitalize'>
                     <Link className='block' to={`/displayProduct/${prod.productCode}`}>
                       {prod.productCode}
@@ -123,16 +136,12 @@ const ProductFilter = () => {
             </tbody>
           </table>
 
-          {remainingProducts.length > 0 && (
+          {product.length > 15 && (
             <div className='mt-2'>
-              <select
-                id='productDropdown'
-                ref={dropdownRef}
-                className={`w-full border border-gray-600 bg-white p-1 focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ${selectedIndex === 2 ? 'bg-[#FEB941]' : ''}`}
-                onChange={handleDropdownChange}
-              >
-                <option value="" className='block text-center text-[14px]'>Select other products</option>
-                {remainingProducts.map(prod => (
+              <label htmlFor="productDropdown" className='block text-center text-[14px] mb-1'></label>
+              <select name="productDropdown" id="productDropdown" ref={dropdownRef} className={`w-full border border-gray-600 bg-white p-1 focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ${selectedIndex === filteredProducts.length + 2 ? 'bg-[#BBE9FF]' : ''}`} onChange={handleDropdownChange}>
+                <option value="" className='block text-center text-[14px]'>Select other Products</option>
+                {product.slice(15).map(prod => (
                   <option key={prod.productCode} value={prod.productCode} className='block text-center text-[14px]'>
                     {prod.productCode}
                   </option>

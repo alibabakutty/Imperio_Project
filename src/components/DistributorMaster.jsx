@@ -325,8 +325,6 @@ const DistributorMaster = () => {
             : <input type="text" id='distributorCode' name='distributorCode' value={distributorCode} onChange={(e) => {handleDistributorChange(e); setDistributorCode(e.target.value);}} onKeyDown={handleKeyDown}  ref={(input) => {distributorCodeRef.current = input; inputRefs.current.distributorCode = input; }}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
             {errors.distributorCode && <p className='text-red-500 text-xs ml-2'>{errors.distributorCode}</p>}
 
-            {errors.distributorCode && <p className='text-red-500'>{errors.distributorCode}</p>}
-
             {filteredLedgerSuggestions.length > 0 && (
                 <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '40px', left: '1028px' }}>
                     <div className='text-center bg-[#003285] text-[13.5px] text-white'>

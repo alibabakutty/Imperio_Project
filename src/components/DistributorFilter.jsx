@@ -46,6 +46,7 @@ const DistributorFilter = () => {
       } else if (e.key === 'Enter') {
           if (selectedIndex === 0) {
               navigate('/executive');
+              e.preventDefault();
           } else if (selectedIndex === 1) {
               navigate('/display');
           } else if (filteredDistributors[selectedIndex - 2]) {

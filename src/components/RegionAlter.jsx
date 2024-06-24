@@ -31,17 +31,25 @@ const RegionFilter = () => {
 
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if (e.key === 'ArrowDown') {
-                setSelectedIndex(prevIndex => (prevIndex + 1) % (filteredRegions.length + 2)); // +2 for Create and Back
-            } else if (e.key === 'ArrowUp') {
-                setSelectedIndex(prevIndex => (prevIndex - 1 + (filteredRegions.length + 2)) % (filteredRegions.length + 2)); // +2 for Create and Back
-            } else if (e.key === 'Enter') {
-                if (selectedIndex === 0) {
+            const totalItems = region.length > 15 ? filteredRegions.length + 3 : filteredRegions.length + 2;  // +2 for create, back, and +1 for dropdown if it exists 
+            
+            if(e.key === 'ArrowDown'){
+                setSelectedIndex(prevIndex => (prevIndex + 1) % totalItems);
+                e.preventDefault();
+            }else if(e.key === 'ArrowUp'){
+                setSelectedIndex(prevIndex => (prevIndex - 1 + totalItems) % totalItems );
+                e.preventDefault();
+            }else if(e.key === 'Enter'){
+                if(selectedIndex === 0){
                     navigate('/region');
-                } else if (selectedIndex === 1) {
-                    navigate('/alter');
-                } else if (filteredRegions[selectedIndex - 2]) {
-                    navigate(`/alterRegionMaster/${filteredRegions[selectedIndex - 2].regionMasterId}`);
+                    e.preventDefault();
+                }else if(selectedIndex === 1){
+                    navigate('/display');
+                    e.preventDefault();
+                }else if(region.length > 15 && selectedIndex === filteredRegions.length + 2){
+                    dropdownRef.current.focus();
+                }else if(filteredRegions[selectedIndex - 2]){
+                    navigate(`/displayRegion/${filteredRegions[selectedIndex - 2].regionMasterId}`);   //Navigate to the selected region 
                 }
             }
         };
@@ -51,17 +59,21 @@ const RegionFilter = () => {
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [filteredRegions, selectedIndex, navigate]);
+    }, [filteredRegions, selectedIndex, navigate, region.length]);
 
     const filterRegions = () => {
-        if (regionMasterId === "") {
-            setFilteredRegions(region.slice(0, 15));   //Reset to show the first 15 regions
-        } else {
-            const filtered = region.filter(reg => reg.regionMasterId.toLowerCase().includes(regionMasterId.toLowerCase())).slice(0, 15);
-            setFilteredRegions(filtered);
+        let filtered = [];
+
+        if(regionMasterId === ''){
+            filtered = region.slice(0, 15); //Reset to show the first 15 elements
+        }else{
+            filtered = region.filter(reg => reg.regionMasterId.toLowerCase().includes(regionMasterId.toLowerCase() ));
+            filtered = filtered.slice(0, 15);  //Limit to 15 elements
         }
-        setSelectedIndex(filteredRegions.length > 0 ? 3 : 0); // Reset selected index to the first element in the filtered list
-    };
+
+        setFilteredRegions(filtered);
+        setSelectedIndex(2);   //Reset selected index to the first element in the filtered list
+    }
 
     const handleDropdownChange = (e) => {
         const selectedRegionId = e.target.value;
@@ -104,7 +116,7 @@ const RegionFilter = () => {
                     {region.length > 15 && (
                         <div className='mt-2'>
                             <label htmlFor="regionDropdown" className="block text-center text-[14px] mb-1"></label>
-                            <select id="regionDropdown" ref={dropdownRef} className={`w-full border border-gray-600 bg-white p-1 focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ${selectedIndex === 2 ? 'bg-[#FEB941]' : ''}`} onChange={handleDropdownChange}>
+                            <select id="regionDropdown" ref={dropdownRef} className={`w-full border border-gray-600 bg-white p-1 focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ${selectedIndex === filteredRegions.length + 2 ? 'bg-[#BBE9FF]' : ''}`} onChange={handleDropdownChange}>
                                 <option value="" className='block text-center text-[14px]'>Select Other Regions</option>
                                 {region.slice(15).map(reg => (
                                     <option key={reg.regionMasterId} value={reg.regionMasterId} className='block text-center text-[14px]'>

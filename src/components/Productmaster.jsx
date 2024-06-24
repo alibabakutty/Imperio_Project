@@ -117,30 +117,58 @@ const Productmaster = () => {
     
 
     const handleKeyDown = (event) => {
-        const { keyCode, target } = event;
-    
-        if (keyCode === 13) {
+      const { keyCode, target } = event;
+  
+      if (keyCode === 13) {
+          // Handle Enter key
           event.preventDefault();
           const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-            (key) => key === target.id
+              (key) => key === target.id
           );
           if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
-            acceptButtonRef.current.focus();
+              acceptButtonRef.current.focus();
           } else {
-            const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
-            nextInputRef.focus();
+              const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
+              nextInputRef.focus();
           }
-        } else if (keyCode === 27) {
+      } else if (keyCode === 27) {
+          // Handle Escape key
           setShowModal(true);
-        } else if (keyCode === 8 && target.value === '') {
+      } else if (keyCode === 8 && target.value === '' && target.id !== 'productCode') {
+          // Handle Backspace key
+          event.preventDefault();
           const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-            (key) => key === target.id
+              (key) => key === target.id
           );
-          const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+          const prevInputIndex =
+              (currentInputIndex - 1 + Object.keys(inputRefs.current).length) %
+              Object.keys(inputRefs.current).length;
           const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
           prevInputRef.focus();
-        }
-      };
+      }
+  
+      // Handle specific input fields (standardCost, sellingPrice, discount)
+      if (['standardCost', 'sellingPrice', 'discount'].includes(target.id)) {
+          const value = target.value.trim();
+  
+          if (keyCode === 8 && value === '') {
+              // Handle Backspace to navigate to previous input field
+              event.preventDefault();
+              const currentInputIndex = Object.keys(inputRefs.current).findIndex(
+                  (key) => key === target.id
+              );
+              const prevInputIndex =
+                  (currentInputIndex - 1 + Object.keys(inputRefs.current).length) %
+                  Object.keys(inputRefs.current).length;
+              const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+              prevInputRef.focus();
+          } else if (isNaN(value) && value !== '') {
+              // Prevent NaN in numeric fields, reset to previous valid value
+              target.value = target.defaultValue;
+          }
+      }
+  };
+  
     
 
     const handleUomChange = (e) => {
@@ -171,40 +199,6 @@ const Productmaster = () => {
         setErrors(newErrors);
 
         return Object.keys(newErrors).length === 0;
-    };
-
-
-    const handleStandardCostChange = (e) => {
-      const value = Number(e.target.value);
-      setStandardCost(value);
-      calculateSellingPriceAndDiscount(value, sellingPrice);
-    };
-
-    const handleSellingPriceChange = (e) => {
-      const value = Number(e.target.value);
-      setSellingPrice(value);
-      calculateDiscount(standardCost, value);
-    };
-
-    const handleDiscountChange = (e) => {
-      const value = Number(e.target.value);
-      setDiscount(value);
-      calculateSellingPrice(standardCost, value);
-    };
-
-    const calculateSellingPriceAndDiscount = (standardCost, sellingPrice) => {
-      const discount = ((sellingPrice - standardCost) / sellingPrice) * 100;
-      setDiscount(discount.toFixed(2));
-    };
-
-    const calculateDiscount = (standardCost, sellingPrice) => {
-      const discount = ((sellingPrice - standardCost) / sellingPrice) * 100;
-      setDiscount(discount.toFixed(2));
-    };
-
-    const calculateSellingPrice = (standardCost, discount) => {
-      const sellingPrice = standardCost / (1 - discount / 100);
-      setSellingPrice(sellingPrice.toFixed(2));
     };
 
     const saveProductMaster = (e) => {
@@ -244,7 +238,7 @@ const Productmaster = () => {
                 </span>
             </div>
 
-            <div className='w-[550px] h-[33vh] border border-gray-500 ml-[750px]'>
+            <div className='w-[550px] h-[35vh] border border-gray-500 ml-[750px]'>
                 <form>
                     <div className='input-ldgr mt-3'>
                         <label htmlFor="productCode" className='text-sm mr-[53.5px] ml-2'>Product Code</label>
@@ -310,17 +304,17 @@ const Productmaster = () => {
 
                     <div className='input-ldgr'>
                         <label htmlFor="standardCost" className='text-sm mr-[51px] ml-2'>Standard Cost</label>
-                        : <input type="text" id='standardCost' name='standardCost' value={standardCost} onChange={handleStandardCostChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.standardCost = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='standardCost' name='standardCost' value={standardCost} onChange={(e) => setStandardCost(Number(e.target.value))} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.standardCost = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                     </div>
 
                     <div className='input-ldgr'>
                         <label htmlFor="sellingPrice" className='text-sm mr-[62px] ml-2'>Selling Price</label>
-                        : <input type="text" id='sellingPrice' name='sellingPrice' value={sellingPrice} onChange={handleSellingPriceChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.sellingPrice = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='sellingPrice' name='sellingPrice' value={sellingPrice} onChange={(e) => setSellingPrice(Number(e.target.value))} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.sellingPrice = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                     </div>
 
                     <div className='input-ldgr'>
                         <label htmlFor="discount" className='text-sm mr-[87px] ml-2'>Discount</label>
-                        : <input type="text" id='discount' name='discount' value={discount} onChange={handleDiscountChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.discount = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='discount' name='discount' value={discount} onChange={(e) => setDiscount(Number(e.target.value))} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.discount = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                     </div>
 
                     <div className='mt-[302px]'>

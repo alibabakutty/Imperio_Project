@@ -44,6 +44,7 @@ const VoucherTypeAlter = () => {
             }else if(e.key === 'Enter'){
                 if(selectedIndex === 0){
                     navigate("/voucherType")
+                    e.preventDefault();
                 }else if(selectedIndex === 1){
                     navigate('/alter');
                 }else if(filteredVoucherNames[selectedIndex - 2]){
