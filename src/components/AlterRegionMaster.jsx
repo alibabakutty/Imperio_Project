@@ -63,32 +63,6 @@ const AlterRegionMaster = () => {
     }
   };
 
-  const fetchGodownSuggestions = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/api/master/allGodown');
-      setGodownSuggestions(response.data);
-    } catch (error) {
-      console.error('Error fetching godown data:', error);
-    }
-  };
-
-  const loadRegion = async () => {
-    try {
-      const result = await axios.get(`http://localhost:8080/api/master/displayRegion/${regionMasterId}`);
-      setRegion(result.data);
-    } catch (error) {
-      console.error("Error fetching the region data", error);
-    }
-  };
-
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
-
-  const handleModalConfirm = () => {
-    navigate('/regionAlter');
-  };
-
   useEffect(() => {
     fetchGodownSuggestions();
     loadRegion();
@@ -168,6 +142,36 @@ const AlterRegionMaster = () => {
       prevInputRef.focus();
     }
   };
+
+  const fetchGodownSuggestions = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/master/allGodown');
+      setGodownSuggestions(response.data);
+    } catch (error) {
+      console.error('Error fetching godown data:', error);
+    }
+  };
+
+  const loadRegion = async () => {
+    try {
+      const result = await axios.get(`http://localhost:8080/api/master/displayRegion/${regionMasterId}`);
+      setRegion(result.data);
+    } catch (error) {
+      console.error("Error fetching the region data", error);
+    }
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const handleModalConfirm = () => {
+    navigate('/regionAlter');
+  };
+
+  
+
+  
 
   const handleGodownCodeInputChange = (e) => {
     const godownCodeValue = e.target.value;
@@ -266,7 +270,7 @@ const AlterRegionMaster = () => {
               )}
 
               <div>
-                <label htmlFor="godownName" className='text-sm mr-[66px] ml-2'>Godown Name</label>
+                <label htmlFor="godownName" className='text-sm mr-[64px] ml-2'>Godown Name</label>
                 : <input type="text" id='godownName' name='godownName' value={region.godownName} onChange={(e) => { onInputChange(e); handleGodownNameInputChange(e); }} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.godownName = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
               </div>
 

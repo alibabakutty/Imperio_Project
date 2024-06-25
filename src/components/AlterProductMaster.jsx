@@ -42,16 +42,9 @@ const AlterProductMaster = () => {
     const parsedValue = name === 'standardCost' || name === 'sellingPrice' || name === 'discount' ? parseFloat(value) || 0 : value;
 
     // Capitalize the first letter of the input data
-    const capitalizedValue = parsedValue.charAt(0).toUpperCase() + parsedValue.slice(1);
+    const capitalizedValue = parsedValue.toString().charAt(0).toUpperCase() + parsedValue.toString().slice(1);
 
     setProduct({ ...product, [name]: capitalizedValue });
-
-    // Move the cursor to the beginning
-    if (inputRefs.current[name]) {
-      setTimeout(() => {
-        inputRefs.current[name].setSelectionRange(0, 0);
-      }, 0);
-    }
   };
 
   const onSubmit = async (e) => {
@@ -127,27 +120,43 @@ const AlterProductMaster = () => {
 
   const handleKeyDown = (event) => {
     const { keyCode, target } = event;
-
-    if (keyCode === 13) {
+    const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
+  
+    if (keyCode === 13) { // Enter key
       event.preventDefault();
-      const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
       if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
         acceptButtonRef.current.focus();
       } else {
         const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
         nextInputRef.focus();
       }
-    } else if (keyCode === 27) {
+    } else if (keyCode === 27) { // Escape key
       setShowModal(true);
-    } else if (keyCode === 8) {
-      event.preventDefault();
-      const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
+    } else if (keyCode === 8) { // Backspace key
+      const isStandardCost = target.name === 'standardCost';
+      const isSellingPrice = target.name === 'sellingPrice';
+      const isDiscount = target.name === 'discount';
+  
+      // Determine if current input is empty or has specific conditions to allow backspacing
+      const isEmptyOrZero = target.value.trim() === '' || (target.value === '0' && (isStandardCost || isSellingPrice || isDiscount));
+  
+      if (isEmptyOrZero) {
+        event.preventDefault();
+        const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+        const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+        prevInputRef.focus();
+      }else if(target.selectionStart === 0 && target.selectionEnd === 0){
+        event.preventDefault();
       const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
       const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
       prevInputRef.focus();
+      }
     }
   };
-
+  
+  
+  
+  
   const loadProduct = async () => {
     try {
       const result = await axios.get(`http://localhost:8080/api/master/displayProduct/${productCode}`);
@@ -239,31 +248,29 @@ const AlterProductMaster = () => {
               <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
             <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <div className="sm:flex sm:items-start">
-                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900">Quit Altering Product</h3>
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-500">Are you sure you want to quit altering the product?</p>
-                    </div>
+            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+              <div>
+                <div className="mt-3 text-center sm:mt-5">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">Confirm Quit</h3>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-500">Are you sure you want to quit without saving?</p>
                   </div>
                 </div>
               </div>
-              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <div className="mt-5 sm:mt-6 sm:flex sm:flex-row-reverse">
                 <button
-                  ref={yesQuitButtonRef}
-                  onClick={handleModalConfirm}
                   type="button"
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-slate-600 text-base font-medium text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  ref={yesQuitButtonRef}
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  onClick={handleModalConfirm}
                 >
                   Yes
                 </button>
                 <button
-                  ref={cancelModalConfirmRef}
-                  onClick={handleModalClose}
                   type="button"
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
+                  ref={cancelModalConfirmRef}
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+                  onClick={handleModalClose}
                 >
                   No
                 </button>
@@ -274,6 +281,6 @@ const AlterProductMaster = () => {
       )}
     </div>
   );
-};
+}
 
 export default AlterProductMaster;
