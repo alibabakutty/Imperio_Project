@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { IoClose } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -40,7 +40,18 @@ const AlterProductMaster = () => {
   const onInputChange = (e) => {
     const { name, value } = e.target;
     const parsedValue = name === 'standardCost' || name === 'sellingPrice' || name === 'discount' ? parseFloat(value) || 0 : value;
-    setProduct({ ...product, [name]: parsedValue });
+
+    // Capitalize the first letter of the input data
+    const capitalizedValue = parsedValue.charAt(0).toUpperCase() + parsedValue.slice(1);
+
+    setProduct({ ...product, [name]: capitalizedValue });
+
+    // Move the cursor to the beginning
+    if (inputRefs.current[name]) {
+      setTimeout(() => {
+        inputRefs.current[name].setSelectionRange(0, 0);
+      }, 0);
+    }
   };
 
   const onSubmit = async (e) => {
@@ -61,6 +72,8 @@ const AlterProductMaster = () => {
   useEffect(() => {
     if (productCodeRef.current) {
       productCodeRef.current.focus();
+      // Pulse the cursor at the beginning of productCode input
+      pulseCursor(productCodeRef.current);
     }
 
     loadProduct();
@@ -126,7 +139,7 @@ const AlterProductMaster = () => {
       }
     } else if (keyCode === 27) {
       setShowModal(true);
-    } else if (keyCode === 8 && (target.value === '' || target.value === '0')) {
+    } else if (keyCode === 8) {
       event.preventDefault();
       const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
       const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
@@ -152,37 +165,15 @@ const AlterProductMaster = () => {
     navigate('/productAlter');
   };
 
-  useLayoutEffect(() => {
-    Object.values(inputRefs.current).forEach(inputRef => {
-      if (inputRef && (inputRef instanceof HTMLInputElement || inputRef instanceof HTMLTextAreaElement)) {
-        inputRef.focus();
-        inputRef.setSelectionRange(0, 0);
-      }
-    });
-  }, [product]);
-
-
-  useEffect(() => {
-    setTimeout(() => {
-      Object.values(inputRefs.current).forEach(inputRef => {
-        if (inputRef && (inputRef instanceof HTMLInputElement || inputRef instanceof HTMLTextAreaElement)) {
-          inputRef.focus();
-          inputRef.setSelectionRange(0, 0);
-        }
-      });
-    }, 0);
-  }, [product]);
-
-  
-  const useFocusAndCursor = (refs, dependencies = []) => {
-    useEffect(() => {
-      Object.values(refs).forEach(ref => {
-        if (ref && (ref instanceof HTMLInputElement || ref instanceof HTMLTextAreaElement)) {
-          ref.focus();
-          ref.setSelectionRange(0, 0);
-        }
-      });
-    }, dependencies);
+  const pulseCursor = (input) => {
+    const value = input.value;
+    if (value) {
+      input.value = '';
+      setTimeout(() => {
+        input.value = value.charAt(0).toUpperCase() + value.slice(1);
+        input.setSelectionRange(0, 0);
+      }, 0);
+    }
   };
 
   return (
@@ -208,6 +199,9 @@ const AlterProductMaster = () => {
                     name={field}
                     value={product[field]}
                     onChange={onInputChange}
+                    onFocus={(e) => {
+                      pulseCursor(e.target);
+                    }}
                     onKeyDown={handleKeyDown}
                     ref={input => {
                       if (field === 'productCode') productCodeRef.current = input;

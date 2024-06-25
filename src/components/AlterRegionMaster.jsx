@@ -4,7 +4,8 @@ import { IoClose } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const AlterRegionMaster = () => {
-  const { regionMasterId } = useParams(); // Use regionMasterId from URL parameters
+  const { regionMasterId } = useParams();
+  const navigate = useNavigate();
 
   const [region, setRegion] = useState({
     ledgerCode: "",
@@ -33,24 +34,33 @@ const AlterRegionMaster = () => {
     acceptButton: null
   });
 
-  const ledgerCodeRef = useRef(null);
   const acceptButtonRef = useRef(null);
   const yesQuitButtonRef = useRef(null);
   const cancelModalConfirmRef = useRef(null);
-  
-
-  const navigate = useNavigate();
 
   const [showModal, setShowModal] = useState(false);
 
   const onInputChange = (e) => {
-    setRegion({ ...region, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const capitalizedValue = value.charAt(0).toUpperCase() + value.slice(1);
+    setRegion({ ...region, [name]: capitalizedValue });
+
+    if (inputRefs.current[name]) {
+      setTimeout(() => {
+        inputRefs.current[name].setSelectionRange(0, 0);
+      }, 0);
+    }
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    await axios.put(`http://localhost:8080/api/master/alterRegionMaster/${regionMasterId}`, region);
-    navigate("/alteredRegion");
+    try {
+      await axios.put(`http://localhost:8080/api/master/alterRegionMaster/${regionMasterId}`, region);
+      navigate("/alteredRegion");
+    } catch (error) {
+      console.error('Error updating region:', error);
+      // Implement error handling here
+    }
   };
 
   const fetchGodownSuggestions = async () => {
@@ -62,14 +72,30 @@ const AlterRegionMaster = () => {
     }
   };
 
-  useEffect(() => {
-    if (ledgerCodeRef.current) {
-      ledgerCodeRef.current.focus();
+  const loadRegion = async () => {
+    try {
+      const result = await axios.get(`http://localhost:8080/api/master/displayRegion/${regionMasterId}`);
+      setRegion(result.data);
+    } catch (error) {
+      console.error("Error fetching the region data", error);
     }
+  };
 
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const handleModalConfirm = () => {
+    navigate('/regionAlter');
+  };
+
+  useEffect(() => {
     fetchGodownSuggestions();
     loadRegion();
 
+    if (inputRefs.current.ledgerCode) {
+      inputRefs.current.ledgerCode.focus();
+    }
 
     const handleKeyDown = (event) => {
       const { ctrlKey, key } = event;
@@ -98,29 +124,26 @@ const AlterRegionMaster = () => {
   }, [navigate]);
 
   useEffect(() => {
-
-    if(showModal){
+    if (showModal) {
       yesQuitButtonRef.current.focus();
       const handleModalKeyDown = (event) => {
-        if(event.key.toLowerCase() === 'y'){
+        if (event.key.toLowerCase() === 'y') {
           handleModalConfirm();
-        }else if(event.key === 'n'){
+        } else if (event.key === 'n') {
           handleModalClose();
-        }else if(event.key === 'ArrowLeft'){
+        } else if (event.key === 'ArrowLeft') {
           cancelModalConfirmRef.current.focus();
-        }else if(event.key === 'ArrowRight'){
+        } else if (event.key === 'ArrowRight') {
           yesQuitButtonRef.current.focus();
         }
-      }
+      };
 
       document.addEventListener('keydown', handleModalKeyDown);
 
-      return() => {
+      return () => {
         document.removeEventListener('keydown', handleModalKeyDown);
-      }
-    };
-
-
+      };
+    }
   }, [showModal]);
 
   const handleKeyDown = (event) => {
@@ -128,9 +151,7 @@ const AlterRegionMaster = () => {
 
     if (keyCode === 13) {
       event.preventDefault();
-      const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-        (key) => key === target.id
-      );
+      const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
       if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
         acceptButtonRef.current.focus();
       } else {
@@ -139,10 +160,9 @@ const AlterRegionMaster = () => {
       }
     } else if (keyCode === 27) {
       setShowModal(true);
-    } else if (keyCode === 8 && target.value === '') {
-      const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-        (key) => key === target.id
-      );
+    } else if (keyCode === 8) {
+      event.preventDefault();
+      const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
       const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
       const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
       prevInputRef.focus();
@@ -179,23 +199,6 @@ const AlterRegionMaster = () => {
     setFilteredGodownNameSuggestions([]);
   };
 
-  const loadRegion = async () => {
-    try {
-      const result = await axios.get(`http://localhost:8080/api/master/displayRegion/${regionMasterId}`);
-      setRegion(result.data);
-    } catch (error) {
-      console.error("Error fetching the region data", error);
-    }
-  };
-
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
-
-  const handleModalConfirm = () => {
-    navigate('/regionAlter');
-  };
-
   return (
     <div>
       <div className='flex'>
@@ -204,88 +207,88 @@ const AlterRegionMaster = () => {
         </div>
         <div className='w-1/2 border border-bg-gray-500'>
           <div className='w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[80px] mt-10 border border-gray-500 border-b-0'>
-                <h2 className='ml-[200px]'>Region Master</h2>
-                <span className='cursor-pointer mt-[5px] mr-2'>
-                <Link to={"/regionAlter"}><IoClose /></Link>
-                </span>
+            <h2 className='ml-[200px]'>Region Master</h2>
+            <span className='cursor-pointer mt-[5px] mr-2'>
+              <Link to={"/regionAlter"}><IoClose /></Link>
+            </span>
           </div>
 
           <div className='w-[550px] h-[34vh] border border-gray-500 ml-[80px] '>
-                <form onSubmit={onSubmit}>
-                    <div className='input-ldgr mt-3'>
-                        <label htmlFor="ledgerCode" className='text-sm mr-[73px] ml-2'>Ledger Code</label>
-                        : <input type="text" id='ledgerCode' name='ledgerCode' value={region.ledgerCode} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => { ledgerCodeRef.current = input; inputRefs.current.ledgerCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                    </div>
+            <form onSubmit={onSubmit}>
+              <div className='input-ldgr mt-3'>
+                <label htmlFor="ledgerCode" className='text-sm mr-[73px] ml-2'>Ledger Code</label>
+                : <input type="text" id='ledgerCode' name='ledgerCode' value={region.ledgerCode} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.ledgerCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+              </div>
 
-                    <div className='input-ldgr'>
-                        <label htmlFor="ledgerName" className='text-sm mr-[70px] ml-2'>Ledger Name</label>
-                        : <input type="text" id='ledgerName' name='ledgerName' value={region.ledgerName} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.ledgerName = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                    </div>
+              <div className='input-ldgr'>
+                <label htmlFor="ledgerName" className='text-sm mr-[70px] ml-2'>Ledger Name</label>
+                : <input type="text" id='ledgerName' name='ledgerName' value={region.ledgerName} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.ledgerName = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+              </div>
 
-                    <div className='input-ldgr'>
-                        <label htmlFor="regionMasterId" className='text-sm ml-2 mr-[49px]'>Region Master ID</label>
-                        : <input type="text" id='regionMasterId' name='regionMasterId' value={region.regionMasterId} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.regionMasterId = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                    </div>
+              <div className='input-ldgr'>
+                <label htmlFor="regionMasterId" className='text-sm ml-2 mr-[49px]'>Region Master ID</label>
+                : <input type="text" id='regionMasterId' name='regionMasterId' value={region.regionMasterId} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.regionMasterId = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+              </div>
 
-                    <div className='input-ldgr'>
-                        <label htmlFor="regionName" className='text-sm mr-[71px] ml-2'>Region Name</label>
-                        : <input type="text" id='regionName' name='regionName' value={region.regionName} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.regionName = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                    </div>
+              <div className='input-ldgr'>
+                <label htmlFor="regionName" className='text-sm mr-[71px] ml-2'>Region Name</label>
+                : <input type="text" id='regionName' name='regionName' value={region.regionName} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.regionName = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+              </div>
 
-                    <div className='input-ldgr'>
-                        <label htmlFor="regionState" className='text-sm mr-[76px] ml-2'>Region State</label>
-                        : <input type="text" id='regionState' name='regionState' value={region.regionState} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.regionState = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                    </div>
+              <div className='input-ldgr'>
+                <label htmlFor="regionState" className='text-sm mr-[76px] ml-2'>Region State</label>
+                : <input type="text" id='regionState' name='regionState' value={region.regionState} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.regionState = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+              </div>
 
-                    <div className='input-ldgr'>
-                        <label htmlFor="country" className='text-sm mr-[106px] ml-2'>Country</label>
-                        : <input type="text" id='country' name='country' value={region.country} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.country = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                    </div>
+              <div className='input-ldgr'>
+                <label htmlFor="country" className='text-sm mr-[106px] ml-2'>Country</label>
+                : <input type="text" id='country' name='country' value={region.country} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.country = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+              </div>
 
-                    <div className='input-ldgr'>
-                        <label htmlFor="godownCode" className='text-sm mr-[66px] ml-2'>Godown Code</label>
-                        : <input type="text" id='godownCode' name='godownCode' value={region.godownCode} onChange={(e) => { onInputChange(e); handleGodownCodeInputChange(e); }} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.godownCode = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                    </div>
+              <div className='input-ldgr'>
+                <label htmlFor="godownCode" className='text-sm mr-[66px] ml-2'>Godown Code</label>
+                : <input type="text" id='godownCode' name='godownCode' value={region.godownCode} onChange={(e) => { onInputChange(e); handleGodownCodeInputChange(e); }} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.godownCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+              </div>
 
-                    {filteredGodownCodeSuggestions.length > 0 && (
-                        <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '40px', left: '1028px' }}>
-                        <div className='text-center bg-[#003285] text-[13.5px] text-white'>
-                            <p>List Of Godown Codes</p>
-                        </div>
-                        <ul className='suggestions w-full h-[20vh] text-center mt-2'>
-                            {filteredGodownCodeSuggestions.map((godown, index) => (
-                            <li key={index} tabIndex={0} onClick={() => selectGodown(godown)} onKeyDown={(e) => e.key === 'Enter' && selectGodown(godown)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
-                                {godown.godownCode.toUpperCase()}
-                            </li>
-                            ))}
-                        </ul>
-                        </div>
-                    )}
+              {filteredGodownCodeSuggestions.length > 0 && (
+                <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '40px', left: '1028px' }}>
+                  <div className='text-center bg-[#003285] text-[13.5px] text-white'>
+                    <p>List Of Godown Codes</p>
+                  </div>
+                  <ul className='suggestions w-full h-[20vh] text-center mt-2'>
+                    {filteredGodownCodeSuggestions.map((godown, index) => (
+                      <li key={index} tabIndex={0} onClick={() => selectGodown(godown)} onKeyDown={(e) => e.key === 'Enter' && selectGodown(godown)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
+                        {godown.godownCode.toUpperCase()}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-                    <div>
-                        <label htmlFor="godownName" className='text-sm mr-[66px] ml-2'>Godown Name</label>
-                        : <input type="text" id='godownName' name='godownName' value={region.godownName} onChange={(e) => { onInputChange(e); handleGodownNameInputChange(e); }} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.godownName = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                    </div>
+              <div>
+                <label htmlFor="godownName" className='text-sm mr-[66px] ml-2'>Godown Name</label>
+                : <input type="text" id='godownName' name='godownName' value={region.godownName} onChange={(e) => { onInputChange(e); handleGodownNameInputChange(e); }} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.godownName = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+              </div>
 
-                    {filteredGodownNameSuggestions.length > 0 && (
-                        <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '40px', left: '1028px' }}>
-                        <div className='text-center bg-[#003285] text-[13.5px] text-white'>
-                            <p>List Of Godown Names</p>
-                        </div>
-                        <ul className='suggestions w-full h-[20vh] text-center mt-2'>
-                            {filteredGodownNameSuggestions.map((godown, index) => (
-                            <li key={index} tabIndex={0} onClick={() => selectGodown(godown)} onKeyDown={(e) => e.key === 'Enter' && selectGodown(godown)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
-                                {godown.godownName.toUpperCase()}
-                            </li>
-                            ))}
-                        </ul>
-                        </div>
-                    )}
-                    
-                    <div className='mt-[300px]'>
-                        <button type='submit' id='acceptButton' ref={(button) => { acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'>A: Accept</button>
-                    </div>
-                </form>
+              {filteredGodownNameSuggestions.length > 0 && (
+                <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '40px', left: '1028px' }}>
+                  <div className='text-center bg-[#003285] text-[13.5px] text-white'>
+                    <p>List Of Godown Names</p>
+                  </div>
+                  <ul className='suggestions w-full h-[20vh] text-center mt-2'>
+                    {filteredGodownNameSuggestions.map((godown, index) => (
+                      <li key={index} tabIndex={0} onClick={() => selectGodown(godown)} onKeyDown={(e) => e.key === 'Enter' && selectGodown(godown)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
+                        {godown.godownName.toUpperCase()}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div className='mt-[300px]'>
+                <button type='submit' id='acceptButton' ref={(button) => { acceptButtonRef.current = button; }} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'>A: Accept</button>
+              </div>
+            </form>
           </div>
           <div className='mt-[300px] ml-[490px]'>
             <Link to={"/regionAlter"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>Q: Quit</Link>
@@ -293,7 +296,6 @@ const AlterRegionMaster = () => {
         </div>
       </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -341,7 +343,6 @@ const AlterRegionMaster = () => {
           </div>
         </div>
       )}
-
 
     </div>
   );

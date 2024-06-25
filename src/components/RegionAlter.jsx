@@ -49,7 +49,7 @@ const RegionFilter = () => {
                 }else if(region.length > 15 && selectedIndex === filteredRegions.length + 2){
                     dropdownRef.current.focus();
                 }else if(filteredRegions[selectedIndex - 2]){
-                    navigate(`/displayRegion/${filteredRegions[selectedIndex - 2].regionMasterId}`);   //Navigate to the selected region 
+                    navigate(`/alterRegionMaster/${filteredRegions[selectedIndex - 2].regionMasterId}`);   //Navigate to the selected region 
                 }
             }
         };
