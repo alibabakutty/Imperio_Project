@@ -332,13 +332,13 @@ const RegionMaster = () => {
               />
 
               {filteredGodownCodeSuggestions.length > 0 && (
-                <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '40px', left: '1028px' }}>
+                <div className='bg-[#CAF4FF] w-[20%] h-[80vh] border border-gray-500' style={{ position: 'absolute', top: '70px', left: '1028px' }}>
                   <div className='text-center bg-[#003285] text-[13.5px] text-white'>
                     <p>List Of Godown Codes</p>
                   </div>
-                  <ul className='suggestions w-full h-[20vh] text-center mt-2'>
+                  <ul className='suggestions w-full h-[20vh] text-left mt-2'>
                     {filteredGodownCodeSuggestions.map((godown, index) => (
-                      <li key={index} tabIndex={0} onClick={() => selectGodown(godown)} onKeyDown={(e) => e.key === 'Enter' && selectGodown(godown)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
+                      <li key={index} tabIndex={0} onClick={() => selectGodown(godown)} onKeyDown={(e) => e.key === 'Enter' && selectGodown(godown)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px] pl-2'>
                         {godown.godownCode.toUpperCase()} - {godown.godownName.toUpperCase()}
                       </li>
                     ))}

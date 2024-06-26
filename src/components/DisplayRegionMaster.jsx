@@ -30,24 +30,33 @@ const DisplayRegionMaster = () => {
         backButton: null
     });
 
-    const ledgerCodeRef = useRef(null);
     const backButtonRef = useRef(null);
     const yesQuitButtonRef = useRef(null);
     const cancelModalConfirmRef = useRef(null);
 
     const [showModal, setShowModal] = useState(false);
 
+    const pulseCursor = (input) => {
+        const value = input.value;
+        if (value) {
+            input.value = '';
+            setTimeout(() => {
+                input.value = value.charAt(0).toUpperCase() + value.slice(1);
+                input.setSelectionRange(0, 0);
+            }, 0);
+        }
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setRegion(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        const capitalizedValue = value.charAt(0).toUpperCase() + value.slice(1);
+        setRegion({ ...region, [name]: capitalizedValue });
     };
 
     useEffect(() => {
-        if (ledgerCodeRef.current) {
-            ledgerCodeRef.current.focus();
+        if (inputRefs.current.ledgerCode) {
+            inputRefs.current.ledgerCode.focus();
+            pulseCursor(inputRefs.current.ledgerCode);
         }
         loadRegion();
 
@@ -75,60 +84,70 @@ const DisplayRegionMaster = () => {
         };
     }, []);
 
-
     useEffect(() => {
-
-        if(showModal){
+        if (showModal) {
             yesQuitButtonRef.current.focus();
-          const handleModalKeyDown = (event) => {
-            if(event.key.toLowerCase() === 'y'){
-              handleModalConfirm();
-            }else if(event.key === 'n'){
-              handleModalClose();
-            }else if(event.key === 'ArrowLeft'){
-                cancelModalConfirmRef.current.focus();
-            }else if(event.key === 'ArrowRight'){
-                yesQuitButtonRef.current.focus();
-            }
-          }
-    
-          document.addEventListener('keydown', handleModalKeyDown);
-    
-          return() => {
-            document.removeEventListener('keydown', handleModalKeyDown);
-          }
-        };
-    
-    
-      }, [showModal]);
+            const handleModalKeyDown = (event) => {
+                if (event.key.toLowerCase() === 'y') {
+                    handleModalConfirm();
+                } else if (event.key === 'n') {
+                    handleModalClose();
+                } else if (event.key === 'ArrowLeft') {
+                    cancelModalConfirmRef.current.focus();
+                } else if (event.key === 'ArrowRight') {
+                    yesQuitButtonRef.current.focus();
+                }
+            };
+
+            document.addEventListener('keydown', handleModalKeyDown);
+
+            return () => {
+                document.removeEventListener('keydown', handleModalKeyDown);
+            };
+        }
+    }, [showModal]);
 
     const handleKeyDown = (event) => {
         const { keyCode, target } = event;
-
-        if (keyCode === 13) {
+        const currentInputIndex = Object.keys(inputRefs.current).findIndex(
+            (key) => key === target.id
+        );
+    
+        if (keyCode === 13) { // Handle Enter key
             event.preventDefault();
             const currentInputIndex = Object.keys(inputRefs.current).findIndex(
                 (key) => key === target.id
             );
             if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
                 backButtonRef.current.focus();
+                pulseCursor(backButtonRef.current); // Pulsing the cursor on the back button
             } else {
                 const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
                 nextInputRef.focus();
+                pulseCursor(nextInputRef); // Pulsing the cursor on the next input
             }
-        } else if (keyCode === 27) {
+        } else if (keyCode === 27) { // Handle Escape key
             setShowModal(true);
-        } else if (keyCode === 8 && target.value === '') {
+        } else if (keyCode === 8) { // Handle Backspace key
             event.preventDefault();
-            const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-                (key) => key === target.id
-            );
-            if (currentInputIndex > 0) {
-                const prevInputRef = Object.values(inputRefs.current)[currentInputIndex - 1];
+            const isEmptyOrZero = target.value.trim() === '' || (target.value === '0');
+            
+            if (isEmptyOrZero) {
+                event.preventDefault();
+                const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+                const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
                 prevInputRef.focus();
-            }
+              } else if (target.selectionStart === 0 && target.selectionEnd === 0) {
+                event.preventDefault();
+                const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+                const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+                prevInputRef.focus();
+              }
         }
     };
+    
+    
+    
 
     const loadRegion = async () => {
         try {
@@ -147,7 +166,6 @@ const DisplayRegionMaster = () => {
         navigate('/regionFilter');
     };
 
-
     return (
         <div>
             <div className='flex'>
@@ -160,38 +178,38 @@ const DisplayRegionMaster = () => {
                         </span>
                     </div>
                     <div className='w-[550px] h-[35vh] border border-gray-500 ml-[80px] '>
-                    <form>
+                        <form>
                             <div className='input-ldgr mt-3 '>
                                 <label htmlFor="ledgerCode" className='text-sm mr-[73px] ml-2'>Ledger Code</label>
-                                : <input type="text" id='ledgerCode' name='ledgerCode' value={region.ledgerCode} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => { ledgerCodeRef.current = input; inputRefs.current.ledgerCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ' autoComplete='off' />
+                                : <input type="text" id='ledgerCode' name='ledgerCode' value={region.ledgerCode} onChange={handleChange} onKeyDown={handleKeyDown} onFocus={(e) => pulseCursor(e.target)} ref={(input) => { inputRefs.current.ledgerCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ' autoComplete='off' />
                             </div>
                             <div className='input-ldgr '>
                                 <label htmlFor="ledgerName" className='text-sm mr-[70px] ml-2'>Ledger Name</label>
-                                : <input type="text" id='ledgerName' name='ledgerName' value={region.ledgerName} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.ledgerName = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ' autoComplete='off' />
+                                : <input type="text" id='ledgerName' name='ledgerName' value={region.ledgerName} onChange={handleChange} onKeyDown={handleKeyDown} onFocus={(e) => pulseCursor(e.target)} ref={(input) => inputRefs.current.ledgerName = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ' autoComplete='off' />
                             </div>
                             <div className='input-ldgr '>
                                 <label htmlFor="regionMasterId" className='text-sm ml-2 mr-[49px]'>Region Master ID</label>
-                                : <input type="text" id='regionMasterId' name='regionMasterId' value={region.regionMasterId} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.regionMasterId = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' /> 
+                                : <input type="text" id='regionMasterId' name='regionMasterId' value={region.regionMasterId} onChange={handleChange} onKeyDown={handleKeyDown} onFocus={(e) => pulseCursor(e.target)} ref={(input) => inputRefs.current.regionMasterId = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                             </div>
                             <div className='input-ldgr '>
                                 <label htmlFor="regionName" className='text-sm mr-[71px] ml-2'>Region Name</label>
-                                : <input type="text" id='regionName' name='regionName' value={region.regionName} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.regionName = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                : <input type="text" id='regionName' name='regionName' value={region.regionName} onChange={handleChange} onKeyDown={handleKeyDown} onFocus={(e) => pulseCursor(e.target)} ref={(input) => inputRefs.current.regionName = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                             </div>
                             <div className='input-ldgr'>
                                 <label htmlFor="regionState" className='text-sm mr-[76px] ml-2'>Region State</label>
-                                : <input type="text" id='regionState' name='regionState' value={region.regionState} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.regionState = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                : <input type="text" id='regionState' name='regionState' value={region.regionState} onChange={handleChange} onKeyDown={handleKeyDown} onFocus={(e) => pulseCursor(e.target)} ref={(input) => inputRefs.current.regionState = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                             </div>
                             <div className='input-ldgr'>
                                 <label htmlFor="country" className='text-sm mr-[106px] ml-2'>Country</label>
-                                : <input type="text" id='country' name='country' value={region.country} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.country = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                : <input type="text" id='country' name='country' value={region.country} onChange={handleChange} onKeyDown={handleKeyDown} onFocus={(e) => pulseCursor(e.target)} ref={(input) => inputRefs.current.country = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                             </div>
                             <div className='input-ldgr'>
                                 <label htmlFor="godownCode" className='text-sm mr-[66.5px] ml-2'>Godown Code</label>
-                                : <input type="text" id='godownCode' name='godownCode' value={region.godownCode} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.godownCode = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                : <input type="text" id='godownCode' name='godownCode' value={region.godownCode} onChange={handleChange} onKeyDown={handleKeyDown} onFocus={(e) => pulseCursor(e.target)} ref={(input) => inputRefs.current.godownCode = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                             </div>
                             <div className='input-ldgr'>
                                 <label htmlFor="godownName" className='text-sm mr-[65px] ml-2'>Godown Name</label>
-                                : <input type="text" id='godownName' name='godownName' value={region.godownName} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.godownName = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                : <input type="text" id='godownName' name='godownName' value={region.godownName} onChange={handleChange} onKeyDown={handleKeyDown} onFocus={(e) => pulseCursor(e.target)} ref={(input) => inputRefs.current.godownName = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                             </div>
                         </form>
                     </div>

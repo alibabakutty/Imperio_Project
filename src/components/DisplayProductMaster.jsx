@@ -31,25 +31,37 @@ const DisplayProductMaster = () => {
     backButton: null
   });
 
-  const productCodeRef = useRef(null);
   const backButtonRef = useRef(null);
   const yesQuitButtonRef = useRef(null);
   const cancelModalConfirmRef = useRef(null);
 
   const [showModal, setShowModal] = useState(false);
 
+  const pulseCursor = (input) => {
+    const value = input.value;
+    if(value){
+      input.value = '';
+      setTimeout(() => {
+        input.value = value.charAt(0).toUpperCase() + value.slice(1);
+        input.setSelectionRange(0, 0);
+
+      }, 0);
+    }
+  };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setProduct(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        
+        const capitalizedValue = value.charAt(0).toUpperCase() + value.slice(1);
+        setProduct({ ...product, [name]: capitalizedValue });
     };
 
   useEffect(() => {
-    if (productCodeRef.current) {
-      productCodeRef.current.focus();
-    }
+    
+    if(inputRefs.current.productCode){
+      inputRefs.current.productCode.focus();
+      pulseCursor(inputRefs.current.productCode);
+    };
     
     loadProduct();
 
@@ -108,28 +120,37 @@ const DisplayProductMaster = () => {
 
   const handleKeyDown = (event) => {
         const { keyCode, target } = event;
+        const currentInputIndex = Object.keys(inputRefs.current).findIndex(
+          (key) => key === target.id
+      );
 
         if (keyCode === 13) {
             event.preventDefault();
-            const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-                (key) => key === target.id
-            );
+            
             if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
                 backButtonRef.current.focus();
             } else {
                 const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
                 nextInputRef.focus();
+                pulseCursor(nextInputRef);
             }
         } else if (keyCode === 27) {
             setShowModal(true);
-        } else if (keyCode === 8 && target.value === '') {
+        } else if (keyCode === 8) {
             event.preventDefault();
-            const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-                (key) => key === target.id
-            );
-            if (currentInputIndex > 0) {
-                const prevInputRef = Object.values(inputRefs.current)[currentInputIndex - 1];
-                prevInputRef.focus();
+            
+            const isEmptyOrZero = target.value.trim() === '' || (target.value === '0');
+
+            if(isEmptyOrZero){
+              event.preventDefault();
+              const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+              const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+              prevInputRef.focus();
+            }else if(target.selectionStart === 0 && target.selectionEnd === 0){
+              event.preventDefault();
+              const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+              const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+              prevInputRef.focus();
             }
         }
     };
@@ -169,7 +190,7 @@ const handleModalConfirm = () => {
             <form>
               <div className='input-ldgr mt-3'>
                 <label htmlFor="productCode" className='text-sm ml-2 mr-[59px]'>Product Code</label>
-                : <input type="text" id='productCode' name='productCode' value={product.productCode} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => { productCodeRef.current = input; inputRefs.current.productCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' /> 
+                : <input type="text" id='productCode' name='productCode' value={product.productCode} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.productCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' /> 
               </div>
 
               <div className='input-ldgr mt-1'>

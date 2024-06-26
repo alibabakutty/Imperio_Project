@@ -28,7 +28,6 @@ const DisplayExecutiveMaster = () => {
     });
     
 
-    const executiveCodeRef = useRef(null);
     const backButtonRef = useRef(null);
     const yesQuitButtonRef = useRef(null);
     const cancelModalConfirmRef = useRef(null);
@@ -37,18 +36,30 @@ const DisplayExecutiveMaster = () => {
 
     const navigate = useNavigate();
 
+    const pulseCursor = (input) => {
+        const value = input.value;
+        if (value) {
+            input.value = '';
+            setTimeout(() => {
+                input.value = value.charAt(0).toUpperCase() + value.slice(1);
+                input.setSelectionRange(0, 0);
+            }, 0);
+        }
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setExecutive(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        
+        const capitalizedValue = value.charAt(0).toUpperCase() + value.slice(1);
+        setExecutive({ ...executive, [name]: capitalizedValue });
     };
 
 
     useEffect(() => {
-        if(executiveCodeRef.current){
-            executiveCodeRef.current.focus();
+        
+        if(inputRefs.current.executiveCode){
+            inputRefs.current.executiveCode.focus();
+            pulseCursor(inputRefs.current.executiveCode);
         }
         
         loadExecutive();
@@ -109,29 +120,38 @@ const DisplayExecutiveMaster = () => {
 
     const handleKeyDown = (event) => {
         const { keyCode, target } = event;
+        const currentInputIndex = Object.keys(inputRefs.current).findIndex(
+            (key) => key === target.id
+        );
 
         if (keyCode === 13) {
             event.preventDefault();
-            const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-                (key) => key === target.id
-            );
+            
             if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
                 backButtonRef.current.focus();
             } else {
                 const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
                 nextInputRef.focus();
+                pulseCursor(nextInputRef);
             }
         } else if (keyCode === 27) {
             setShowModal(true);
-        } else if (keyCode === 8 && target.value === '') {
+        } else if (keyCode === 8) {
             event.preventDefault();
-            const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-                (key) => key === target.id
-            );
-            if (currentInputIndex > 0) {
-                const prevInputRef = Object.values(inputRefs.current)[currentInputIndex - 1];
+            
+            const isEmptyOrZero = target.value.trim() === '' || (target.value === '0');
+            
+            if (isEmptyOrZero) {
+                event.preventDefault();
+                const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+                const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
                 prevInputRef.focus();
-            }
+              } else if (target.selectionStart === 0 && target.selectionEnd === 0) {
+                event.preventDefault();
+                const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+                const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+                prevInputRef.focus();
+              }
         }
     };
 
@@ -173,7 +193,7 @@ const DisplayExecutiveMaster = () => {
                         <form>
                             <div className='input-ldgr mt-3'>
                                 <label htmlFor="executiveCode" className='text-sm ml-2 mr-[49px]'>Executive Code</label>
-                                : <input type="text" id='executiveCode' name='executiveCode' value={executive.executiveCode} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => {executiveCodeRef.current = input; inputRefs.current.executiveCode = input;}}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' /> 
+                                : <input type="text" id='executiveCode' name='executiveCode' value={executive.executiveCode} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.executiveCode = input;}}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' /> 
                             </div>
 
                             <div className='input-ldgr mt-1'>

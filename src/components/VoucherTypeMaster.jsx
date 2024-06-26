@@ -414,7 +414,7 @@ const VoucherTypeMaster = () => {
       const voucherNumberRenderingOptions = () => {
         const methodsOfNumberingDatas = ["Automatic", "Manual"];
         return methodsOfNumberingDatas.map((methodsOfNumbering) => (
-            <p key={methodsOfNumbering} tabIndex={0} onClick={() => handleVoucherNumberingClick(methodsOfNumbering)} onKeyDown={(e) => {if(e.key === 'Enter'){handleVoucherNumberingClick(methodsOfNumbering)}}} className='h-5 pl-1 text-sm focus:bg-yellow-200 focus:outline-none'>{methodsOfNumbering}</p>
+            <p key={methodsOfNumbering} tabIndex={0} onClick={() => handleVoucherNumberingClick(methodsOfNumbering)} onKeyDown={(e) => {if(e.key === 'Enter'){handleVoucherNumberingClick(methodsOfNumbering)}}} className='h-5 pl-2 text-sm focus:bg-yellow-200 focus:outline-none text-left'>{methodsOfNumbering}</p>
         ))
       };
 
@@ -502,9 +502,9 @@ const VoucherTypeMaster = () => {
                                             <p>List of Voucher Types</p>
                                         </div>
 
-                                        <ul className='suggestions w-full h-[20vh] text-center mt-2'>
+                                        <ul className='suggestions w-full h-[20vh] text-left mt-2'>
                                             {filteredVoucherTypeSuggestions.map((voucher, index) => (
-                                                <li key={index} tabIndex={0} onClick={() => selectVoucherType(voucher)} onKeyDown={(e) => e.key === 'Enter' && selectVoucherType(voucher)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
+                                                <li key={index} tabIndex={0} onClick={() => selectVoucherType(voucher)} onKeyDown={(e) => e.key === 'Enter' && selectVoucherType(voucher)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px] pl-2'>
                                                     {voucher.voucherType.toUpperCase()}
                                                 </li>
                                             ))}

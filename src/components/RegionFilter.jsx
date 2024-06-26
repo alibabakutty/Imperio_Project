@@ -103,7 +103,7 @@ const RegionFilter = () => {
                         <tbody>
                             {filteredRegions.map((reg, index) => (
                                 <tr key={reg.regionMasterId} className={selectedIndex === index + 2 ? 'bg-[#FEB941]' : ''}>
-                                    <td className='block text-center text-[14px] capitalize'>
+                                    <td className='block text-left text-[14px] capitalize pl-2'>
                                         <Link to={`/displayRegion/${reg.regionMasterId}`} className='block'>{reg.regionMasterId}</Link>
                                     </td>
                                 </tr>

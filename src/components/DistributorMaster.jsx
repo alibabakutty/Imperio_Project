@@ -326,15 +326,15 @@ const DistributorMaster = () => {
             {errors.distributorCode && <p className='text-red-500 text-xs ml-2'>{errors.distributorCode}</p>}
 
             {filteredLedgerSuggestions.length > 0 && (
-                <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '40px', left: '1028px' }}>
+                <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '70px', left: '1028px' }}>
                     <div className='text-center bg-[#003285] text-[13.5px] text-white'>
                         <p>List Of Executive Master</p>
                     </div>
 
                     <div className='suggestions-dropdown'>
-                    <ul className='suggestions w-full h-[50vh] text-center mt-2'>
+                    <ul className='suggestions w-full h-[50vh] text-left mt-2'>
                         {filteredLedgerSuggestions.slice(0, showAllLedgerSuggestions ? undefined : 15).map((ledger) => (
-                            <li key={ledger.ledgerCode} tabIndex={0} onClick={() => selectLedger(ledger)} onKeyDown={(e) => e.key === 'Enter' && selectLedger(ledger)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
+                            <li key={ledger.ledgerCode} tabIndex={0} onClick={() => selectLedger(ledger)} onKeyDown={(e) => e.key === 'Enter' && selectLedger(ledger)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px] pl-2'>
                                 {ledger.ledgerCode.toUpperCase()} - {ledger.ledgerName.toUpperCase()}
                             </li>
                         ))}
@@ -372,14 +372,14 @@ const DistributorMaster = () => {
 
 
                 {filteredExecutiveSuggestions.length > 0 && (
-                    <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '40px', left: '1028px' }}>
+                    <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '70px', left: '1028px' }}>
                         <div className='text-center bg-[#003285] text-[13.5px] text-white'>
                             <p>List Of Executive Master</p>
                         </div>
 
-                        <ul className='suggestions w-full h-[20vh] text-center mt-2'>
+                        <ul className='suggestions w-full h-[20vh] text-left mt-2'>
                             {filteredExecutiveSuggestions.map((executive, index) => (
-                                <li key={index} tabIndex={0} onClick={() => selectExecutive(executive)} onKeyDown={(e) => e.key === 'Enter' && selectExecutive(executive)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
+                                <li key={index} tabIndex={0} onClick={() => selectExecutive(executive)} onKeyDown={(e) => e.key === 'Enter' && selectExecutive(executive)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px] pl-2'>
                                     {executive.executiveCode.toUpperCase()} - {executive.executiveMaster.toUpperCase()}
                                 </li>
                             ))}
@@ -401,15 +401,15 @@ const DistributorMaster = () => {
                 : <input type="text" id='regionCode' name='regionCode' value={regionCode} onChange={(e) => {handleRegionInputChange(e); setRegionCode(e.target.value)}} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.regionCode = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
 
                 {filteredRegionSuggestions.length > 0 && (
-                    <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '40px', left: '1028px' }}>
+                    <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '70px', left: '1028px' }}>
                         <div className='text-center bg-[#003285] text-[13.5px] text-white'>
                             <p>List Of Region Master</p>
                         </div>
 
                         <div className='suggestions-dropdown'>
-                            <ul className='suggestions w-full h-[50vh] text-center mt-2'>
+                            <ul className='suggestions w-full h-[50vh] text-left mt-2'>
                                 {filteredRegionSuggestions.slice(0, showAllRegionSuggestions ? undefined : 15).map((region) => (
-                                    <li key={region.regionCode} tabIndex={0} onClick={() => selectRegion(region)} onKeyDown={(e) => e.key === 'Enter' && selectRegion(region)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
+                                    <li key={region.regionCode} tabIndex={0} onClick={() => selectRegion(region)} onKeyDown={(e) => e.key === 'Enter' && selectRegion(region)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px] pl-2'>
                                         {region.regionMasterId.toUpperCase()} - {region.regionName.toUpperCase()}
                                     </li>
                                 ))}

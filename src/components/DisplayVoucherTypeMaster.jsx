@@ -27,7 +27,7 @@ const DisplayVoucherTypeMaster = () => {
         backButton: null
     });
 
-    const voucherTypeNameRef = useRef(null);
+    
     const backButtonRef = useRef(null);
     const yesQuitButtonRef = useRef(null);
     const cancelModalConfirmRef = useRef(null);
@@ -35,18 +35,31 @@ const DisplayVoucherTypeMaster = () => {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
 
+    const pulseCursor = (input) => {
+      const value = input.value;
+      if(value){
+        input.value = '';
+        setTimeout(() => {
+          input.value = value.charAt(0).toUpperCase() + value.slice(1);
+          input.setSelectionRange(0, 0);
+        }, 0);
+      }
+    };
+
     const handleChange = (e) => {
         const {name,value} = e.target;
-        setVoucher(prevState => ({
-            ...prevState, [name]: value
-        }));
+        
+        const capitalizedValue = value.charAt(0).toUpperCase() + value.slice(1);
+        setVoucher({ ...voucher, [name]: capitalizedValue });
     };
 
     useEffect(() => {
-        if(voucherTypeNameRef.current){
-            voucherTypeNameRef.current.focus();
-        };
 
+      if(inputRefs.current.voucherTypeName){
+        inputRefs.current.voucherTypeName.focus();
+        pulseCursor(inputRefs.current.voucherTypeName);
+      }
+        
 
         if (voucherTypeName) {
             loadVoucherTypeName();
@@ -105,28 +118,37 @@ const DisplayVoucherTypeMaster = () => {
 
     const handleKeyDown = (event) => {
         const {keyCode,target} = event;
+        const currentInputIndex = Object.keys(inputRefs.current).findIndex( (key) => key === target.id );
 
         if(keyCode === 13){
             event.preventDefault();
 
-            const currentInputIndex = Object.keys(inputRefs.current).findIndex( (key) => key === target.id );
+            
 
             if(currentInputIndex === Object.keys(inputRefs.current).length - 2){
                 backButtonRef.current.focus();
             }else{
                 const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
                 nextInputRef.focus();
+                pulseCursor(nextInputRef);
             }
         }else if(keyCode === 27){
             setShowModal(true);
-        }else if(keyCode === 8 && target.value === ''){
-            event.preventDefault();
+        }else if(keyCode === 8){
+          event.preventDefault();
 
-            const currentInputIndex = Object.keys(inputRefs.current).findIndex( (key) => key === target.id );
-
-            if(currentInputIndex > 0){
-                const prevInputRef = Object.values(inputRefs.current)[currentInputIndex - 1];
-                prevInputRef.focus();
+          const isEmptyOrZero = target.value.trim() === '' || (target.value === '0');
+          
+          if (isEmptyOrZero) {
+              event.preventDefault();
+              const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+              const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+              prevInputRef.focus();
+            } else if (target.selectionStart === 0 && target.selectionEnd === 0) {
+              event.preventDefault();
+              const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+              const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+              prevInputRef.focus();
             }
         }
     };
@@ -176,7 +198,7 @@ const DisplayVoucherTypeMaster = () => {
                 <form action="">
                     <div className='w-[100%] h-[10vh] border border-b-slate-500'>
                         <label htmlFor="voucherTypeName" className='mr-5 mt-3 ml-1'>Name</label>
-                        : <input type="text" id='voucherTypeName' name='voucherTypeName' value={voucher.voucherTypeName} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => {voucherTypeNameRef.current = input; inputRefs.current.voucherTypeName = input; }} className='w-[300px] ml-2 mt-3 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='voucherTypeName' name='voucherTypeName' value={voucher.voucherTypeName} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.voucherTypeName = input; }} className='w-[300px] ml-2 mt-3 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                     </div>
 
                     <div className='flex text-sm h-[75vh]'>
