@@ -83,7 +83,7 @@ const GodownAlter = () => {
         </div>
 
         <div className='w-[350px] h-[85vh] border border-gray-600 bg-[#def1fc]'>
-          <h2 className='p-1 bg-[#2a67b1] text-white text-center text-[14px]'>List of Godown</h2>
+          <h2 className='p-1 bg-[#2a67b1] text-white text-left text-[14px]'>List of Godown</h2>
           <table>
               <thead>
                   <tr>
@@ -97,8 +97,8 @@ const GodownAlter = () => {
               <tbody>
                   {filteredGodowns.map((god, index) => (
                       <tr key={god.godownCode} className={selectedIndex === index + 2 ? 'bg-[#FEB941]' : ''}>
-                            <Link className='block text-center text-[14px] focus:bg-[#FEB941] outline-none' to={`/alterGodownMaster/${god.godownCode}`}>
-                              <td className='flex justify-center items-center capitalize'>{god.godownCode}</td>
+                            <Link className='block text-left pl-2 text-[14px] focus:bg-[#FEB941] outline-none' to={`/alterGodownMaster/${god.godownCode}`}>
+                              <td className='flex capitalize'>{god.godownCode}</td>
                             </Link>
                       </tr>
                   ))}

@@ -55,30 +55,30 @@ const Gateway = () => {
             
             <div className='w-[350px] h-[70vh] bg-[#def1fc]  mt-20 border border-[#5BBCFF]'>
 
-                <h2 className=' p-1 bg-[#2a67b1] text-white text-center text-[14px]'>Gateway to DOMSS</h2>
+                <h2 className=' p-1 bg-[#2a67b1] text-white text-left text-[14px] pl-28'>Gateway to DOMSS</h2>
 
-                <p className='text-[12px] text-center mt-3 mb-2 text-[#686D76]'>MASTERS</p>
+                <p className='text-[12px] pl-28 mt-3 mb-2 text-[#5BBCFF]'>MASTERS</p>
 
-                <Link to="/list" ref={createRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
+                <Link to="/list" ref={createRef} className='block text-left pl-28 text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
                     <p className='m-0'>Create</p>
                 </Link>
 
-                <Link to="/display" ref={displayRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
+                <Link to="/display" ref={displayRef} className='block text-left pl-28 text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
                     <p className='m-0'>Display</p>
                 </Link>
 
-                <Link to="/alter" ref={alterRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
+                <Link to="/alter" ref={alterRef} className='block text-left pl-28 text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
                     <p className='m-0'>Alter</p>
                 </Link>
 
-                <p className='text-[12px] text-center mt-3 mb-2 text-[#686D76]'>TRANSACTIONS</p>
+                <p className='text-[12px] text-left pl-28 mt-3 mb-2 text-[#5BBCFF]'>TRANSACTIONS</p>
 
-                <Link to="/paymentVoucher"  ref={vouchersRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
+                <Link to="/paymentVoucher"  ref={vouchersRef} className='block text-left pl-28 text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
                     <p className='m-0'>Vouchers</p>
                 </Link>
 
-                <Link to="/conditional"  ref={dayBookRef} className='block text-center text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
-                    <p className='m-0'>DayBook</p>
+                <Link to="/conditional"  ref={dayBookRef} className='block text-left pl-28 text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
+                    <p className='m-0'>Day Book</p>
                 </Link>
 
             </div>

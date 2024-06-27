@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react'
 import { IoClose } from 'react-icons/io5'
+import { VscLaw } from 'react-icons/vsc';
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 const AlterVoucherTypeMaster = () => {
@@ -28,18 +29,37 @@ const AlterVoucherTypeMaster = () => {
         nameOfClass: ""
     });
 
+    const [voucherTypeSuggestions, setVoucherTypeSuggestions] = useState('');
+    const [filteredVoucherTypeSuggestions, setFilteredVoucherTypeSuggestions] = useState('');
+    // const [showVoucherNumberingOptions, setShowVoucherNumberingOptions] = useState(false);
+
     const inputRefs = useRef({
         voucherTypeName: null,
         voucherType: null,
         methodOfVoucherNumbering: null,
         alterAdditionalNumberingDetails: null,
+        startingNumber: null,
+        widthOfNumericalPart: null,
+        prefillWithZero: null,
+        restartNumberingApplicationForm: null,
+        restartNumberingStartingNumber: null,
+        restartNumberingPeriodicity: null,
+        prefixDetailsApplicationForm: null,
+        prefixDetailsParticulars: null,
+        suffixDetailsApplicationForm: null,
+        suffixDetailsParticulars: null,
         printingVoucherAfterSaving: null,
         nameOfClass: null,
         acceptButton: null
     });
 
-    const voucherTypeNameRef = useRef(null);
+    
     const acceptButtonRef = useRef(null);
+    const startingNumberRef = useRef(null);
+    const optionsRef = useRef(null);
+    // const voucherNumberingOptionsRef = useRef(null);
+    // const subFormSaveButtonRef = useRef(null);
+    // const subFormCancelButtonRef = useRef(null);
     const yesQuitButtonRef = useRef(null);
     const cancelModalConfirmRef = useRef(null);
 
@@ -48,17 +68,30 @@ const AlterVoucherTypeMaster = () => {
     const [showModal, setShowModal] = useState(false);
     const [showSubFormModal, setShowSubFormModal] = useState(false);
 
-    const handleChange = (e) => {
-        const {name,value} = e.target;
-        setVoucher(prevState => ({
-            ...prevState, [name]: value
-        }));
+    const pulseCursor = (input) => {
+      const value = input.value;
+      if(value){
+        input.value = '';
+        setTimeout(() => {
+          input.value = value.charAt(0).toUpperCase() + value.slice(1);
+          input.setSelectionRange(0, 0);
+        }, 0);
+      }
     };
 
+    const handleChange = (e) => {
+      const {name,value} = e.target;
+      
+      const capitalizedValue = value.charAt(0).toUpperCase() + value.slice(1);
+      setVoucher({ ...voucher, [name]: capitalizedValue });
+  };
+
     useEffect(() => {
-        if(voucherTypeNameRef.current){
-            voucherTypeNameRef.current.focus();
-        };
+        
+      if(inputRefs.current.voucherTypeName){
+        inputRefs.current.voucherTypeName.focus();
+        pulseCursor(inputRefs.current.voucherTypeName);
+      }
 
 
         if (voucherTypeName) {
@@ -68,6 +101,17 @@ const AlterVoucherTypeMaster = () => {
         if (voucherType) {
             loadVoucherType();
         };
+
+        const fetchVoucherTypeSuggestions = async () => {
+          try{
+            const response = await axios.get('http://localhost:8080/api/master/allVoucherTypes');
+            setVoucherTypeSuggestions(response.data);
+          }catch(error){
+            console.error('Error fetching voucher type names:', error);
+          }
+        };
+
+        fetchVoucherTypeSuggestions();
 
 
         const handleKeyDown = (event) => {
@@ -127,29 +171,84 @@ const AlterVoucherTypeMaster = () => {
 
       const handleKeyDown = (event) => {
         const { keyCode, target } = event;
-    
-        if (keyCode === 13) {
+        const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
+      
+        if (keyCode === 13) { // Enter key
           event.preventDefault();
-          const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-            (key) => key === target.id
-          );
+      
           if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
             acceptButtonRef.current.focus();
           } else {
             const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
             nextInputRef.focus();
+            pulseCursor(nextInputRef);
           }
-        } else if (keyCode === 27) {
+        } else if (keyCode === 27) { // Escape key
+          event.preventDefault();
           setShowModal(true);
-        } else if (keyCode === 8 && target.value === '') {
-          const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-            (key) => key === target.id
-          );
-          const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
-          const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-          prevInputRef.focus();
+        } else if (keyCode === 8) { // Backspace key
+          const isEmptyOrZero = target.value.trim() === '' || target.value === '0';
+          if (isEmptyOrZero) {
+            event.preventDefault();
+            const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+            const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+            prevInputRef.focus();
+            pulseCursor(prevInputRef);
+          } else if (target.selectionStart === 0 && target.selectionEnd === 0) {
+            event.preventDefault();
+            const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+            const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+            prevInputRef.focus();
+            pulseCursor(prevInputRef);
+          }
+        } else if (target.id === 'alterAdditionalNumberingDetails') {
+          if (keyCode === 89 || keyCode === 121) { // Y or y
+            event.preventDefault();
+            setVoucher(prevState => ({ ...prevState, alterAdditionalNumberingDetails: 'yes' }));
+            setShowSubFormModal(true);
+          } else if (keyCode === 78 || keyCode === 110) { // N or n
+            event.preventDefault();
+            setVoucher(prevState => ({ ...prevState, alterAdditionalNumberingDetails: 'no' }));
+            inputRefs.current.printingVoucherAfterSaving?.focus();
+          }
+        } else if (target.id === 'printingVoucherAfterSaving') {
+          if (keyCode === 89 || keyCode === 121) { // Y or y
+            event.preventDefault();
+            setVoucher(prevState => ({ ...prevState, printingVoucherAfterSaving: 'yes' }));
+          } else if (keyCode === 78 || keyCode === 110) { // N or n
+            event.preventDefault();
+            setVoucher(prevState => ({ ...prevState, printingVoucherAfterSaving: 'no' }));
+          }
         }
       };
+      
+      
+
+      const handleVoucherTypeChange = (e) => {
+        const value = e.target.value;
+
+        setVoucher((prevState) => ({ ...prevState, voucherType: value }));
+
+        if(value.trim() !== ''){
+          const filteredSuggestions = voucherTypeSuggestions.filter((voucher) => voucher.voucherType.toLowerCase().includes(value.toLowerCase()));
+
+          setFilteredVoucherTypeSuggestions(filteredSuggestions);
+
+          const exactMatch = voucherTypeSuggestions.find((voucher) => voucher.voucherType.toLowerCase() === value.toLowerCase());
+
+          if(exactMatch){
+            setVoucher((prevState) => ({ ...prevState, voucherType: exactMatch.voucherType }));
+          }
+        }else{
+          setFilteredVoucherTypeSuggestions([]);
+          setVoucher((prevState) => ({ ...prevState, voucherType: '' }));
+        }
+      };
+
+      const selectVoucherType = (voucher) => {
+        setVoucher((prevState) => ({ ...prevState, voucherType: voucher.voucherType}));
+        setFilteredVoucherTypeSuggestions([]);
+      }
 
 
     const loadVoucherTypeName = async () => {
@@ -190,6 +289,17 @@ const AlterVoucherTypeMaster = () => {
     };
 
 
+    const handleSubFormSave = () => {
+      setShowSubFormModal(false);
+    };
+
+    const handleSubFormCancel = () => {
+      setShowSubFormModal(false);
+    }
+    
+
+
+
   return (
     <div>
         <div className='#FFF5E1 w-[90%] h-[95vh]'>
@@ -204,7 +314,7 @@ const AlterVoucherTypeMaster = () => {
                 <form>
                     <div className='w-[100%] h-[10vh] border border-b-slate-500'>
                         <label htmlFor="voucherTypeName" className='mr-5 mt-3 ml-1'>Name</label>
-                        : <input type="text" id='voucherTypeName' name='voucherTypeName' value={voucher.voucherTypeName} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => {voucherTypeNameRef.current = input; inputRefs.current.voucherTypeName = input; }} className='w-[300px] ml-2 mt-3 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='voucherTypeName' name='voucherTypeName' value={voucher.voucherTypeName} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.voucherTypeName = input; }} className='w-[300px] ml-2 mt-3 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                     </div>
 
                     <div className='flex text-sm h-[75vh]'>
@@ -213,7 +323,24 @@ const AlterVoucherTypeMaster = () => {
 
                             <div>
                                 <label htmlFor="voucherType" className='mr-[130px] ml-1'>Select type of voucher</label>
-                                : <input type="text" id='voucherType' name='voucherType' value={voucher.voucherType} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.voucherType = input} className='w-[200px] ml-2 mt-3 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                : <input type="text" id='voucherType' name='voucherType' value={voucher.voucherType} onChange={(e) => {handleChange(e); handleVoucherTypeChange(e);}} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.voucherType = input} className='w-[200px] ml-2 mt-3 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+
+                              {filteredVoucherTypeSuggestions.length > 0 && (
+                                <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{position: 'absolute', top: '18px', left: '956px' }}>
+                                  <div className='text-center bg-[#003285] text-[13.5px] text-white'>
+                                    <p>List of Voucher Types</p>
+                                  </div>
+
+                                  <ul className='suggestions w-full h-[20vh] text-left mt-2'>
+                                    {filteredVoucherTypeSuggestions.map((voucher,index) => (
+                                      <li key={index} tabIndex={0} onClick={() => selectVoucherType(voucher)} onKeyDown={(e) => e.key === 'Enter' && selectVoucherType(voucher)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px] pl-2'>
+                                        {voucher.voucherType}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            
                             </div>
 
                             <div>
@@ -242,17 +369,17 @@ const AlterVoucherTypeMaster = () => {
                                                     <div className='mt-2 w-[1100px] h-[93vh] '>
                                                         <div className='ml-2'>
                                                             <label htmlFor="startingNumber" className='mr-14'>Starting Number</label>
-                                                            : <input type="text" id='startingNumber' name='startingNumber' value={startingNumber} onChange={(e) => setStartingNumber(e.target.value)} onKeyDown={handleFormKeyDown} ref={(input) => {inputRefs.current.startingNumber = input; startingNumberRef.current = input; }} className='w-[80px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                            : <input type="text" id='startingNumber' name='startingNumber' value={voucher.startingNumber} onKeyDown={handleKeyDown}  className='w-[80px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                         </div>
 
                                                         <div className='ml-2'>
                                                             <label htmlFor="widthOfNumericalPart" className='mr-[11px]'>Width of Numerical Part</label>
-                                                            : <input type="text" id='widthOfNumericalPart' name='widthOfNumericalPart' value={widthOfNumericalPart} onChange={(e) => setWidthOfNumericalPart(e.target.value)} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.widthOfNumericalPart = input} className='w-[80px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                            : <input type="text" id='widthOfNumericalPart' name='widthOfNumericalPart' value={voucher.widthOfNumericalPart} onKeyDown={handleKeyDown}  className='w-[80px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                         </div>
 
                                                         <div className='ml-2'>
                                                             <label htmlFor="prefillWithZero" className='mr-[64.5px]'>Prefil with Zero</label>
-                                                            : <input type="text" id='prefillWithZero' name='prefillWithZero' value={prefillWithZero} onChange={(e) => setPrefillWithZero(e.target.value)} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.prefillWithZero = input} className='w-[80px] ml-2 mb-1 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                            : <input type="text" id='prefillWithZero' name='prefillWithZero' value={voucher.prefillWithZero} onKeyDown={handleKeyDown}  className='w-[80px] ml-2 mb-1 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                         </div>
 
                                                         <div className='flex justify-evenly text-center border border-gray-400 w-[99%] h-[83vh] ml-[5px]'>
@@ -270,26 +397,19 @@ const AlterVoucherTypeMaster = () => {
                                                                 <div className='flex justify-evenly'>
                                                                     <div>
                                                                         <label htmlFor="restartNumberingApplicationForm"></label>
-                                                                        <input type="text" id='restartNumberingApplicationForm' name='restartNumberingApplicationForm' value={restartNumberingApplicationForm} onChange={(e) => {setRestartNumberingApplicationForm(e.target.value); handleDateInputChange(e); }} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.restartNumberingApplicationForm = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='restartNumberingApplicationForm' name='restartNumberingApplicationForm' onKeyDown={handleKeyDown} value={voucher.restartNumberingApplicationForm} className='w-[100px] ml-2 h-5 text-right capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                                     </div>
 
                                                                     <div>
                                                                         <label htmlFor="restartNumberingStartingNumber"></label>
-                                                                        <input type="text" id='restartNumberingStartingNumber' name='restartNumberingStartingNumber' value={restartNumberingStartingNumber} onChange={(e) => setRestartNumberingStartingNumber(e.target.value)} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.restartNumberingStartingNumber = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='restartNumberingStartingNumber' name='restartNumberingStartingNumber' onKeyDown={handleKeyDown} value={voucher.restartNumberingStartingNumber} className='w-[100px] ml-2 h-5 text-right capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                                     </div>
 
                                                                     <div>
                                                                         <label htmlFor="restartNumberingPeriodicity"></label>
-                                                                        <input type="text" id='restartNumberingPeriodicity' name='restartNumberingPeriodicity' value={restartNumberingPeriodicity} onChange={(e) => {setRestartNumberingPeriodicity(e.target.value); handleInputChange(e); }} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.restartNumberingPeriodicity = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='restartNumberingPeriodicity' name='restartNumberingPeriodicity' onKeyDown={handleKeyDown} value={voucher.restartNumberingPeriodicity} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
 
-                                                                        {showPeriodicityOptions && (
-                                                                            <div ref={optionsRef} className='w-[10%] border text-sm bg-[#CAF4FF] absolute top-[70px] left-[365px]'>
-                                                                                <div className='bg-[#003285] px-5 text-white'>
-                                                                                    <p>Periodicity</p>
-                                                                                </div>
-                                                                                {periodicityRenderOptions()}
-                                                                            </div>
-                                                                        )}
+                                                                        
                                                                         
                                                                     </div>
                                                                 </div>
@@ -311,12 +431,12 @@ const AlterVoucherTypeMaster = () => {
                                                                 <div className='flex justify-evenly'>
                                                                     <div>
                                                                         <label htmlFor="prefixDetailsApplicationForm"></label>
-                                                                        <input type="text" id='prefixDetailsApplicationForm' name='prefixDetailsApplicationForm' value={prefixDetailsApplicationForm} onChange={(e) => {setPrefixDetailsApplicationForm(e.target.value); handleDateInputChange(e); }} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.prefixDetailsApplicationForm = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='prefixDetailsApplicationForm' name='prefixDetailsApplicationForm' value={voucher.prefixDetailsApplicationForm} onKeyDown={handleKeyDown} className='w-[100px] ml-2 h-5 text-right capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                                     </div>
 
                                                                     <div>
                                                                         <label htmlFor="prefixDetailsParticulars"></label>
-                                                                        <input type="text" id='prefixDetailsParticulars' name='prefixDetailsParticulars' value={prefixDetailsParticulars} onChange={(e) => setPrefixDetailsParticulars(e.target.value)} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.prefixDetailsParticulars = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='prefixDetailsParticulars' name='prefixDetailsParticulars' value={voucher.prefixDetailsParticulars} onKeyDown={handleKeyDown}  className='w-[100px] ml-2 h-5 text-left capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                                     </div>
                                                                 </div>
 
@@ -336,12 +456,12 @@ const AlterVoucherTypeMaster = () => {
                                                                 <div className='flex justify-evenly'>
                                                                     <div>
                                                                         <label htmlFor="suffixDetailsApplicationForm"></label>
-                                                                        <input type="text" id='suffixDetailsApplicationForm' name='suffixDetailsApplicationForm' value={suffixDetailsApplicationForm} onChange={(e) => {setSuffixDetailsApplicationForm(e.target.value); handleDateInputChange(e); }} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.suffixDetailsApplicationForm = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='suffixDetailsApplicationForm' name='suffixDetailsApplicationForm' value={voucher.suffixDetailsApplicationForm} onKeyDown={handleKeyDown}  className='w-[100px] ml-2 h-5 text-right capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                                     </div>
 
                                                                     <div>
                                                                         <label htmlFor="suffixDetailsParticulars"></label>
-                                                                        <input type="text" id='suffixDetailsParticulars' name='suffixDetailsParticulars' value={suffixDetailsParticulars} onChange={(e) => setSuffixDetailsParticulars(e.target.value)} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.suffixDetailsParticulars = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='suffixDetailsParticulars' name='suffixDetailsParticulars' value={voucher.suffixDetailsParticulars} onKeyDown={handleKeyDown} className='w-[100px] ml-2 h-5 text-left capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                                     </div>
                                                                 </div>
 
@@ -350,8 +470,8 @@ const AlterVoucherTypeMaster = () => {
                                                     </div>
 
                                                     <div>
-                                                        <button type='submit' onClick={handleSubFormSave} className='text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[315px]'>Save</button>
-                                                        <button type='button' onClick={handleSubFormCancel} className='text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[260px]'>Cancel</button>
+                                                        <button type='submit' onClick={handleSubFormSave}  className='text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[315px]'>Save</button>
+                                                        <button type='button' onClick={handleSubFormCancel}  className='text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[260px]'>Cancel</button>
                                                     </div>
 
                                                 </div>

@@ -59,31 +59,31 @@ const ListofMasters = () => {
 
       <div className='flex justify-center items-center flex-col'>
         <div className='w-[350px] h-[70vh] border border-gray-600 mt-20 bg-[#def1fc]'>
-          <h2 className='p-1 bg-[#2a67b1] text-white text-center text-[14px]'>List of Masters</h2>
+          <h2 className='p-1 bg-[#2a67b1] text-white text-left pl-28 text-[14px]'>List of Masters</h2>
 
-          <p className='text-[13px] ml-[120px] mt-12 text-[#686D76]'>DOMSS MASTER</p>
+          <p className='text-[13px] text-left pl-28 mt-12 text-[#5BBCFF]'>DOMSS MASTER</p>
 
-          <Link to="/region" ref={regionRef} className='block text-center text-sm focus:bg-yellow-500 outline-none mt-2 mb-1'>
+          <Link to="/region" ref={regionRef} className='block text-left pl-28 text-sm focus:bg-yellow-500 outline-none mt-2 mb-1'>
             <p className='m-0'>Region Master</p>
           </Link>
 
-          <Link to="/executive" ref={executiveRef} className='block text-center text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
+          <Link to="/executive" ref={executiveRef} className='block text-left pl-28 text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
             <p className='m-0'>Executive Master</p>
           </Link>
 
-          <Link to="/distributor" ref={distributorRef} className='block text-center text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
+          <Link to="/distributor" ref={distributorRef} className='block text-left pl-28 text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
             <p className='m-0'>Distributor Master</p>
           </Link>
 
-          <Link to="/product" ref={productRef} className='block text-center text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
+          <Link to="/product" ref={productRef} className='block text-left pl-28 text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
             <p className='m-0'>Product Master</p>
           </Link>
 
-          <Link to="/godown" ref={godownRef} className='block text-center text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
+          <Link to="/godown" ref={godownRef} className='block text-left pl-28 text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
             <p className='m-0'>Goodown Master</p>
           </Link>
 
-          <Link to="/voucherType" ref={voucherTypeRef} className='block text-center text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
+          <Link to="/voucherType" ref={voucherTypeRef} className='block text-left pl-28 text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
             <p className='m-0'>Voucher Type Master</p>
           </Link>
 

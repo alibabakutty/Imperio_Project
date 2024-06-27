@@ -18,7 +18,7 @@ const ProductAlter = () => {
         listOfProducts()
             .then((response) => {
                 setProduct(response.data);
-                setFilteredProducts(response.data.slice(0, 15)); // Initially set filteredProducts to the first 15 products
+                setFilteredProducts(response.data.slice(0, 20)); // Initially set filteredProducts to the first 15 products
             })
             .catch(error => {
                 console.error(error);
@@ -32,7 +32,7 @@ const ProductAlter = () => {
     useEffect(() => {
         const handleKeyDown = (e) => {
 
-            const totalItems = product.length > 15 ? filteredProducts.length + 3 : filteredProducts.length + 2;   //+2 for create, back and +1 for dropdown if exists
+            const totalItems = product.length > 20 ? filteredProducts.length + 3 : filteredProducts.length + 2;   //+2 for create, back and +1 for dropdown if exists
 
             if (e.key === 'ArrowDown') {
                 setSelectedIndex(prevIndex => (prevIndex + 1) % totalItems);
@@ -46,7 +46,7 @@ const ProductAlter = () => {
                 } else if (selectedIndex === 1) {
                     navigate('/alter');
 
-                } else if(product.length > 15 && selectedIndex === filteredProducts.length + 2){
+                } else if(product.length > 20 && selectedIndex === filteredProducts.length + 2){
                     dropdownRef.current.focus();
                 }else if(filteredProducts[selectedIndex - 2]){
                     navigate(`/alterProductMaster/${filteredProducts[selectedIndex - 2].productCode}`);   //Navigate to the selected product
@@ -65,10 +65,10 @@ const ProductAlter = () => {
         let filtered = [];
 
         if(productCode === ''){
-            filtered = product.slice(0, 15);  //Reset to show 15 products
+            filtered = product.slice(0, 20);  //Reset to show 15 products
         }else{
             filtered = product.filter(prod => prod.productCode.toLowerCase().includes(productCode.toLowerCase()));
-            filtered = filtered.slice(0,15);  //Limit to 15 products
+            filtered = filtered.slice(0,20);  //Limit to 15 products
         }
 
         setFilteredProducts(filtered);
@@ -91,7 +91,7 @@ const ProductAlter = () => {
                 </div>
 
                 <div className='w-[350px] h-[85vh] border border-gray-600 bg-[#def1fc]'>
-                    <h2 className='p-1 bg-[#2a67b1] text-white text-center text-[14px]'>List of Product</h2>
+                    <h2 className='p-1 bg-[#2a67b1] text-white text-left text-[13px]'>List of Product</h2>
                     <table>
                         <thead>
                             <tr>
@@ -99,26 +99,26 @@ const ProductAlter = () => {
                             </tr>
                         </thead>
                         <div className='border border-b-gray-500 w-[347px]'>
-                            <Link className={`block text-center text-[14px] ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`} to={"/product"}><p className='ml-[285px] text-[14px]'>Create</p></Link>
-                            <Link className={`block text-center text-[14px] ${selectedIndex === 1 ? 'bg-[#FEB941]' : ''}`} to={"/alter"}><p className='ml-[287px] text-[14px] '>Back</p></Link>
+                            <Link className={`block text-center text-[13px] ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`} to={"/product"}><p className='ml-[285px] text-[14px]'>Create</p></Link>
+                            <Link className={`block text-center text-[13px] ${selectedIndex === 1 ? 'bg-[#FEB941]' : ''}`} to={"/alter"}><p className='ml-[287px] text-[14px] '>Back</p></Link>
                         </div>
                         <tbody>
                             {filteredProducts.map((prod, index) => (
                                 <tr key={prod.productCode} className={selectedIndex === index + 2 ? 'bg-[#FEB941]' : ''}>
-                                    <td className='flex justify-center items-center capitalize'>
+                                    <td className='flex text-left text-[13px] pl-2 capitalize'>
                                         <Link to={`/alterProductMaster/${prod.productCode}`} className='block'>{prod.productCode}</Link>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-                    {product.length > 15 && (
+                    {product.length > 20 && (
                         <div className='mt-2'>
                             <label htmlFor="productDropdown" className='block text-center text-[14px] mb-1'></label>
-                            <select name="productDropdown" id="productDropdown" ref={dropdownRef} className={`w-full border border-gray-600 bg-white p-1 focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ${selectedIndex === filteredProducts.length + 2 ? 'bg-[#BBE9FF]' : ''}`} onChange={handleDropdownChange}>
-                                <option value="" className='block text-center text-[14px]'>Select other Products</option>
-                                {product.slice(15).map(prod => (
-                                    <option key={prod.productCode} value={prod.productCode} className='block text-center text-[14px]'>
+                            <select name="productDropdown" id="productDropdown" ref={dropdownRef} className={`w-full text-[13px] border border-gray-600 bg-[#BBE9FF] p-1 focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ${selectedIndex === filteredProducts.length + 2 }`} onChange={handleDropdownChange}>
+                                <option value="" className='block text-left pl-2 text-[13px]'>Select other Products</option>
+                                {product.slice(20).map(prod => (
+                                    <option key={prod.productCode} value={prod.productCode} className='block text-left pl-2 text-[13px]'>
                                         {prod.productCode}
                                     </option>
                                 ))}

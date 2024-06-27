@@ -85,7 +85,7 @@ const GodownFilter = () => {
         </div>
 
         <div className='w-[350px] h-[85vh] border border-gray-600 bg-[#def1fc]'>
-          <h2 className='p-1 bg-[#2a67b1] text-white text-center text-[14px]'>List of Godown</h2>
+          <h2 className='p-1 bg-[#2a67b1] text-white text-left text-[13px]'>List of Godown</h2>
           <table>
               <thead>
                   <tr>
@@ -93,14 +93,14 @@ const GodownFilter = () => {
                   </tr>
               </thead>
               <div className='border border-b-gray-500 w-[347px]'>
-                  <Link className={`block text-center text-[14px] focus:bg-[#FEB941] outline-none ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`} to={"/godown"}><p className='ml-[285px] text-[14px]'>Create</p></Link>
-                  <Link className={`block text-center text-[14px] focus:bg-[#FEB941] outline-none ${selectedIndex === 1 ? 'bg-[#FEB941]' : ''}`} to={"/display"}><p className='ml-[287px] text-[14px] '>Back</p></Link>
+                  <Link className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`} to={"/godown"}><p className='ml-[285px] text-[14px]'>Create</p></Link>
+                  <Link className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${selectedIndex === 1 ? 'bg-[#FEB941]' : ''}`} to={"/display"}><p className='ml-[287px] text-[14px] '>Back</p></Link>
               </div>
               <tbody>
                   {filteredGodowns.map((god, index) => (
                       <tr key={god.godownCode} className={selectedIndex === index + 2 ? 'bg-[#FEB941]' : ''}>
-                            <Link className='block text-center text-[14px] focus:bg-[#FEB941] outline-none' to={`/displayGodown/${god.godownCode}`}>
-                              <td className='flex justify-center items-center capitalize'>{god.godownCode}</td>
+                            <Link className='block text-center text-[13px] focus:bg-[#FEB941] outline-none' to={`/displayGodown/${god.godownCode}`}>
+                              <td className='flex text-left capitalize pl-2'>{god.godownCode}</td>
                             </Link>
                       </tr>
                   ))}

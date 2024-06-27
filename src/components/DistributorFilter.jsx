@@ -84,7 +84,7 @@ const DistributorFilter = () => {
         </div>
 
         <div className='w-[350px] h-[85vh] border border-gray-600 bg-[#def1fc]'>
-          <h2 className='p-1 bg-[#2a67b1] text-white text-center text-[14px]'>List of Distributor</h2>
+          <h2 className='p-1 bg-[#2a67b1] text-white text-left text-[13px]'>List of Distributor</h2>
           <table>
               <thead>
                   <tr>
@@ -92,13 +92,13 @@ const DistributorFilter = () => {
                   </tr>
               </thead>
               <div className='border border-b-gray-500 w-[347px]'>
-                  <Link className={`block text-center text-[14px] focus:bg-[#FEB941] outline-none ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`} to={"/distributor"}><p className='ml-[285px] text-[14px]'>Create</p></Link>
-                  <Link className={`block text-center text-[14px] focus:bg-[#FEB941] outline-none ${selectedIndex === 1 ? 'bg-[#FEB941]' : ''}`} to={"/display"}><p className='ml-[287px] text-[14px] '>Back</p></Link>
+                  <Link className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`} to={"/distributor"}><p className='ml-[285px] text-[14px]'>Create</p></Link>
+                  <Link className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${selectedIndex === 1 ? 'bg-[#FEB941]' : ''}`} to={"/display"}><p className='ml-[287px] text-[14px] '>Back</p></Link>
               </div>
               <tbody>
                   {filteredDistributors.map((dis, index) => (
                     <tr key={dis.distributorCode} className={selectedIndex === index + 2 ? 'bg-[#FEB941]' : ''}>
-                      <td className='flex justify-center items-center capitalize'>
+                      <td className='flex text-left text-[13px] capitalize pl-2'>
                           <Link className='block' to={`/displayDistributor/${dis.distributorCode}`}>
                             {dis.distributorCode}
                           </Link>

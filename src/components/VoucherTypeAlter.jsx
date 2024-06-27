@@ -95,7 +95,7 @@ const VoucherTypeAlter = () => {
             </div>
 
             <div className='w-[350px] h-[85vh] border border-gray-600 bg-[#def1fc]'>
-                <h2 className='p-1 bg-[#2a67b1] text-white text-center text-[14px]'>List of Voucher Types</h2>
+                <h2 className='p-1 bg-[#2a67b1] text-white text-left text-[14px]'>List of Voucher Types</h2>
 
                 <div className='border border-b-gray-500 w-[347px]'>
                     <Link tabIndex={0} onFocus={() => setSelectedIndex(0)} className={`block text-center text-[14px] focus:bg-[#FEB941] outline-none ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`} to={"/voucherType"}><p className='ml-[285px] text-[14px]'>Create</p></Link>
@@ -120,7 +120,7 @@ const VoucherTypeAlter = () => {
                                         tabIndex={0}
                                         onFocus={() => setSelectedIndex(index + 2)}
                                     >
-                                        <div className='flex justify-center items-center capitalize'>
+                                        <div className='flex text-left pl-2 capitalize'>
                                             {vou.voucherTypeName}
                                         </div>
                                     </Link>
@@ -137,7 +137,7 @@ const VoucherTypeAlter = () => {
                                         tabIndex={0}
                                         onFocus={() => setSelectedIndex(index + filteredVoucherNames.length + 2)}
                                     >
-                                        <div className='flex justify-center items-center capitalize'>
+                                        <div className='flex text-left pl-2 capitalize'>
                                             {vou.voucherType}
                                         </div>
                                     </Link>
