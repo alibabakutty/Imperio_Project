@@ -1,7 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react'
 import { IoClose } from 'react-icons/io5'
-import { VscLaw } from 'react-icons/vsc';
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 const AlterVoucherTypeMaster = () => {
@@ -15,12 +14,11 @@ const AlterVoucherTypeMaster = () => {
         methodOfVoucherNumbering: "",
         alterAdditionalNumberingDetails: "",
         startingNumber: "",
-        widthOfNumericalPart: "",
+        widthOfNumericalPart: '',
         prefillWithZero: "",
         restartNumberingApplicationForm: "",
         restartNumberingStartingNumber: "",
         restartNumberingPeriodicity: "",
-        showPeriodicityOptions: "",
         prefixDetailsApplicationForm: "",
         prefixDetailsParticulars: "",
         suffixDetailsApplicationForm: "",
@@ -29,9 +27,7 @@ const AlterVoucherTypeMaster = () => {
         nameOfClass: ""
     });
 
-    const [voucherTypeSuggestions, setVoucherTypeSuggestions] = useState('');
-    const [filteredVoucherTypeSuggestions, setFilteredVoucherTypeSuggestions] = useState('');
-    // const [showVoucherNumberingOptions, setShowVoucherNumberingOptions] = useState(false);
+    
 
     const inputRefs = useRef({
         voucherTypeName: null,
@@ -53,20 +49,27 @@ const AlterVoucherTypeMaster = () => {
         acceptButton: null
     });
 
+    const [voucherTypeSuggestions, setVoucherTypeSuggestions] = useState('');
+    const [filteredVoucherTypeSuggestions, setFilteredVoucherTypeSuggestions] = useState('');
+    const [showVoucherNumberingOptions, setShowVoucherNumberingOptions] = useState(false);
+    const [showPeriodicityOptions, setShowPeriodicityOptions] = useState(false);
+
+    const [showModal, setShowModal] = useState(false);
+    const [showSubFormModal, setShowSubFormModal] = useState(false);
+
     
     const acceptButtonRef = useRef(null);
     const startingNumberRef = useRef(null);
     const optionsRef = useRef(null);
-    // const voucherNumberingOptionsRef = useRef(null);
-    // const subFormSaveButtonRef = useRef(null);
-    // const subFormCancelButtonRef = useRef(null);
+    const voucherNumberingOptionsRef = useRef(null);
+    const subFormSaveButtonRef = useRef(null);
+    const subFormCancelButtonRef = useRef(null);
     const yesQuitButtonRef = useRef(null);
     const cancelModalConfirmRef = useRef(null);
 
     const navigate = useNavigate();
 
-    const [showModal, setShowModal] = useState(false);
-    const [showSubFormModal, setShowSubFormModal] = useState(false);
+    
 
     const pulseCursor = (input) => {
       const value = input.value;
@@ -91,6 +94,10 @@ const AlterVoucherTypeMaster = () => {
       if(inputRefs.current.voucherTypeName){
         inputRefs.current.voucherTypeName.focus();
         pulseCursor(inputRefs.current.voucherTypeName);
+      }
+
+      if(showSubFormModal){
+        startingNumberRef.current.focus();
       }
 
 
@@ -138,7 +145,7 @@ const AlterVoucherTypeMaster = () => {
             document.removeEventListener('keydown', handleCtrlA);
           };
 
-    }, [voucherTypeName, voucherType]);
+    }, [voucherTypeName, voucherType, showSubFormModal]);
 
 
 
@@ -170,54 +177,92 @@ const AlterVoucherTypeMaster = () => {
 
 
       const handleKeyDown = (event) => {
-        const { keyCode, target } = event;
-        const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
-      
-        if (keyCode === 13) { // Enter key
+        const {keyCode, target} = event;
+
+        if(keyCode === 13){
           event.preventDefault();
-      
-          if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
-            acceptButtonRef.current.focus();
-          } else {
-            const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
-            nextInputRef.focus();
-            pulseCursor(nextInputRef);
+          const currentInputIndex = Object.keys(inputRefs.current).findIndex( (key) => key === target.id );
+
+          if(target.id === 'alterAdditionalNumberingDetails'){
+            if(inputRefs.current.printingVoucherAfterSaving && inputRefs.current.printingVoucherAfterSaving.focus){
+              inputRefs.current.printingVoucherAfterSaving.focus();
+              pulseCursor(inputRefs.current.printingVoucherAfterSaving);
+            }
+          }else if(target.id === 'suffixDetailsParticulars'){
+            if(subFormSaveButtonRef.current && subFormSaveButtonRef.current.focus){
+              subFormSaveButtonRef.current.focus();
+            }
+          }else if(target.id === 'subFormSaveButton'){
+            handleSubFormSave();
+            if(inputRefs.current.printingVoucherAfterSaving && inputRefs.current.printingVoucherAfterSaving.focus){
+              inputRefs.current.printingVoucherAfterSaving.focus();
+            }
+          }else{
+            const nextInputIndex = currentInputIndex + 1;
+            if(nextInputIndex < Object.keys(inputRefs.current).length){
+              const nextInputRef = Object.values(inputRefs.current)[nextInputIndex];
+              if(nextInputRef && nextInputRef.focus){
+                nextInputRef.focus();
+                pulseCursor(nextInputRef);
+              }
+            }else{
+              if(acceptButtonRef.current && acceptButtonRef.current.focus){
+                acceptButtonRef.current.focus();
+              }
+            }
           }
-        } else if (keyCode === 27) { // Escape key
-          event.preventDefault();
+        } else if(keyCode === 27){
           setShowModal(true);
-        } else if (keyCode === 8) { // Backspace key
-          const isEmptyOrZero = target.value.trim() === '' || target.value === '0';
-          if (isEmptyOrZero) {
+        } else if(keyCode === 8){
+          if(target.selectionStart === 0 && target.selectionEnd === 0){
             event.preventDefault();
-            const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
-            const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-            prevInputRef.focus();
-            pulseCursor(prevInputRef);
-          } else if (target.selectionStart === 0 && target.selectionEnd === 0) {
-            event.preventDefault();
-            const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
-            const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-            prevInputRef.focus();
-            pulseCursor(prevInputRef);
+
+            if(target.id === 'printingVoucherAfterSaving'){
+              if(inputRefs.current.alterAdditionalNumberingDetails && inputRefs.current.alterAdditionalNumberingDetails.focus){
+                inputRefs.current.alterAdditionalNumberingDetails.focus();
+                pulseCursor(inputRefs.current.alterAdditionalNumberingDetails);
+              }
+            } else if(target.id === 'acceptButton'){
+              if(inputRefs.current.nameOfClass && inputRefs.current.nameOfClass.focus){
+                inputRefs.current.nameOfClass.focus();
+                pulseCursor(inputRefs.current.nameOfClass);
+              }
+            }else{
+              const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id );
+              const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+              const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+              
+              if(prevInputRef && prevInputRef.focus){
+                prevInputRef.focus();
+                pulseCursor(prevInputRef);
+              }
+            }
           }
-        } else if (target.id === 'alterAdditionalNumberingDetails') {
-          if (keyCode === 89 || keyCode === 121) { // Y or y
+        } else if(target.id === 'alterAdditionalNumberingDetails'){
+          if(keyCode === 89 || keyCode === 121){
             event.preventDefault();
-            setVoucher(prevState => ({ ...prevState, alterAdditionalNumberingDetails: 'yes' }));
+
+            setVoucher({ ...voucher, alterAdditionalNumberingDetails: 'no' });
             setShowSubFormModal(true);
-          } else if (keyCode === 78 || keyCode === 110) { // N or n
+          } else if(keyCode === 78 || keyCode === 110){
             event.preventDefault();
-            setVoucher(prevState => ({ ...prevState, alterAdditionalNumberingDetails: 'no' }));
-            inputRefs.current.printingVoucherAfterSaving?.focus();
+
+            setVoucher({ ...voucher, alterAdditionalNumberingDetails: 'no' });
+            const nextInputRef = inputRefs.current.printingVoucherAfterSaving;
+            if(nextInputRef && nextInputRef.focus){
+              nextInputRef.focus();
+              pulseCursor(nextInputRef);
+            }
           }
-        } else if (target.id === 'printingVoucherAfterSaving') {
-          if (keyCode === 89 || keyCode === 121) { // Y or y
+        } else if(target.id === 'printingVoucherAfterSaving'){
+          if(keyCode === 89 || keyCode === 121){
             event.preventDefault();
-            setVoucher(prevState => ({ ...prevState, printingVoucherAfterSaving: 'yes' }));
-          } else if (keyCode === 78 || keyCode === 110) { // N or n
+
+            setVoucher({ ...voucher, printingVoucherAfterSaving: 'yes'});
+          }else if(keyCode === 78 || keyCode === 110){
             event.preventDefault();
-            setVoucher(prevState => ({ ...prevState, printingVoucherAfterSaving: 'no' }));
+
+            setVoucher({ ...voucher, printingVoucherAfterSaving: 'no' });
           }
         }
       };
@@ -289,13 +334,132 @@ const AlterVoucherTypeMaster = () => {
     };
 
 
-    const handleSubFormSave = () => {
-      setShowSubFormModal(false);
+    const handleSubFormSave = async () => {
+      try {
+        const response = await axios.put(`http://localhost:8080/api/master/alterVoucherTypeMaster/${voucherTypeName}`, voucher);
+        console.log('Response:', response.data); // Log response for debugging
+        // Optionally handle success scenario (e.g., show confirmation)
+      } catch (error) {
+        console.error('Error updating data:', error);
+        // Optionally handle error scenario (e.g., show error message)
+        showSubFormModal(false);
+      }
     };
 
     const handleSubFormCancel = () => {
+
+      setVoucher({ ...voucher, startingNumber: voucher.startingNumber, widthOfNumericalPart: voucher.widthOfNumericalPart, prefillWithZero: voucher.widthOfNumericalPart, restartNumberingApplicationForm: voucher.restartNumberingApplicationForm, restartNumberingStartingNumber: voucher.restartNumberingStartingNumber, restartNumberingPeriodicity: voucher.restartNumberingPeriodicity, prefixDetailsApplicationForm: voucher.prefixDetailsApplicationForm, prefixDetailsParticulars: voucher.prefixDetailsParticulars, suffixDetailsApplicationForm: voucher.suffixDetailsApplicationForm, suffixDetailsParticulars: voucher.suffixDetailsParticulars, alterAdditionalNumberingDetails: voucher.alterAdditionalNumberingDetails, });
+      
       setShowSubFormModal(false);
-    }
+    };
+
+
+    
+      // Handle outside click to hide options
+      useEffect(() => {
+        const handleOutsideClick = (e) => {
+          if(optionsRef.current && !optionsRef.current.contains(e.target)){
+            setShowPeriodicityOptions(false);
+          }
+        };
+
+        const handleVoucherNumberingOutsideClick = (e) => {
+          if(voucherNumberingOptionsRef.current && !voucherNumberingOptionsRef.current.contains(e.target)){
+            setShowVoucherNumberingOptions(false);
+          }
+        };
+
+
+        document.addEventListener('click', handleOutsideClick);
+        document.addEventListener('click', handleVoucherNumberingOutsideClick);
+
+
+        return() => {
+          document.removeEventListener('click', handleOutsideClick);
+          document.removeEventListener('click', handleVoucherNumberingOutsideClick);
+        }
+      }, []);
+
+
+      // Handle input change
+      const handleInputChange = (e) => {
+        setVoucher({ ...voucher, restartNumberingPeriodicity: e.target.value });
+        setShowPeriodicityOptions(true);  //show the periodicity options when input is changed
+      };
+
+      //Handle periodicity option click
+      const handlePeriodicityClick = (periodicity) => {
+        setVoucher({ ...voucher, restartNumberingPeriodicity: periodicity });
+        setShowPeriodicityOptions(false); //Hide the periodicity options
+      };
+
+      const periodicityRenderOptions = () => {
+        const periodicities = ["Daily", "Monthly", "Weekly", "Yearly"];
+        return periodicities.map((periodicity) => (
+          <p key={periodicity} tabIndex={0} onClick={() => handlePeriodicityClick(periodicity)} onKeyDown={(e) => {if(e.key === 'Enter'){handlePeriodicityClick(periodicity)} }} className='h-5 pl-1 text-sm focus:bg-yellow-200 focus:outline-none'>{periodicity}</p>
+        ))
+      };
+
+      //Handle voucher numbering input change
+      const handleVoucherNumberingInputChange = (e) => {
+        setVoucher({ ...voucher, methodOfVoucherNumbering: e.target.value });
+        setShowVoucherNumberingOptions(true);   //show voucher numbering options
+      };
+
+      //Handle periodicity option click for voucher numbering
+      const handleVoucherNumberingClick = (methodsOfNumbering) =>{
+        setVoucher({ ...voucher, methodOfVoucherNumbering: methodsOfNumbering });
+        setShowVoucherNumberingOptions(false); //Hide the voucher numbering options
+      };
+
+      const voucherNumberRenderingOptions = () => {
+        const methodsOfNumberingDatas = ["Automatic", "Manual"];
+        return methodsOfNumberingDatas.map((methodOfNumbering) => (
+          <p key={methodOfNumbering} tabIndex={0} onClick={() => handleVoucherNumberingClick(methodOfNumbering)} onKeyDown={(e) => {if(e.key === 'Enter'){handleVoucherNumberingClick(methodOfNumbering)} }} className='h-5 pl-2 text-sm focus:bg-yellow-200 focus:outline-none text-left'>{methodOfNumbering}</p>
+        ))
+      };
+
+      //Function to format date input
+      const formatDateInput = (value) => {
+        const datePattern = /(\d{1,2})[./-](\d{1,2})[./-](\d{2})/;
+        const match = value.match(datePattern);
+
+        if(match){
+          const day = match[1];
+          const month = match[2];
+          const year = match[3];
+
+          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Nov', 'Dec'];
+
+          const formattedMonth = months[parseInt(month, 10) - 1 ];
+
+          if(formattedMonth){
+            return `${day}-${formattedMonth}-20${year}`;
+          }
+        }
+        return value;
+      };
+
+      //Handle date input change
+      const handleDateInputChange = (e) => {
+        const {name, value} = e.target;
+
+        //Format the input value using formatedateinput function
+        const formattedValue = formatDateInput(value);
+
+        //Update state based on the input field name
+        switch(name) {
+          case 'restartNumberingApplicationForm':
+            setVoucher({ ...voucher, restartNumberingApplicationForm: formattedValue });
+            break;
+          case 'prefixDetailsApplicationForm':
+            setVoucher({ ...voucher, prefixDetailsApplicationForm: formattedValue});
+            break;
+          case 'suffixDetailsApplicationForm':
+            setVoucher({ ...voucher, suffixDetailsApplicationForm: formattedValue });
+            break;
+        }
+      };
     
 
 
@@ -345,7 +509,17 @@ const AlterVoucherTypeMaster = () => {
 
                             <div>
                                 <label htmlFor="methodOfVoucherNumbering" className='mr-[77.5px] ml-1'>Method of Voucher Numbering</label>
-                                : <input type="text" id='methodOfVoucherNumbering' name='methodOfVoucherNumbering' value={voucher.methodOfVoucherNumbering} onKeyDown={handleKeyDown} onChange={handleChange} ref={(input) => inputRefs.current.methodOfVoucherNumbering = input} className='w-[200px] ml-2 mt-3 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                : <input type="text" id='methodOfVoucherNumbering' name='methodOfVoucherNumbering' value={voucher.methodOfVoucherNumbering} onKeyDown={handleKeyDown} onChange={(e) => {handleChange(e); handleVoucherNumberingInputChange(e); }} ref={(input) => {inputRefs.current.methodOfVoucherNumbering = input; }} className='w-[200px] ml-2 mt-3 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+
+                              {showVoucherNumberingOptions && (
+                                <div ref={voucherNumberingOptionsRef} className='w-[15%] border text-center text-sm bg-[#CAF4FF] absolute top-[122px] left-[405px]'>
+                                  <div className='bg-[#003285] px-5 text-white'>
+                                    <p>Methods of Numbering</p>
+                                  </div>
+                                  {voucherNumberRenderingOptions()}
+                                </div>
+                              )}
+                            
                             </div>
 
                             <div>
@@ -369,17 +543,17 @@ const AlterVoucherTypeMaster = () => {
                                                     <div className='mt-2 w-[1100px] h-[93vh] '>
                                                         <div className='ml-2'>
                                                             <label htmlFor="startingNumber" className='mr-14'>Starting Number</label>
-                                                            : <input type="text" id='startingNumber' name='startingNumber' value={voucher.startingNumber} onKeyDown={handleKeyDown}  className='w-[80px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                            : <input type="text" id='startingNumber' name='startingNumber' value={voucher.startingNumber} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => {inputRefs.current.startingNumber = input; startingNumberRef.current = input; }}  className='w-[80px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                         </div>
 
                                                         <div className='ml-2'>
                                                             <label htmlFor="widthOfNumericalPart" className='mr-[11px]'>Width of Numerical Part</label>
-                                                            : <input type="text" id='widthOfNumericalPart' name='widthOfNumericalPart' value={voucher.widthOfNumericalPart} onKeyDown={handleKeyDown}  className='w-[80px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                            : <input type="text" id='widthOfNumericalPart' name='widthOfNumericalPart' value={voucher.widthOfNumericalPart} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => {inputRefs.current.widthOfNumericalPart = input; }}  className='w-[80px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                         </div>
 
                                                         <div className='ml-2'>
                                                             <label htmlFor="prefillWithZero" className='mr-[64.5px]'>Prefil with Zero</label>
-                                                            : <input type="text" id='prefillWithZero' name='prefillWithZero' value={voucher.prefillWithZero} onKeyDown={handleKeyDown}  className='w-[80px] ml-2 mb-1 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                            : <input type="text" id='prefillWithZero' name='prefillWithZero' value={voucher.prefillWithZero} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => {inputRefs.current.prefillWithZero = input; }}  className='w-[80px] ml-2 mb-1 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                         </div>
 
                                                         <div className='flex justify-evenly text-center border border-gray-400 w-[99%] h-[83vh] ml-[5px]'>
@@ -388,28 +562,35 @@ const AlterVoucherTypeMaster = () => {
                                                                     <p>Restart Numbering</p>
                                                                 </div>
 
-                                                                <div className='flex justify-evenly'>
-                                                                    <p className=''>Applicable Form</p>
-                                                                    <p>Starting Number</p>
+                                                                <div className='flex justify-evenly border border-b-gray-400'>
+                                                                    <p>Applicable <br />Form</p>
+                                                                    <p>Starting <br />Number</p>
                                                                     <p>Periodicity</p>
                                                                 </div>
 
                                                                 <div className='flex justify-evenly'>
                                                                     <div>
                                                                         <label htmlFor="restartNumberingApplicationForm"></label>
-                                                                        <input type="text" id='restartNumberingApplicationForm' name='restartNumberingApplicationForm' onKeyDown={handleKeyDown} value={voucher.restartNumberingApplicationForm} className='w-[100px] ml-2 h-5 text-right capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='restartNumberingApplicationForm' name='restartNumberingApplicationForm' onKeyDown={handleKeyDown} value={voucher.restartNumberingApplicationForm} onChange={(e) => {handleChange(e); handleDateInputChange(e); }} ref={(input) => {inputRefs.current.restartNumberingApplicationForm = input; }} className='w-[100px] ml-2 h-5 text-right capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                                     </div>
 
                                                                     <div>
                                                                         <label htmlFor="restartNumberingStartingNumber"></label>
-                                                                        <input type="text" id='restartNumberingStartingNumber' name='restartNumberingStartingNumber' onKeyDown={handleKeyDown} value={voucher.restartNumberingStartingNumber} className='w-[100px] ml-2 h-5 text-right capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='restartNumberingStartingNumber' name='restartNumberingStartingNumber' onKeyDown={handleKeyDown} value={voucher.restartNumberingStartingNumber} onChange={handleChange} ref={(input) => {inputRefs.current.restartNumberingStartingNumber = input; }} className='w-[70px] ml-2 h-5 text-right capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                                     </div>
 
                                                                     <div>
                                                                         <label htmlFor="restartNumberingPeriodicity"></label>
-                                                                        <input type="text" id='restartNumberingPeriodicity' name='restartNumberingPeriodicity' onKeyDown={handleKeyDown} value={voucher.restartNumberingPeriodicity} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='restartNumberingPeriodicity' name='restartNumberingPeriodicity' onKeyDown={handleKeyDown} value={voucher.restartNumberingPeriodicity} onChange={(e) => {handleChange(e); handleInputChange(e); }} ref={(input) => {inputRefs.current.restartNumberingPeriodicity = input; }} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
 
-                                                                        
+                                                                      {showPeriodicityOptions && (
+                                                                        <div ref={optionsRef} className='w-[10%] border text-sm bg-[#CAF4FF] absolute top-[92px] left-[350px]'>
+                                                                          <div className='bg-[#003285] px-5 text-white'>
+                                                                            <p>Periodicity</p>
+                                                                          </div>
+                                                                          {periodicityRenderOptions()}
+                                                                        </div>
+                                                                      )}
                                                                         
                                                                     </div>
                                                                 </div>
@@ -422,8 +603,8 @@ const AlterVoucherTypeMaster = () => {
                                                                     <p>Prefix Details</p>
                                                                 </div>
 
-                                                                <div className='flex justify-evenly'>
-                                                                    <p>Application Form</p>
+                                                                <div className='flex justify-evenly border border-b-gray-400'>
+                                                                    <p>Application <br />Form</p>
                                                                     <p>Particulars</p>
                                                                     
                                                                 </div>
@@ -431,12 +612,12 @@ const AlterVoucherTypeMaster = () => {
                                                                 <div className='flex justify-evenly'>
                                                                     <div>
                                                                         <label htmlFor="prefixDetailsApplicationForm"></label>
-                                                                        <input type="text" id='prefixDetailsApplicationForm' name='prefixDetailsApplicationForm' value={voucher.prefixDetailsApplicationForm} onKeyDown={handleKeyDown} className='w-[100px] ml-2 h-5 text-right capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='prefixDetailsApplicationForm' name='prefixDetailsApplicationForm' value={voucher.prefixDetailsApplicationForm} onChange={(e) => {handleChange(e); handleDateInputChange(e); }} onKeyDown={handleKeyDown} ref={(input) => {inputRefs.current.prefixDetailsApplicationForm = input; }} className='w-[100px] ml-2 h-5 text-right capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                                     </div>
 
                                                                     <div>
                                                                         <label htmlFor="prefixDetailsParticulars"></label>
-                                                                        <input type="text" id='prefixDetailsParticulars' name='prefixDetailsParticulars' value={voucher.prefixDetailsParticulars} onKeyDown={handleKeyDown}  className='w-[100px] ml-2 h-5 text-left capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='prefixDetailsParticulars' name='prefixDetailsParticulars' value={voucher.prefixDetailsParticulars} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => {inputRefs.current.prefixDetailsParticulars = input; }}  className='w-[100px] ml-2 h-5 text-left capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                                     </div>
                                                                 </div>
 
@@ -448,20 +629,20 @@ const AlterVoucherTypeMaster = () => {
                                                                     <p>Suffix Details</p>
                                                                 </div>
 
-                                                                <div className='flex justify-evenly'>
-                                                                    <p>Application Form</p>
+                                                                <div className='flex justify-evenly border border-b-gray-400'>
+                                                                    <p>Application <br />Form</p>
                                                                     <p>Particulars</p>
                                                                 </div>
 
                                                                 <div className='flex justify-evenly'>
                                                                     <div>
                                                                         <label htmlFor="suffixDetailsApplicationForm"></label>
-                                                                        <input type="text" id='suffixDetailsApplicationForm' name='suffixDetailsApplicationForm' value={voucher.suffixDetailsApplicationForm} onKeyDown={handleKeyDown}  className='w-[100px] ml-2 h-5 text-right capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='suffixDetailsApplicationForm' name='suffixDetailsApplicationForm' value={voucher.suffixDetailsApplicationForm} onChange={(e) => {handleChange(e); handleDateInputChange(e); }} onKeyDown={handleKeyDown} ref={(input) => {inputRefs.current.suffixDetailsApplicationForm = input; }}  className='w-[100px] ml-2 h-5 text-right capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                                     </div>
 
                                                                     <div>
                                                                         <label htmlFor="suffixDetailsParticulars"></label>
-                                                                        <input type="text" id='suffixDetailsParticulars' name='suffixDetailsParticulars' value={voucher.suffixDetailsParticulars} onKeyDown={handleKeyDown} className='w-[100px] ml-2 h-5 text-left capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='suffixDetailsParticulars' name='suffixDetailsParticulars' value={voucher.suffixDetailsParticulars} onChange={handleChange} onKeyDown={handleKeyDown} ref={(input) => {inputRefs.current.suffixDetailsParticulars = input; }} className='w-[100px] ml-2 h-5 text-left capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                                     </div>
                                                                 </div>
 
@@ -470,8 +651,8 @@ const AlterVoucherTypeMaster = () => {
                                                     </div>
 
                                                     <div>
-                                                        <button type='submit' onClick={handleSubFormSave}  className='text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[315px]'>Save</button>
-                                                        <button type='button' onClick={handleSubFormCancel}  className='text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[260px]'>Cancel</button>
+                                                        <button type='submit' onClick={handleSubFormSave} ref={subFormSaveButtonRef}  className='text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[315px]'>Save</button>
+                                                        <button type='button' onClick={handleSubFormCancel} ref={subFormCancelButtonRef}  className='text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[260px]'>Cancel</button>
                                                     </div>
 
                                                 </div>

@@ -82,11 +82,18 @@ const ProductFilter = () => {
   };
 
   return (
-    <div className='flex'>
-      <div className='w-[45%] h-[100vh] bg-[#DDDDDD]'></div>
+    <>
+    
+    <div className='flex justify-evenly'>
 
-      <div className='w-[45%] h-[100vh] bg-[#EEEEEE] flex flex-col items-center justify-start'>
-        <div className='w-[50%] h-16 flex flex-col justify-center items-center border border-black bg-white border-b-0 '>
+        <div className='w-[90%] flex h-screen'>
+            <div className='w-1/2 bg-white'>
+                
+            </div> 
+
+            <div className='w-1/2 bg-slate-100 flex justify-center items-center flex-col'>
+
+            <div className='w-[50%] h-16 flex flex-col justify-center items-center border border-black bg-white border-b-0 '>
           <p className='text-[13px] font-semibold underline underline-offset-4 decoration-gray-400'>Product Display</p>
           <input
             type="text"
@@ -113,22 +120,22 @@ const ProductFilter = () => {
                 className={`block text-center text-[13px] ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`}
                 to={"/product"}
               >
-                <p className='ml-[285px] text-[14px]'>Create</p>
+                <p className='ml-[285px]'>Create</p>
               </Link>
 
               <Link
                 className={`block text-center text-[13px] ${selectedIndex === 1 ? 'bg-[#FEB941]' : ''}`}
                 to={"/display"}
               >
-                <p className='ml-[287px] text-[14px] '>Back</p>
+                <p className='ml-[287px] '>Back</p>
               </Link>
             </div>
             <tbody>
               {filteredProducts.map((prod, index) => (
                 <tr key={prod.productCode} className={selectedIndex === index + 2 ? 'bg-[#FEB941]' : ''}>
-                  <td className='flex text-left text-[13px] capitalize pl-2'>
+                  <td className='flex text-left text-[12.5px] capitalize pl-2'>
                     <Link className='block' to={`/displayProduct/${prod.productCode}`}>
-                      {prod.productCode}
+                      {prod.productCode} - {prod.productDescription}
                     </Link>
                   </td>
                 </tr>
@@ -143,17 +150,20 @@ const ProductFilter = () => {
                 <option value="" className='block text-left text-[13px] pl-2'>Select other Products</option>
                 {product.slice(20).map(prod => (
                   <option key={prod.productCode} value={prod.productCode} className='block text-left text-[13px] pl-2'>
-                    {prod.productCode}
+                    {prod.productCode} - {prod.productDescription}
                   </option>
                 ))}
               </select>
             </div>
           )}
         </div>
-      </div>
+            </div>
 
-      <div className='w-[10%] bg-[#DDDDDD] h-[100vh]'></div>
+        </div>
+
     </div>
+    
+    </>
   );
 }
 

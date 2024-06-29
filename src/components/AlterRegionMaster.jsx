@@ -19,19 +19,19 @@ const AlterRegionMaster = () => {
   });
 
   const inputRefs = useRef({
-    ledgerCode: null,
-    ledgerName: null,
+    // ledgerCode: null,
+    // ledgerName: null,
     regionMasterId: null,
     regionName: null,
-    country: null,
-    godownCode: null,
-    godownName: null
+    country: null
+    // godownCode: null,
+    // godownName: null
   })
 
   const [godownSuggestions, setGodownSuggestions] = useState([]);
-  const [filteredGodownSuggestions, setFilteredGodownSuggestions] = useState([]);
-  const [godownCode, setGodownCode] = useState('');
-  const [godownName, setGodownName] = useState('');
+  // const [filteredGodownSuggestions, setFilteredGodownSuggestions] = useState([]);
+  // const [godownCode, setGodownCode] = useState('');
+  // const [godownName, setGodownName] = useState('');
 
   
   const acceptButtonRef = useRef(null);
@@ -93,9 +93,9 @@ const AlterRegionMaster = () => {
     loadRegion();
 
     // Focus on ledgerCode input and pulse cursor
-    if (inputRefs.current.ledgerCode) {
-      inputRefs.current.ledgerCode.focus();
-      pulseCursor(inputRefs.current.ledgerCode);
+    if (inputRefs.current.regionMasterId) {
+      inputRefs.current.regionMasterId.focus();
+      pulseCursor(inputRefs.current.regionMasterId);
     }
 
     const handleKeyDown = (event) => {
@@ -208,12 +208,12 @@ const AlterRegionMaster = () => {
     }
   };
 
-  const selectGodown = (godown) => {
-    setGodownCode(godown.godownCode);
-    setGodownName(godown.godownName);
-    setRegion({ ...region, godownCode: godown.godownCode, godownName: godown.godownName });
-    setFilteredGodownSuggestions([]);
-  };
+  // const selectGodown = (godown) => {
+  //   setGodownCode(godown.godownCode);
+  //   setGodownName(godown.godownName);
+  //   setRegion({ ...region, godownCode: godown.godownCode, godownName: godown.godownName });
+  //   setFilteredGodownSuggestions([]);
+  // };
 
   const handleModalClose = () => {
     setShowModal(false);
@@ -236,9 +236,9 @@ const AlterRegionMaster = () => {
               </Link>
             </span>
           </div>
-          <div className="w-[550px] h-[36vh] border border-gray-500 ml-[80px]">
+          <div className="w-[550px] h-[20vh] border border-gray-500 ml-[80px]">
             <form onSubmit={onSubmit}>
-              {['ledgerCode', 'ledgerName', 'regionMasterId', 'regionName', 'regionState', 'country', 'godownCode', 'godownName'].map((field) => (
+              {[ 'regionMasterId', 'regionName', 'regionState', 'country'].map((field) => (
                 <div key={field} className="input-ldgr flex items-center mt-1">
                   <label htmlFor={field} className="text-sm ml-2 mr-2 w-[140px]">
                     {field.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}
@@ -260,7 +260,7 @@ const AlterRegionMaster = () => {
                   />
                 </div>
               ))}
-              <div className='mt-[288px]'>
+              <div className='mt-[395px]'>
                 <button
                   type='submit'
                   id='acceptButton'
@@ -272,7 +272,7 @@ const AlterRegionMaster = () => {
               </div>
             </form>
           </div>
-          <div className='mt-[295px] ml-[480px]'>
+          <div className='mt-[395px] ml-[480px]'>
             <Link to={"/regionFilter"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>Q: Quit</Link>
           </div>
         </div>
@@ -326,7 +326,7 @@ const AlterRegionMaster = () => {
         </div>
       )}
 
-      {filteredGodownSuggestions.length > 0 && (
+      {/* {filteredGodownSuggestions.length > 0 && (
         <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '40px', left: '1028px' }}>
           <div className='text-center bg-[#003285] text-[13.5px] text-white'>
             <p>List Of Godown Codes</p>
@@ -339,7 +339,7 @@ const AlterRegionMaster = () => {
             ))}
           </ul>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

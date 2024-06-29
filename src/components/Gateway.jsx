@@ -1,17 +1,17 @@
 import React, { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import '../assets/css/font.css'
+// import  imperio1  from '../assets/imperio1.jpeg'
 
 const Gateway = () => {
 
     const createRef = useRef(null);
     const displayRef = useRef(null);
     const alterRef = useRef(null);
-    const vouchersRef = useRef(null);
-    const dayBookRef = useRef(null);
+    
 
 
-    const links = [createRef, displayRef, alterRef, vouchersRef, dayBookRef];
+    const links = [createRef, displayRef, alterRef];
 
 
     useEffect(() => {
@@ -43,58 +43,53 @@ const Gateway = () => {
 
     }, [links])
   return (
-    <div className='flex'>
+    <>
+    
+    <div className='flex justify-evenly'>
 
-        <div className='w-[45%] bg-[#DDDDDD] h-[100vh]'>
-            
-        </div>
+        <div className='w-[90%] flex h-screen'>
+            <div className='w-1/2 bg-white flex items-center'>
+                <div>
+                    {/* <img src={imperio1} alt="Imperio Golden Label" className='w-[900px]'  /> */}
+                </div>
+            </div> 
 
+            <div className='w-1/2 bg-slate-100 flex justify-center'>
 
+                <div className='w-[300px] h-96 border border-blue-400 text-sm bg-[#def1fc] mt-[82px]'>
 
-        <div className='w-[45%] bg-[#EEEEEE] h-[100vh] flex justify-center'>
-            
-            <div className='w-[350px] h-[70vh] bg-[#def1fc]  mt-20 border border-[#5BBCFF]'>
+                    <h2 className=' text-white bg-[#2a67b1] px-20'>Gateway of Imperio</h2>
 
-                <h2 className=' p-1 bg-[#2a67b1] text-white text-left text-[14px] pl-28'>Gateway to DOMSS</h2>
+                    <ul>
+                        <li className=" py-3 ml-20 text-[10px] text-[#2a67b1]">
+                            <h2>MASTERS</h2>
+                        </li>
+                        <Link to={"/list"} ref={createRef} className='block outline-none focus:bg-yellow-500'>
+                            <li className="w-full  pl-20 ">
+                                Create
+                            </li>
+                        </Link>
+                        <Link to={"/alter"} ref={displayRef} className='block outline-none focus:bg-yellow-500'>
+                            <li className="w-full pl-20 p-0">
+                                Alter
+                            </li>
+                        </Link>
+                        <Link to={"display"} ref={alterRef} className='block outline-none focus:bg-yellow-500'>
+                            <li className="w-full pl-20 p-0">
+                                Display
+                            </li>
+                        </Link>
+                    </ul>
 
-                <p className='text-[12px] pl-28 mt-3 mb-2 text-[#5BBCFF]'>MASTERS</p>
-
-                <Link to="/list" ref={createRef} className='block text-left pl-28 text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
-                    <p className='m-0'>Create</p>
-                </Link>
-
-                <Link to="/display" ref={displayRef} className='block text-left pl-28 text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
-                    <p className='m-0'>Display</p>
-                </Link>
-
-                <Link to="/alter" ref={alterRef} className='block text-left pl-28 text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
-                    <p className='m-0'>Alter</p>
-                </Link>
-
-                <p className='text-[12px] text-left pl-28 mt-3 mb-2 text-[#5BBCFF]'>TRANSACTIONS</p>
-
-                <Link to="/paymentVoucher"  ref={vouchersRef} className='block text-left pl-28 text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
-                    <p className='m-0'>Vouchers</p>
-                </Link>
-
-                <Link to="/conditional"  ref={dayBookRef} className='block text-left pl-28 text-[14px] focus:bg-[#FEB941] outline-none mb-1'>
-                    <p className='m-0'>Day Book</p>
-                </Link>
+                </div>
 
             </div>
 
         </div>
 
-
-
-        <div className='w-[10%] bg-[#DDDDDD] h-[100vh]'>
-
-        </div>
-
-        
-        
-        
     </div>
+    
+    </>
   )
 }
 

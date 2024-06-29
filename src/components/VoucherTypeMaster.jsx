@@ -7,7 +7,7 @@ import { createNewVoucherTypeMaster } from '../services/MasterService';
 const VoucherTypeMaster = () => {
 
     const [voucherTypeName, setVoucherTypeName] = useState('');
-    const [voucherType, setVoucherType] = useState('');
+    const [voucherType, setVoucherType] = useState('Sales Order');
     const [methodOfVoucherNumbering, setMethodVoucherNumbering] = useState('automatic');
     const [showVoucherNumberingOptions, setShowVoucherNumberingOptions] = useState(false);
     const [alterAdditionalNumberingDetails, setAlterAdditionalNumberingDetails] = useState('no');
@@ -218,12 +218,24 @@ const VoucherTypeMaster = () => {
           case 8: // Backspace key
             if (target.selectionStart === 0 && target.selectionEnd === 0) {
               event.preventDefault();
-              const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
-              const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
-              const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-              if (prevInputRef && prevInputRef.focus) {
-                prevInputRef.focus();
-                pulseCursor(prevInputRef);
+              if (target.id === 'printingVoucherAfterSaving') {
+                if (inputRefs.current.alterAdditionalNumberingDetails && inputRefs.current.alterAdditionalNumberingDetails.focus) {
+                  inputRefs.current.alterAdditionalNumberingDetails.focus();
+                  pulseCursor(inputRefs.current.alterAdditionalNumberingDetails);
+                }
+              } else if (target.id === 'acceptButton') {
+                if (inputRefs.current.nameofclass && inputRefs.current.nameofclass.focus) {
+                  inputRefs.current.nameofclass.focus();
+                  pulseCursor(inputRefs.current.nameofclass);
+                }
+              } else {
+                const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
+                const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+                const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+                if (prevInputRef && prevInputRef.focus) {
+                  prevInputRef.focus();
+                  pulseCursor(prevInputRef);
+                }
               }
             }
             break;
@@ -251,12 +263,20 @@ const VoucherTypeMaster = () => {
                 event.preventDefault();
                 setPrintingVoucherAfterSaving('no');
               }
+            } else if (target.id === 'prefillWithZero'){
+              if(keyCode === 89 || keyCode === 121){
+                event.preventDefault();
+                setPrefillWithZero('yes');
+              } else if(keyCode === 78 || keyCode === 110){
+                event.preventDefault();
+                setPrefillWithZero('no');
+              }
             }
             break;
         }
       };
       
-    
+      
     
     
     
@@ -591,9 +611,9 @@ const VoucherTypeMaster = () => {
                                                                     <p>Restart Numbering</p>
                                                                 </div>
 
-                                                                <div className='flex justify-evenly'>
-                                                                    <p className=''>Applicable Form</p>
-                                                                    <p>Starting Number</p>
+                                                                <div className='flex justify-evenly border border-b-gray-400'>
+                                                                    <p>Applicable <br />Form</p>
+                                                                    <p>Starting <br />Number</p>
                                                                     <p>Periodicity</p>
                                                                 </div>
 
@@ -605,7 +625,7 @@ const VoucherTypeMaster = () => {
 
                                                                     <div>
                                                                         <label htmlFor="restartNumberingStartingNumber"></label>
-                                                                        <input type="text" id='restartNumberingStartingNumber' name='restartNumberingStartingNumber' value={restartNumberingStartingNumber} onChange={(e) => setRestartNumberingStartingNumber(e.target.value)} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.restartNumberingStartingNumber = input} className='w-[100px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                                                        <input type="text" id='restartNumberingStartingNumber' name='restartNumberingStartingNumber' value={restartNumberingStartingNumber} onChange={(e) => setRestartNumberingStartingNumber(e.target.value)} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.restartNumberingStartingNumber = input} className='w-[70px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                                                                     </div>
 
                                                                     <div>
@@ -632,8 +652,8 @@ const VoucherTypeMaster = () => {
                                                                     <p>Prefix Details</p>
                                                                 </div>
 
-                                                                <div className='flex justify-evenly'>
-                                                                    <p>Application Form</p>
+                                                                <div className='flex justify-evenly border border-b-gray-400'>
+                                                                    <p>Application <br />Form</p>
                                                                     <p>Particulars</p>
                                                                     
                                                                 </div>
@@ -658,8 +678,8 @@ const VoucherTypeMaster = () => {
                                                                     <p>Suffix Details</p>
                                                                 </div>
 
-                                                                <div className='flex justify-evenly'>
-                                                                    <p>Application Form</p>
+                                                                <div className='flex justify-evenly border border-b-gray-400'>
+                                                                    <p>Application <br />Form</p>
                                                                     <p>Particulars</p>
                                                                 </div>
 

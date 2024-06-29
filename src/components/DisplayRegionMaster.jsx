@@ -54,9 +54,9 @@ const DisplayRegionMaster = () => {
     };
 
     useEffect(() => {
-        if (inputRefs.current.ledgerCode) {
-            inputRefs.current.ledgerCode.focus();
-            pulseCursor(inputRefs.current.ledgerCode);
+        if (inputRefs.current.regionMasterId) {
+            inputRefs.current.regionMasterId.focus();
+            pulseCursor(inputRefs.current.regionMasterId);
         }
         loadRegion();
 
@@ -177,16 +177,16 @@ const DisplayRegionMaster = () => {
                             <IoClose />
                         </span>
                     </div>
-                    <div className='w-[550px] h-[35vh] border border-gray-500 ml-[80px] '>
+                    <div className='w-[550px] h-[18vh] border border-gray-500 ml-[80px] '>
                         <form>
-                            <div className='input-ldgr mt-3 '>
+                            {/* <div className='input-ldgr mt-3 '>
                                 <label htmlFor="ledgerCode" className='text-sm mr-[73px] ml-2'>Ledger Code</label>
                                 : <input type="text" id='ledgerCode' name='ledgerCode' value={region.ledgerCode} onChange={handleChange} onKeyDown={handleKeyDown} onFocus={(e) => pulseCursor(e.target)} ref={(input) => { inputRefs.current.ledgerCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ' autoComplete='off' />
                             </div>
                             <div className='input-ldgr '>
                                 <label htmlFor="ledgerName" className='text-sm mr-[70px] ml-2'>Ledger Name</label>
                                 : <input type="text" id='ledgerName' name='ledgerName' value={region.ledgerName} onChange={handleChange} onKeyDown={handleKeyDown} onFocus={(e) => pulseCursor(e.target)} ref={(input) => inputRefs.current.ledgerName = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ' autoComplete='off' />
-                            </div>
+                            </div> */}
                             <div className='input-ldgr '>
                                 <label htmlFor="regionMasterId" className='text-sm ml-2 mr-[49px]'>Region Master ID</label>
                                 : <input type="text" id='regionMasterId' name='regionMasterId' value={region.regionMasterId} onChange={handleChange} onKeyDown={handleKeyDown} onFocus={(e) => pulseCursor(e.target)} ref={(input) => inputRefs.current.regionMasterId = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
@@ -203,17 +203,17 @@ const DisplayRegionMaster = () => {
                                 <label htmlFor="country" className='text-sm mr-[106px] ml-2'>Country</label>
                                 : <input type="text" id='country' name='country' value={region.country} onChange={handleChange} onKeyDown={handleKeyDown} onFocus={(e) => pulseCursor(e.target)} ref={(input) => inputRefs.current.country = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                             </div>
-                            <div className='input-ldgr'>
+                            {/* <div className='input-ldgr'>
                                 <label htmlFor="godownCode" className='text-sm mr-[66.5px] ml-2'>Godown Code</label>
                                 : <input type="text" id='godownCode' name='godownCode' value={region.godownCode} onChange={handleChange} onKeyDown={handleKeyDown} onFocus={(e) => pulseCursor(e.target)} ref={(input) => inputRefs.current.godownCode = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                             </div>
                             <div className='input-ldgr'>
                                 <label htmlFor="godownName" className='text-sm mr-[65px] ml-2'>Godown Name</label>
                                 : <input type="text" id='godownName' name='godownName' value={region.godownName} onChange={handleChange} onKeyDown={handleKeyDown} onFocus={(e) => pulseCursor(e.target)} ref={(input) => inputRefs.current.godownName = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                            </div>
+                            </div> */}
                         </form>
                     </div>
-                    <div className='mt-[300px] ml-[30px]'>
+                    <div className='mt-[400px] ml-[30px]'>
                         <Link to={"/regionFilter"} id='backButton' ref={(button) => { backButtonRef.current = button; inputRefs.current.backButton = button }} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>Q: Quit</Link>
                     </div>
                 </div>

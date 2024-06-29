@@ -42,6 +42,12 @@ const AlterDistributorMaster = () => {
     const cancelModalConfirmRef = useRef(null);
 
     const [showModal, setShowModal] = useState(false);
+    const [executiveSuggestions, setExecutiveSuggestions] = useState([]);
+    const [regionSuggestions, setRegionSuggestions] = useState([]);
+    const [filteredExecutiveSuggestions, setFilteredExecutiveSuggestions] = useState([]);
+    const [filteredRegionSuggestions, setFilteredRegionSuggestions] = useState([]);
+    const [showAllRegionSuggestions, setShowAllRegionSuggestions] = useState(false);
+
 
     const pulseCursor = (input) => {
       const value = input.value;
@@ -77,6 +83,28 @@ const AlterDistributorMaster = () => {
       }
         
         loadDistributor();
+
+        const fetchExecutiveSuggestions = async () => {
+          try{
+            const responseExecutive = await axios.get('http://localhost:8080/api/master/allExecutive');
+            setExecutiveSuggestions(responseExecutive.data);
+          }catch (error){
+            console.error('Error fetching executive data:', error);
+          }
+        };
+
+        fetchExecutiveSuggestions();
+
+        const fetchRegionSuggestions = async () => {
+          try{
+            const responseRegion = await axios.get('http://localhost:8080/api/master/allRegion');
+            setRegionSuggestions(responseRegion.data);
+          }catch (error){
+            console.error('Error fetching region data:', error);
+          }
+        };
+
+        fetchRegionSuggestions();
 
         const handleKeyDown = (event) => {
             const { ctrlKey, key } = event;
@@ -131,6 +159,60 @@ const AlterDistributorMaster = () => {
   
     }, [showModal]);
 
+
+    const handleExecutiveInputChange = (e) => {
+      const executiveValue = e.target.value;
+      setDistributor({ ...distributor, executiveCode: executiveValue });
+
+      if(executiveValue.trim() !== ''){
+        const filteredSuggestions = executiveSuggestions.filter((executive) => executive.executiveCode.toLowerCase().includes(executiveValue.toLowerCase()) );
+        setFilteredExecutiveSuggestions(filteredSuggestions);
+
+        const exactMatch = executiveSuggestions.find((executive) => executive.executiveCode.toLowerCase() === executiveValue.toLowerCase());
+
+        if(exactMatch){
+          setDistributor({ ...distributor, executiveMaster: exactMatch.executiveMaster });
+        }
+      }else{
+        setFilteredExecutiveSuggestions([]);
+        setDistributor({ ...distributor, executiveMaster: '' });
+      }
+      
+    };
+
+
+    const selectExecutive = (executive) => {
+      setDistributor({ ...distributor, executiveCode: executive.executiveCode });
+      setDistributor({ ...distributor, executiveMaster: executive.executiveMaster });
+      setFilteredExecutiveSuggestions([]);
+    };
+
+
+    const handleRegionInputChange = (e) => {
+      const regionValue = e.target.value;
+      setDistributor({ ...distributor, regionCode: regionValue });
+
+      if(regionValue.trim() !== ''){
+        const filteredSuggestions = regionSuggestions.filter((region) => region.regionMasterId.toLowerCase().includes(regionValue.toLowerCase()));
+        setFilteredRegionSuggestions(filteredSuggestions);
+
+        const exactMatch = regionSuggestions.find((region) => region.regionMasterId,toLowerCase() === regionValue.toLowerCase());
+
+        if(exactMatch){
+          setDistributor({ ...distributor, regionMaster: exactMatch.regionMaster})
+        }
+      }else{
+        setFilteredRegionSuggestions([]);
+        setDistributor({ ...distributor, regionMaster: '' });
+      }
+    };
+
+    const selectRegion = (region) => {
+      setDistributor({ ...distributor, regionCode: region.regionCode });
+      setDistributor({ ...distributor, regionMaster: region.regionMaster });
+      setFilteredRegionSuggestions([]);
+    };
+
     const handleKeyDown = (event) => {
       const { keyCode, target } = event;
       const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
@@ -184,6 +266,10 @@ const AlterDistributorMaster = () => {
         navigate('/distributorAlter');
       };
 
+      const toggleShowAllRegionSuggestions = () => {
+    setShowAllRegionSuggestions(!showAllRegionSuggestions);
+  };
+
 
   return (
     <div>
@@ -225,7 +311,24 @@ const AlterDistributorMaster = () => {
 
                             <div className='input-ldgr'>
                                 <label htmlFor="executiveCode" className='text-sm mr-[92px] ml-2'>Executive Code</label>
-                                : <input type="text" id='executiveCode' name='executiveCode' value={distributor.executiveCode} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.executiveCode = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                : <input type="text" id='executiveCode' name='executiveCode' value={distributor.executiveCode} onChange={(e) => {onInputChange(e); handleExecutiveInputChange(e); }} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.executiveCode = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                            
+                                {filteredExecutiveSuggestions.length > 0 && (
+                                  <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '70px', left: '1028px' }}>
+                                      <div className='text-center bg-[#003285] text-[13.5px] text-white'>
+                                          <p>List Of Executive Master</p>
+                                      </div>
+
+                                      <ul className='suggestions w-full h-[20vh] text-left mt-2'>
+                                          {filteredExecutiveSuggestions.map((executive, index) => (
+                                              <li key={index} tabIndex={0} onClick={() => selectExecutive(executive)} onKeyDown={(e) => e.key === 'Enter' && selectExecutive(executive)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px] pl-2'>
+                                                  {executive.executiveCode.toUpperCase()} - {executive.executiveMaster.toUpperCase()}
+                                              </li>
+                                          ))}
+                                      </ul>
+                                    </div>
+                                  )}
+
                             </div>
 
                             <div className='input-ldgr'>
@@ -235,7 +338,34 @@ const AlterDistributorMaster = () => {
 
                             <div className='input-ldgr'>
                                 <label htmlFor="regionCode" className='text-sm mr-[108px] ml-2'>Region Code</label>
-                                : <input type="text" id='regionCode' name='regionCode' value={distributor.regionCode} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.regionCode = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                : <input type="text" id='regionCode' name='regionCode' value={distributor.regionCode} onChange={(e) => {onInputChange(e); handleRegionInputChange(e); }} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.regionCode = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                  
+                                {filteredRegionSuggestions.length > 0 && (
+                                  <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '70px', left: '1028px' }}>
+                                      <div className='text-center bg-[#003285] text-[13.5px] text-white'>
+                                          <p>List Of Region Master</p>
+                                      </div>
+
+                                      <div className='suggestions-dropdown'>
+                                          <ul className='suggestions w-full h-[50vh] text-left mt-2'>
+                                              {filteredRegionSuggestions.slice(0, showAllRegionSuggestions ? undefined : 15).map((region) => (
+                                                  <li key={region.regionCode} tabIndex={0} onClick={() => selectRegion(region)} onKeyDown={(e) => e.key === 'Enter' && selectRegion(region)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px] pl-2'>
+                                                      {region.regionMasterId.toUpperCase()} - {region.regionName.toUpperCase()}
+                                                  </li>
+                                              ))}
+                                              
+                                          </ul>
+
+                                          {filteredRegionSuggestions.length > 15 && !showAllRegionSuggestions && (
+                                              <div className='text-center'>
+                                                  <button onClick={toggleShowAllRegionSuggestions} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>Show All</button>
+                                              </div>
+                                              
+                                          )}
+                                      </div>
+                                  </div>
+                                )}    
+                            
                             </div>
 
                             <div className='input-ldgr'>

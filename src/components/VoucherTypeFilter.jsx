@@ -20,6 +20,7 @@ const VoucherTypeFilter = () => {
             console.log(response.data);
             setVoucherTypeNames(response.data);
             setFilteredVoucherNames(response.data);
+            setSelectedIndex(response.data.length > 0 ? 2 : 0);
         }).catch((error) =>{
             console.error(error);
         })
@@ -85,10 +86,17 @@ const VoucherTypeFilter = () => {
 
     
   return (
-    <div className='flex'>
-        <div className='w-[45%] h-[100vh] bg-[#DDDDDD]'></div>
+    <>
+    
+    <div className='flex justify-evenly'>
 
-        <div className='w-[45%] h-[100vh] bg-[#EEEEEE] flex flex-col items-center justify-start'>
+        <div className='w-[90%] flex h-screen'>
+            <div className='w-1/2 bg-white'>
+                
+            </div> 
+
+            <div className='w-1/2 bg-slate-100 flex justify-center items-center flex-col'>
+
             <div className='w-[50%] h-16 flex flex-col justify-center items-center border border-black bg-white border-b-0'>
                 <p className='text-[13px] font-semibold underline underline-offset-4 decoration-gray-400'>Voucher Type Display</p>
                 <input type="text" id='voucherTypeName' name='voucherTypeName' value={voucherTypeName} ref={inputRef} onChange={(e) => {setVoucherTypeName(e.target.value); filterVoucherNames(); }} className='w-[250px] ml-2 mt-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
@@ -98,8 +106,8 @@ const VoucherTypeFilter = () => {
                 <h2 className='p-1 bg-[#2a67b1] text-white text-left text-[13px]'>List of Voucher Types</h2>
 
                 <div className='border border-b-gray-500 w-[347px]'>
-                    <Link tabIndex={0} onFocus={() => setSelectedIndex(0)} className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`} to={"/voucherType"}><p className='ml-[285px] text-[14px]'>Create</p></Link>
-                    <Link tabIndex={0} onFocus={() => setSelectedIndex(1)} className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${selectedIndex === 1 ? 'bg-[#FEB941]' : ''}`} to={"/display"}><p className='ml-[287px] text-[14px]'>Back</p></Link>
+                    <Link tabIndex={0} onFocus={() => setSelectedIndex(0)} className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`} to={"/voucherType"}><p className='ml-[285px] '>Create</p></Link>
+                    <Link tabIndex={0} onFocus={() => setSelectedIndex(1)} className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${selectedIndex === 1 ? 'bg-[#FEB941]' : ''}`} to={"/display"}><p className='ml-[287px] '>Back</p></Link>
                 </div>
 
 
@@ -132,7 +140,7 @@ const VoucherTypeFilter = () => {
                             <tr key={vou.voucherType} className={selectedIndex === index + filteredVoucherNames.length + 2 ? 'bg-[#FEB941]' : ''}>
                                 <td className='w-[350px]'>
                                     <Link
-                                        className='text-[14px]'
+                                        className='text-[13px]'
                                         to={`/displayVoucherType/${vou.voucherType}`}
                                         tabIndex={0}
                                         onFocus={() => setSelectedIndex(index + filteredVoucherNames.length + 2)}
@@ -147,10 +155,13 @@ const VoucherTypeFilter = () => {
                     </tbody>
                 </table>
             </div>
+            </div>
+
         </div>
 
-        <div className='w-[10%] bg-[#DDDDDD] h-[100vh]'></div>
     </div>
+    
+    </>
   )
 }
 

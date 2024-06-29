@@ -23,6 +23,7 @@ const GodownAlter = () => {
       console.log(response.data);
       setGodown(response.data);
       setFilteredGodowns(response.data);
+      setSelectedIndex(response.data.length > 0 ? 2 : 0);
     }).catch(error=>{
       console.error(error);
     })
@@ -73,11 +74,18 @@ const GodownAlter = () => {
 
 
   return (
-    <div className='flex'>
-      <div className='w-[45%] h-[100vh] bg-[#DDDDDD]'></div>
+    <>
+    
+    <div className='flex justify-evenly'>
 
-      <div className='w-[45%] h-[100vh] bg-[#EEEEEE] flex flex-col items-center justify-start'>
-        <div className='w-[50%] h-16 flex flex-col justify-center items-center border border-black bg-white border-b-0 '>
+        <div className='w-[90%] flex h-screen'>
+            <div className='w-1/2 bg-white'>
+                
+            </div> 
+
+            <div className='w-1/2 bg-slate-100 flex justify-center items-center flex-col'>
+
+            <div className='w-[50%] h-16 flex flex-col justify-center items-center border border-black bg-white border-b-0 '>
           <p className='text-[13px] font-semibold underline underline-offset-4 decoration-gray-400'>Godown Alter</p>
           <input type="text" id='executiveCode' name='executiveCode' value={godownCode} onChange={(e) => setGodownCode(e.target.value)} ref={inputRef} className='w-[250px] ml-2 mt-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
         </div>
@@ -91,13 +99,13 @@ const GodownAlter = () => {
                   </tr>
               </thead>
               <div className='border border-b-gray-500 w-[347px]'>
-                  <Link className={`block text-center text-[14px] focus:bg-[#FEB941] outline-none ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`} to={"/godown"}><p className='ml-[285px] text-[14px]'>Create</p></Link>
-                  <Link className={`block text-center text-[14px] focus:bg-[#FEB941] outline-none ${selectedIndex === 1 ? 'bg-[#FEB941]' : ''}`} to={"/alter"}><p className='ml-[287px] text-[14px] '>Back</p></Link>
+                  <Link className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${selectedIndex === 0 ? 'bg-[#FEB941]' : ''}`} to={"/godown"}><p className='ml-[285px]'>Create</p></Link>
+                  <Link className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${selectedIndex === 1 ? 'bg-[#FEB941]' : ''}`} to={"/alter"}><p className='ml-[287px] '>Back</p></Link>
               </div>
               <tbody>
                   {filteredGodowns.map((god, index) => (
                       <tr key={god.godownCode} className={selectedIndex === index + 2 ? 'bg-[#FEB941]' : ''}>
-                            <Link className='block text-left pl-2 text-[14px] focus:bg-[#FEB941] outline-none' to={`/alterGodownMaster/${god.godownCode}`}>
+                            <Link className='block text-left pl-2 text-[13px] focus:bg-[#FEB941] outline-none' to={`/alterGodownMaster/${god.godownCode}`}>
                               <td className='flex capitalize'>{god.godownCode}</td>
                             </Link>
                       </tr>
@@ -107,12 +115,13 @@ const GodownAlter = () => {
 
             
         </div>
-
-                
             </div>
 
-      <div className='w-[10%] bg-[#DDDDDD] h-[100vh]'></div>
+        </div>
+
     </div>
+    
+    </>
   )
 }
 

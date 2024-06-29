@@ -24,18 +24,18 @@ const RegionMaster = () => {
   
 
   const inputRefs = useRef({
-    ledgerCode: null,
-    ledgerName: null,
+    // ledgerCode: null,
+    // ledgerName: null,
     regionMasterId: null,
     regionName: null,
     regionState: null,
     country: null,
-    godownCode: null,
-    godownName: null,
+    // godownCode: null,
+    // godownName: null,
     acceptButton: null,
   });
 
-  const ledgerCodeRef = useRef(null);
+  const regionMasterIdRef = useRef(null);
   const acceptButtonRef = useRef(null);
   const yesQuitButtonRef = useRef(null);
   const cancelModalConfirmRef = useRef(null);
@@ -43,8 +43,8 @@ const RegionMaster = () => {
   // const dropdownRef = useRef(null);
 
   useEffect(() => {
-    if (ledgerCodeRef.current) {
-      ledgerCodeRef.current.focus();
+    if (regionMasterIdRef.current) {
+      regionMasterIdRef.current.focus();
     }
 
     const fetchGodownSuggestions = async () => {
@@ -221,11 +221,11 @@ const RegionMaster = () => {
         </span>
       </div>
 
-      <div className='w-[550px] h-[40vh] border border-gray-500 ml-[750px]'>
+      <div className='w-[550px] h-[18vh] border border-gray-500 ml-[750px]'>
 
         <form onSubmit={saveRegionMaster}>
 
-          <div className='input-ldgr mt-3'>
+          {/* <div className='input-ldgr mt-3'>
             <label htmlFor="ledgerCode" className='text-sm mr-[73px] ml-2'>Ledger Code</label>
             : <input
                 type="text"
@@ -254,7 +254,7 @@ const RegionMaster = () => {
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
                 autoComplete='off'
               />
-          </div>
+          </div> */}
 
           <div className='input-ldgr'>
             <label htmlFor="regionMasterId" className='text-sm mr-12 ml-2'>Region Master ID</label>
@@ -265,7 +265,7 @@ const RegionMaster = () => {
                 value={regionMasterId}
                 onChange={(e) => setRegionMasterId(e.target.value)}
                 onKeyDown={handleKeyDown}
-                ref={(input) => inputRefs.current.regionMasterId = input}
+                ref={(input) => { regionMasterIdRef.current = input; inputRefs.current.regionMasterId = input;}}
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
                 autoComplete='off'
               />
@@ -317,7 +317,7 @@ const RegionMaster = () => {
               />
           </div>
 
-          <div className='input-ldgr'>
+          {/* <div className='input-ldgr'>
             <label htmlFor="godownCode" className='text-sm mr-[66px] ml-2'>Godown Code</label>
             : <input
                 type="text"
@@ -362,9 +362,9 @@ const RegionMaster = () => {
                 autoComplete='off'
               />
               
-          </div>
+          </div> */}
 
-          <div className='mt-[280px]'>
+          <div className='mt-[400px]'>
             <button
               type='submit'
               ref={(button) => { acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }}
@@ -377,7 +377,7 @@ const RegionMaster = () => {
 
       </div>
 
-      <div className='mt-[250px] ml-[495px]'>
+      <div className='mt-[400px] ml-[495px]'>
         <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800' >Q: Quit</Link>
       </div>
 

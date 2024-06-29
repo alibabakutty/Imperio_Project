@@ -49,61 +49,62 @@ const AlterOfMasters = () => {
 
   
   return (
-    <div className='flex'>
+    <>
+      <div className='flex justify-evenly'>
+        <div className='w-[90%] flex h-screen'>
+          <div className='w-1/2 bg-white'></div>
 
-      
-      <div className='w-[45%] h-[100vh] bg-[#DDDDDD]'>
+          <div className='w-1/2 bg-slate-100 flex justify-center items-center flex-col'>
+          <div className='w-[300px] h-96 border border-blue-400 text-sm bg-[#def1fc]'>
+            <h2 className=' text-white bg-[#2a67b1] px-20'>Alter of Masters</h2>
 
-      </div>
+            <ul>
+              <li className='py-3 ml-20 text-[10px] text-[#2a67b1]'>
+                <h2>DOMSS MASTER</h2>
+              </li>
 
+              <Link to={'/regionAlter'} ref={regionRef} className='block outline-none focus:bg-yellow-500'>
+                <li className='w-full pl-20'>Region Master</li>
+              </Link>
 
-      <div className='w-[45%] h-[100vh] bg-[#EEEEEE]'>
+              <Link to={'/executiveAlter'} ref={executiveRef} className='block outline-none focus:bg-yellow-500'>
+                <li className='w-full pl-20'>Executive Master</li>
+              </Link>
 
-      <div className='flex justify-center items-center flex-col'>
-        <div className='w-[350px] h-[70vh] border border-gray-600 mt-20 bg-[#def1fc]'>
-          <h2 className='p-1 bg-[#2a67b1] text-white text-left pl-28 text-[14px]'>List of Masters</h2>
+              <Link to={'/distributorAlter'} ref={distributorRef} className='block outline-none focus:bg-yellow-500'>
+                <li className='w-full pl-20'>Distributor Master</li>
+              </Link>
+              
+              <Link to={'/productAlter'} ref={productRef} className='block outline-none focus:bg-yellow-500'>
+                <li className='w-full pl-20'>Product Master</li>
+              </Link>
+              
+              <Link to={'/godownAlter'} ref={godownRef} className='block outline-none focus:bg-yellow-500'>
+              <li className='w-full pl-20'>Godown Master</li>
+              </Link>
 
-          <p className='text-[13px] text-left pl-28 mt-12 text-[#5BBCFF]'>DOMSS MASTER</p>
+              <Link to={'/voucherTypeAlter'} ref={voucherTypeRef} className='block outline-none focus:bg-yellow-500'>
+                <li className='w-full pl-20'>Voucher Type Master</li>
+              </Link>
+              
+              
+            </ul>
+            
 
-          <Link to="/regionAlter" ref={regionRef} className='block text-left pl-28 text-sm focus:bg-yellow-500 outline-none mt-2 mb-1'>
-            <p className='m-0'>Region Master</p>
-          </Link>
+          </div>
 
-          <Link to="/executiveAlter" ref={executiveRef} className='block text-left pl-28 text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
-            <p className='m-0'>Executive Master</p>
-          </Link>
-
-          <Link to="/distributorAlter" ref={distributorRef} className='block text-left pl-28 text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
-            <p className='m-0'>Distributor Master</p>
-          </Link>
-
-          <Link to="/productAlter" ref={productRef} className='block text-left pl-28 text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
-            <p className='m-0'>Product Master</p>
-          </Link>
-
-          <Link to="/godownAlter" ref={godownRef} className='block text-left pl-28 text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
-            <p className='m-0'>Godown Master</p>
-          </Link>
-
-          <Link to="/voucherTypeAlter" ref={voucherTypeRef} className='block text-left pl-28 text-sm focus:bg-yellow-500 outline-none mt-1 mb-1'>
-            <p className='m-0'>Voucher Type Master</p>
-          </Link>
-
-          
-        </div>
-        <div className='mt-[70px]'>
+          <div className='mt-[70px]'>
             <Link to="/" ref={backButtonRef} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>Back</Link>
           </div>
-      </div>
+
+          </div>
+          
+
+        </div>
 
       </div>
-
-      
-
-      <div className='w-[10%] bg-[#DDDDDD] h-[100vh]'>
-
-      </div>
-    </div>
+    
+    </>
   )
 }
 

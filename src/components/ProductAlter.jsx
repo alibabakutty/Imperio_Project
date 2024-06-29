@@ -81,11 +81,18 @@ const ProductAlter = () => {
     }
 
     return (
-        <div className='flex'>
-            <div className='w-[45%] h-[100vh] bg-[#DDDDDD]'></div>
+        <>
+    
+    <div className='flex justify-evenly'>
 
-            <div className='w-[45%] h-[100vh] bg-[#EEEEEE] flex flex-col items-center justify-start'>
-                <div className='w-[50%] h-16 flex flex-col justify-center items-center border border-black bg-white border-b-0 '>
+        <div className='w-[90%] flex h-screen'>
+            <div className='w-1/2 bg-white'>
+                
+            </div> 
+
+            <div className='w-1/2 bg-slate-100 flex justify-center items-center flex-col'>
+
+            <div className='w-[50%] h-16 flex flex-col justify-center items-center border border-black bg-white border-b-0 '>
                     <p className='text-[13px] font-semibold underline underline-offset-4 decoration-gray-400'>Product Alter</p>
                     <input type="text" id='productCode' name='productCode' value={productCode} onChange={(e) => setProductCode(e.target.value)} ref={inputRef} className='w-[250px] ml-2 mt-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                 </div>
@@ -106,7 +113,7 @@ const ProductAlter = () => {
                             {filteredProducts.map((prod, index) => (
                                 <tr key={prod.productCode} className={selectedIndex === index + 2 ? 'bg-[#FEB941]' : ''}>
                                     <td className='flex text-left text-[13px] pl-2 capitalize'>
-                                        <Link to={`/alterProductMaster/${prod.productCode}`} className='block'>{prod.productCode}</Link>
+                                        <Link to={`/alterProductMaster/${prod.productCode}`} className='block'>{prod.productCode} - {prod.productDescription}</Link>
                                     </td>
                                 </tr>
                             ))}
@@ -119,7 +126,7 @@ const ProductAlter = () => {
                                 <option value="" className='block text-left pl-2 text-[13px]'>Select other Products</option>
                                 {product.slice(20).map(prod => (
                                     <option key={prod.productCode} value={prod.productCode} className='block text-left pl-2 text-[13px]'>
-                                        {prod.productCode}
+                                        {prod.productCode} - {prod.productDescription}
                                     </option>
                                 ))}
                             </select>
@@ -128,8 +135,11 @@ const ProductAlter = () => {
                 </div>
             </div>
 
-            <div className='w-[10%] bg-[#DDDDDD] h-[100vh]'></div>
         </div>
+
+    </div>
+    
+    </>
     );
 };
 
