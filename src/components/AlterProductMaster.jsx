@@ -30,20 +30,18 @@ const AlterProductMaster = () => {
     acceptButton: null
   });
 
-
   const acceptButtonRef = useRef(null);
   const yesQuitButtonRef = useRef(null);
   const cancelModalConfirmRef = useRef(null);
 
+  const [unitsSuggestions, setUnitsSuggestions] = useState([]);
+  const [filteredUnitsSuggestions, setFilteredUnitsSuggestions] = useState([]);
+  const [showAllUnits, setShowAllUnits] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   const onInputChange = (e) => {
     const { name, value } = e.target;
-    const parsedValue = name === 'standardCost' || name === 'sellingPrice' || name === 'discount' ? parseFloat(value) || 0 : value;
-
-    // Capitalize the first letter of the input data
-    const capitalizedValue = parsedValue.toString().charAt(0).toUpperCase() + parsedValue.toString().slice(1);
-
+    const capitalizedValue = typeof value === 'string' ? value.charAt(0).toUpperCase() + value.slice(1) : value;
     setProduct({ ...product, [name]: capitalizedValue });
   };
 
@@ -63,10 +61,21 @@ const AlterProductMaster = () => {
   };
 
   useEffect(() => {
-    if(inputRefs.current.productCode){
+    if (inputRefs.current.productCode) {
       inputRefs.current.productCode.focus();
       pulseCursor(inputRefs.current.productCode);
     }
+
+    const fetchUnitSuggestions = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/master/allUnits');
+        setUnitsSuggestions(response.data);
+      } catch (error) {
+        console.error('Error fetching unit data:', error);
+      }
+    };
+
+    fetchUnitSuggestions();
 
     loadProduct();
 
@@ -120,7 +129,7 @@ const AlterProductMaster = () => {
   const handleKeyDown = (event) => {
     const { keyCode, target } = event;
     const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
-  
+
     if (keyCode === 13) { // Enter key
       event.preventDefault();
       if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
@@ -135,29 +144,25 @@ const AlterProductMaster = () => {
       const isStandardCost = target.name === 'standardCost';
       const isSellingPrice = target.name === 'sellingPrice';
       const isDiscount = target.name === 'discount';
-  
-      // Determine if current input is empty or has specific conditions to allow backspacing
+
       const isEmptyOrZero = target.value.trim() === '' || (target.value === '0' && (isStandardCost || isSellingPrice || isDiscount));
-  
+
       if (isEmptyOrZero) {
         event.preventDefault();
         const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
         const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
         prevInputRef.focus();
         pulseCursor(prevInputRef);
-      }else if(target.selectionStart === 0 && target.selectionEnd === 0){
+      } else if (target.selectionStart === 0 && target.selectionEnd === 0) {
         event.preventDefault();
-      const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
-      const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-      prevInputRef.focus();
-      pulseCursor(prevInputRef);
+        const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+        const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+        prevInputRef.focus();
+        pulseCursor(prevInputRef);
       }
     }
   };
-  
-  
-  
-  
+
   const loadProduct = async () => {
     try {
       const result = await axios.get(`http://localhost:8080/api/master/displayProduct/${productCode}`);
@@ -186,6 +191,31 @@ const AlterProductMaster = () => {
     }
   };
 
+  const handleUomChange = (e) => {
+    const { value } = e.target;
+
+    setProduct({ ...product, productUom: value });
+
+    if (value.trim() !== '') {
+      const filteredSuggestions = unitsSuggestions.filter((unit) =>
+        unit.uom.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredUnitsSuggestions(filteredSuggestions);
+    } else {
+      setFilteredUnitsSuggestions([]);
+    }
+  };
+
+  const selectUnit = (unit) => {
+    setProduct({ ...product, productUom: unit.uom });
+    setFilteredUnitsSuggestions([]);
+    setShowAllUnits(false);
+  };
+
+  const toggleShowAllUnitSuggestions = () => {
+    setShowAllUnits(!showAllUnits);
+  };
+
   return (
     <div>
       <div className='flex'>
@@ -208,13 +238,12 @@ const AlterProductMaster = () => {
                     id={field}
                     name={field}
                     value={product[field]}
-                    onChange={onInputChange}
+                    onChange={(e) => { onInputChange(e); handleUomChange(e); }}
                     onFocus={(e) => {
                       pulseCursor(e.target);
                     }}
                     onKeyDown={handleKeyDown}
                     ref={input => {
-  
                       inputRefs.current[field] = input;
                     }}
                     className={`h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ${['standardCost', 'sellingPrice', 'discount'].includes(field) ? 'w-[150px]' : 'w-[300px]'}`}
@@ -222,6 +251,43 @@ const AlterProductMaster = () => {
                   />
                 </div>
               ))}
+
+              {filteredUnitsSuggestions.length > 0 && (
+                <div className=''>
+                  <div className='absolute top-[40px] left-[1028px] bg-[#CAF4FF] w-[20%] h-[550px] border border-gray-500'>
+                    <div className='text-center bg-[#003285] text-[13.5px] text-white'>
+                      <p>List Of Uom</p>
+                    </div>
+
+                    <ul className='suggestions w-full text-center mt-2'>
+                      {filteredUnitsSuggestions.slice(0, 25).map((unit, index) => (
+                        <li key={index} tabIndex={0} onClick={() => selectUnit(unit)} onKeyDown={(e) => e.key === 'Enter' && selectUnit(unit)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
+                          {unit.uom.toUpperCase()}
+                        </li>
+                      ))}
+                    </ul>
+
+                    {filteredUnitsSuggestions.length > 25 && (
+                      <div className='text-center'>
+                        <button type='button' onClick={toggleShowAllUnitSuggestions} className='text-sm text-blue-500 underline'>
+                          {showAllUnits ? 'Show Less' : 'Show More'}
+                        </button>
+                      </div>
+                    )}
+
+                    {showAllUnits && (
+                      <select size='10' className='w-full mt-2' onChange={(e) => selectUnit({ uom: e.target.value })}>
+                        {filteredUnitsSuggestions.slice(25).map((unit, index) => (
+                          <option key={index} value={unit.uom}>
+                            {unit.uom.toUpperCase()}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <div className='mt-[290px]'>
                 <button
                   type='submit'
@@ -292,6 +358,6 @@ const AlterProductMaster = () => {
       )}
     </div>
   );
-}
+};
 
 export default AlterProductMaster;

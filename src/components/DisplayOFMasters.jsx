@@ -10,13 +10,14 @@ const DisplayOFMasters = () => {
     const godownRef = useRef(null);
     const voucherTypeRef = useRef(null);
     const backButtonRef = useRef(null);
+    const ledgerRef = useRef(null);
 
-    const links = [regionRef, executiveRef, distributorRef, productRef, godownRef, voucherTypeRef, backButtonRef];
+    const links = [voucherTypeRef, ledgerRef, regionRef, executiveRef, distributorRef, productRef, godownRef,  backButtonRef];
 
 
     useEffect(() =>{
-        if(regionRef.current){
-            regionRef.current.focus();
+        if(voucherTypeRef.current){
+            voucherTypeRef.current.focus();
         }
 
         const handleKeyDown = (event) => {
@@ -55,29 +56,35 @@ const DisplayOFMasters = () => {
                 <h2>DOMSS MASTER</h2>
               </li>
 
-              <Link to={'/regionFilter'} ref={regionRef} className='block outline-none focus:bg-yellow-500'>
+              <Link to={'/voucherTypeFilter'} ref={voucherTypeRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
+                <li className='w-full pl-20'>Voucher Type Master</li>
+              </Link>
+
+              <Link to={'/ledgerFilter'} ref={ledgerRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
+                <li className='w-full pl-20'>Ledger Master</li>
+              </Link>
+
+              <Link to={'/regionFilter'} ref={regionRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
                 <li className='w-full pl-20'>Region Master</li>
               </Link>
 
-              <Link to={'/executiveFilter'} ref={executiveRef} className='block outline-none focus:bg-yellow-500'>
+              <Link to={'/executiveFilter'} ref={executiveRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
                 <li className='w-full pl-20'>Executive Master</li>
               </Link>
 
-              <Link to={'/distributorFilter'} ref={distributorRef} className='block outline-none focus:bg-yellow-500'>
+              <Link to={'/distributorFilter'} ref={distributorRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
                 <li className='w-full pl-20'>Distributor Master</li>
               </Link>
               
-              <Link to={'/productFilter'} ref={productRef} className='block outline-none focus:bg-yellow-500'>
+              <Link to={'/productFilter'} ref={productRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
                 <li className='w-full pl-20'>Product Master</li>
               </Link>
               
-              <Link to={'/godownFilter'} ref={godownRef} className='block outline-none focus:bg-yellow-500'>
-              <li className='w-full pl-20'>Godown Master</li>
+              <Link to={'/godownFilter'} ref={godownRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
+                <li className='w-full pl-20'>Godown Master</li>
               </Link>
 
-              <Link to={'/voucherTypeFilter'} ref={voucherTypeRef} className='block outline-none focus:bg-yellow-500'>
-                <li className='w-full pl-20'>Voucher Type Master</li>
-              </Link>
+              
               
               
             </ul>

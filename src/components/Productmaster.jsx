@@ -263,7 +263,7 @@ const Productmaster = () => {
 
                     {filteredUnitsSuggestions.length > 0 && (
                         <div className=''>
-                            <div className='absolute top-[40px] left-[1030px] bg-[#CAF4FF] w-[20%] border border-gray-500'>
+                            <div className='absolute top-[40px] left-[1028px] bg-[#CAF4FF] w-[20%] h-[550px] border border-gray-500'>
                                 <div className='text-center bg-[#003285] text-[13.5px] text-white'>
                                     <p>List Of Uom</p>
                                 </div>

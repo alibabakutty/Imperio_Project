@@ -2,36 +2,28 @@ import React, { useEffect, useRef, useState } from 'react';
 import { IoClose } from 'react-icons/io5';
 import { createNewRegionMaster } from '../services/MasterService';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+
 
 const RegionMaster = () => {
 
-  const [ledgerCode, setLedgerCode] = useState('');
-  const [ledgerName, setLedgerName] = useState('');
+  
   const [regionMasterId, setRegionMasterId] = useState('');
   const [regionName, setRegionName] = useState('');
   const [regionState, setRegionState] = useState('');
   const [country, setCountry] = useState('');
-  const [godownCode, setGodownCode] = useState('');
-  const [godownName, setGodownName] = useState('');
+
 
   const [errors, setErrors] = useState({});
-  const [godownSuggestions, setGodownSuggestions] = useState([]);
-  const [filteredGodownCodeSuggestions, setFilteredGodownCodeSuggestions] = useState([]);
+  
   const [showModal, setShowModal] = useState(false);
-
-  // const [selectedIndex, setSelectedIndex] = useState(0);
   
 
   const inputRefs = useRef({
-    // ledgerCode: null,
-    // ledgerName: null,
+    
     regionMasterId: null,
     regionName: null,
     regionState: null,
     country: null,
-    // godownCode: null,
-    // godownName: null,
     acceptButton: null,
   });
 
@@ -40,23 +32,12 @@ const RegionMaster = () => {
   const yesQuitButtonRef = useRef(null);
   const cancelModalConfirmRef = useRef(null);
   const navigate = useNavigate();
-  // const dropdownRef = useRef(null);
 
   useEffect(() => {
     if (regionMasterIdRef.current) {
       regionMasterIdRef.current.focus();
     }
 
-    const fetchGodownSuggestions = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/api/master/allGodown');
-        setGodownSuggestions(response.data);
-      } catch (error) {
-        console.error('Error fetching godown data:', error);
-      }
-    };
-
-    fetchGodownSuggestions();
 
     const handleKeyDown = (event) => {
       const { ctrlKey, key } = event;
@@ -142,40 +123,10 @@ const RegionMaster = () => {
     }
   };
 
-  const handleGodownCodeInputChange = (e) => {
-    const value = e.target.value;
-    setGodownCode(value);
-
-    if (value.trim() !== '') {
-      const filteredSuggestions = godownSuggestions.filter((godown) =>
-        godown.godownCode.toLowerCase().includes(value.toLowerCase())
-      );
-      setFilteredGodownCodeSuggestions(filteredSuggestions);
-
-      const exactMatch = godownSuggestions.find((godown) =>
-        godown.godownCode.toLowerCase() === value.toLowerCase()
-      );
-      if (exactMatch) {
-        setGodownName(exactMatch.godownName);
-      }
-    } else {
-      setFilteredGodownCodeSuggestions([]);
-      setGodownName('');
-    }
-  };
-
-  
-  const selectGodown = (godown) => {
-    setGodownCode(godown.godownCode);
-    setGodownName(godown.godownName);
-    setFilteredGodownCodeSuggestions([]);
-  };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!ledgerCode.trim()) {
-      newErrors.ledgerCode = 'Ledger Code is required.';
-    }
+
     if (!regionMasterId.trim()) {
       newErrors.regionMasterId = 'Region Master Id is required.';
     }
@@ -191,7 +142,7 @@ const RegionMaster = () => {
       return;
     }
 
-    const region = { ledgerCode, ledgerName, regionMasterId, regionName, regionState, country, godownCode, godownName };
+    const region = { regionMasterId, regionName, regionState, country };
 
     console.log(region);
 
@@ -224,37 +175,6 @@ const RegionMaster = () => {
       <div className='w-[550px] h-[18vh] border border-gray-500 ml-[750px]'>
 
         <form onSubmit={saveRegionMaster}>
-
-          {/* <div className='input-ldgr mt-3'>
-            <label htmlFor="ledgerCode" className='text-sm mr-[73px] ml-2'>Ledger Code</label>
-            : <input
-                type="text"
-                id='ledgerCode'
-                name='ledgerCode'
-                value={ledgerCode}
-                onChange={(e) => setLedgerCode(e.target.value)}
-                onKeyDown={handleKeyDown}
-                ref={(input) => { ledgerCodeRef.current = input; inputRefs.current.ledgerCode = input; }}
-                className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
-                autoComplete='off'
-              />
-              {errors.ledgerCode && <p className='text-red-500 text-xs ml-2'>{errors.ledgerCode}</p>}
-          </div>
-
-          <div className='input-ldgr'>
-            <label htmlFor="ledgerName" className='text-sm mr-[70px] ml-2'>Ledger Name</label>
-            : <input
-                type="text"
-                id='ledgerName'
-                name='ledgerName'
-                value={ledgerName}
-                onChange={(e) => setLedgerName(e.target.value)}
-                onKeyDown={handleKeyDown}
-                ref={(input) => inputRefs.current.ledgerName = input}
-                className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
-                autoComplete='off'
-              />
-          </div> */}
 
           <div className='input-ldgr'>
             <label htmlFor="regionMasterId" className='text-sm mr-12 ml-2'>Region Master ID</label>
@@ -317,52 +237,7 @@ const RegionMaster = () => {
               />
           </div>
 
-          {/* <div className='input-ldgr'>
-            <label htmlFor="godownCode" className='text-sm mr-[66px] ml-2'>Godown Code</label>
-            : <input
-                type="text"
-                id='godownCode'
-                name='godownCode'
-                value={godownCode}
-                onChange={(e) => { handleGodownCodeInputChange(e); setGodownCode(e.target.value) }}
-                onKeyDown={handleKeyDown}
-                ref={(input) => inputRefs.current.godownCode = input}
-                className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
-                autoComplete='off'
-              />
-
-              {filteredGodownCodeSuggestions.length > 0 && (
-                <div className='bg-[#CAF4FF] w-[20%] h-[80vh] border border-gray-500' style={{ position: 'absolute', top: '70px', left: '1028px' }}>
-                  <div className='text-center bg-[#003285] text-[13.5px] text-white'>
-                    <p>List Of Godown Codes</p>
-                  </div>
-                  <ul className='suggestions w-full h-[20vh] text-left mt-2'>
-                    {filteredGodownCodeSuggestions.map((godown, index) => (
-                      <li key={index} tabIndex={0} onClick={() => selectGodown(godown)} onKeyDown={(e) => e.key === 'Enter' && selectGodown(godown)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px] pl-2'>
-                        {godown.godownCode.toUpperCase()} - {godown.godownName.toUpperCase()}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-          </div>
-
-          <div className='input-ldgr'>
-            <label htmlFor="godownName" className='text-sm mr-[64px] ml-2'>Godown Name</label>
-            : <input
-                type="text"
-                id='godownName'
-                name='godownName'
-                value={godownName}
-                onChange={(e) => { setGodownName(e.target.value) }}
-                onKeyDown={handleKeyDown}
-                ref={(input) => inputRefs.current.godownName = input}
-                className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
-                autoComplete='off'
-              />
-              
-          </div> */}
+          
 
           <div className='mt-[400px]'>
             <button

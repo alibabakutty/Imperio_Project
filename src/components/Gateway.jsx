@@ -45,10 +45,10 @@ const Gateway = () => {
   return (
     <>
     
-    <div className='flex justify-evenly'>
+    <div className='flex justify-evenly' style={{ backgroundImage: 'linear-gradient(to top, white, #a4f4fc, #ffc4ff)'}}>
 
-        <div className='w-[90%] flex h-screen'>
-            <div className='w-1/2 bg-white flex items-center'>
+        <div className='w-[90%] flex h-screen '>
+            <div className='w-1/2  flex items-center'>
                 <div>
                     {/* <img src={imperio1} alt="Imperio Golden Label" className='w-[900px]'  /> */}
                 </div>
@@ -61,15 +61,15 @@ const Gateway = () => {
                     <h2 className=' text-white bg-[#2a67b1] px-20'>Gateway of Imperio</h2>
 
                     <ul>
-                        <li className=" py-3 ml-20 text-[10px] text-[#2a67b1]">
+                        <li className=" py-3 ml-20 text-[10px] text-[#2a67b1] ">
                             <h2>MASTERS</h2>
                         </li>
-                        <Link to={"/list"} ref={createRef} className='block outline-none focus:bg-yellow-500'>
+                        <Link to={"/list"} ref={createRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
                             <li className="w-full  pl-20 ">
                                 Create
                             </li>
                         </Link>
-                        <Link to={"/alter"} ref={displayRef} className='block outline-none focus:bg-yellow-500'>
+                        <Link to={"/alter"} ref={displayRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
                             <li className="w-full pl-20 p-0">
                                 Alter
                             </li>

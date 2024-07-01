@@ -11,13 +11,14 @@ const AlterOfMasters = () => {
   const godownRef = useRef(null);
   const voucherTypeRef = useRef(null);
   const backButtonRef = useRef(null);
+  const ledgerRef = useRef(null);
 
-  const links = [regionRef, executiveRef, distributorRef, productRef, godownRef, voucherTypeRef, backButtonRef];
+  const links = [voucherTypeRef, ledgerRef, regionRef, executiveRef, distributorRef, productRef, godownRef,  backButtonRef];
 
 
   useEffect(() =>{
-    if(regionRef.current){
-      regionRef.current.focus();
+    if(voucherTypeRef.current){
+      voucherTypeRef.current.focus();
     }
 
 
@@ -63,29 +64,35 @@ const AlterOfMasters = () => {
                 <h2>DOMSS MASTER</h2>
               </li>
 
-              <Link to={'/regionAlter'} ref={regionRef} className='block outline-none focus:bg-yellow-500'>
-                <li className='w-full pl-20'>Region Master</li>
-              </Link>
-
-              <Link to={'/executiveAlter'} ref={executiveRef} className='block outline-none focus:bg-yellow-500'>
-                <li className='w-full pl-20'>Executive Master</li>
-              </Link>
-
-              <Link to={'/distributorAlter'} ref={distributorRef} className='block outline-none focus:bg-yellow-500'>
-                <li className='w-full pl-20'>Distributor Master</li>
-              </Link>
-              
-              <Link to={'/productAlter'} ref={productRef} className='block outline-none focus:bg-yellow-500'>
-                <li className='w-full pl-20'>Product Master</li>
-              </Link>
-              
-              <Link to={'/godownAlter'} ref={godownRef} className='block outline-none focus:bg-yellow-500'>
-              <li className='w-full pl-20'>Godown Master</li>
-              </Link>
-
               <Link to={'/voucherTypeAlter'} ref={voucherTypeRef} className='block outline-none focus:bg-yellow-500'>
                 <li className='w-full pl-20'>Voucher Type Master</li>
               </Link>
+
+              <Link to={'/ledgerAlter'} ref={ledgerRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
+                <li className='w-full pl-20'>Ledger Master</li>
+              </Link>
+
+              <Link to={'/regionAlter'} ref={regionRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
+                <li className='w-full pl-20'>Region Master</li>
+              </Link>
+
+              <Link to={'/executiveAlter'} ref={executiveRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
+                <li className='w-full pl-20'>Executive Master</li>
+              </Link>
+
+              <Link to={'/distributorAlter'} ref={distributorRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
+                <li className='w-full pl-20'>Distributor Master</li>
+              </Link>
+              
+              <Link to={'/productAlter'} ref={productRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
+                <li className='w-full pl-20'>Product Master</li>
+              </Link>
+              
+              <Link to={'/godownAlter'} ref={godownRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
+              <li className='w-full pl-20'>Godown Master</li>
+              </Link>
+
+              
               
               
             </ul>

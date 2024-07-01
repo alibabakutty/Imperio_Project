@@ -44,12 +44,18 @@ import GodownMasterAlteredCheck from "./message/GodownMasterAlteredCheck"
 import PaymentVoucher from "./components/PaymentVoucher"
 import VoucherTypeMaster from "./components/VoucherTypeMaster"
 import VoucherTypeMasterAddedCheck from "./message/VoucherTypeMasterAddedCheck"
-import ConditionalRenderingP from "./components/ConditionalRenderingP"
 import VoucherTypeFilter from "./components/VoucherTypeFilter"
 import DisplayVoucherTypeMaster from "./components/DisplayVoucherTypeMaster"
 import VoucherTypeAlter from "./components/VoucherTypeAlter"
 import AlterVoucherTypeMaster from "./components/AlterVoucherTypeMaster"
 import VoucherTypeMasterAlteredCheck from "./message/VoucherTypeMasterAlteredCheck"
+import LedgerMaster from "./components/LedgerMaster"
+import LedgerMasterAddedCheck from "./message/LedgerMasterAddedCheck"
+import LedgerFilter from "./components/LedgerFilter"
+import LedgerAlter from "./components/LedgerAlter"
+import DisplayLedgerMaster from "./components/DisplayLedgerMaster"
+import AlterLedgerMaster from "./components/AlterLedgerMaster"
+import LedgerMasterAlteredCheck from "./message/LedgerMasterAlteredCheck"
 
 
 function App() {
@@ -83,6 +89,9 @@ function App() {
 
           {/* http://localhost:4000/voucherTypeMaster */}
           <Route path="/voucherType" element = {<VoucherTypeMaster />} />
+
+          {/* http://localhost:4000/ledgerMaster */}
+          <Route path="/ledger" element = {<LedgerMaster /> } />
           
          {/* http://localhost:4000/addedRegion */}
          <Route path="/addedRegion" element = {<RegionMasterAddedCheck />} />
@@ -101,6 +110,9 @@ function App() {
 
          {/* http://localhost:4000/addedVoucherType */}
          <Route path="addedVoucherType" element = {<VoucherTypeMasterAddedCheck />} />
+
+         {/* http://localhost:4000/addedLedger */}
+         <Route path="addedLedger" element = {<LedgerMasterAddedCheck /> } />
 
          {/* http://localhost:4000/display */}
          <Route path="/display" element = {<DisplayOFMasters /> } />
@@ -123,6 +135,9 @@ function App() {
           {/* http://localhost:4000/voucherTypeFilter */}
           <Route path="/voucherTypeFilter" element = {<VoucherTypeFilter />} />
 
+          {/* http://localhost:4000/ledgerFilter */}
+          <Route path="/ledgerFilter" element = {<LedgerFilter /> } />
+
           {/* http://localhost:4000/alter */}
           <Route path="/alter" element = {<AlterOfMasters />} />
 
@@ -143,6 +158,9 @@ function App() {
 
           {/* http://localhost:4000/voucherTypeAlter */}
           <Route path="/voucherTypeAlter" element = {<VoucherTypeAlter />} />
+
+          {/* http://localhost:4000/ledgerAlter */}
+          <Route path="ledgerAlter" element = {<LedgerAlter /> } />
 
 
          {/* http://localhost:4000/displayRegion */}
@@ -166,6 +184,9 @@ function App() {
           {/* http://localhost:4000/displayVoucherType */}
           <Route path="displayVoucherType/:voucherType" element = {<DisplayVoucherTypeMaster />} />
 
+          {/* http://localhost:4000/displayLedger */}
+          <Route path="displayLedger/:ledgerCode" element = {<DisplayLedgerMaster /> } />
+
          {/* http://localhost:4000/alterRegionMaster */}
          <Route path="alterRegionMaster/:regionMasterId" element = {<AlterRegionMaster />} />
 
@@ -183,6 +204,9 @@ function App() {
 
          {/* http://localhost:4000/alterVoucherTypeMaster */}
          <Route path="alterVoucherTypeMaster/:voucherTypeName" element = {<AlterVoucherTypeMaster />} />
+
+         {/* http://localhost:4000/alterLedgerMaster */}
+         <Route path="alterLedgerMaster/:ledgerCode" element = {<AlterLedgerMaster /> } />
 
 
          {/* http://localhost:4000/alteredRegion */}
@@ -203,13 +227,14 @@ function App() {
          {/* http://localhost:4000/alteredVoucherTypeMaster */}
          <Route path="/alteredVoucherTypeMaster" element = {<VoucherTypeMasterAlteredCheck />} />
 
+         {/* http://localhost:4000/alteredLedger */}
+         <Route path="/alteredLedger" element = {<LedgerMasterAlteredCheck /> } />
+
 
          {/* VOUCHERS */}
          {/* http://localhost:4000/paymentVoucher */}
          <Route path="/paymentVoucher" element = {<PaymentVoucher />} />
 
-
-         <Route path="/conditional" element = {<ConditionalRenderingP /> } />
 
 
 

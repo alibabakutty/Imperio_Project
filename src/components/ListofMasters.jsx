@@ -10,17 +10,18 @@ const ListofMasters = () => {
   const productRef = useRef(null);
   const godownRef = useRef(null);
   const voucherTypeRef = useRef(null);
+  const ledgerRef = useRef(null);
   const backButtonRef = useRef(null);
 
   
 
-  const links = [regionRef, executiveRef, distributorRef, productRef, godownRef, voucherTypeRef, backButtonRef];
+  const links = [voucherTypeRef, ledgerRef, regionRef, executiveRef, distributorRef, productRef, godownRef, backButtonRef];
 
 
   useEffect(() => {
     // Add the 'focused' class to the "Region" link on load
-    if(regionRef.current){
-        regionRef.current.focus();
+    if(voucherTypeRef.current){
+        voucherTypeRef.current.focus();
     }
 
     const handleKeyDown = (event) => {
@@ -61,29 +62,35 @@ const ListofMasters = () => {
                 <h2>DOMSS MASTER</h2>
               </li>
 
-              <Link to={'/region'} ref={regionRef} className='block outline-none focus:bg-yellow-500'>
+              <Link to={'/voucherType'} ref={voucherTypeRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
+                <li className='w-full pl-20'>Voucher Type Master</li>
+              </Link>
+
+              <Link to={'/ledger'} ref={ledgerRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
+                <li className='w-full pl-20'>Ledger Master</li>
+              </Link>
+
+              <Link to={'/region'} ref={regionRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
                 <li className='w-full pl-20'>Region Master</li>
               </Link>
 
-              <Link to={'/executive'} ref={executiveRef} className='block outline-none focus:bg-yellow-500'>
+              <Link to={'/executive'} ref={executiveRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
                 <li className='w-full pl-20'>Executive Master</li>
               </Link>
 
-              <Link to={'/distributor'} ref={distributorRef} className='block outline-none focus:bg-yellow-500'>
+              <Link to={'/distributor'} ref={distributorRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
                 <li className='w-full pl-20'>Distributor Master</li>
               </Link>
               
-              <Link to={'/product'} ref={productRef} className='block outline-none focus:bg-yellow-500'>
+              <Link to={'/product'} ref={productRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
                 <li className='w-full pl-20'>Product Master</li>
               </Link>
               
-              <Link to={'/godown'} ref={godownRef} className='block outline-none focus:bg-yellow-500'>
+              <Link to={'/godown'} ref={godownRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
               <li className='w-full pl-20'>Godown Master</li>
               </Link>
 
-              <Link to={'/voucherType'} ref={voucherTypeRef} className='block outline-none focus:bg-yellow-500'>
-                <li className='w-full pl-20'>Voucher Type Master</li>
-              </Link>
+              
               
               
             </ul>

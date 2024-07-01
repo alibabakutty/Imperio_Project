@@ -20,6 +20,8 @@ export const createNewGodownMaster = (godown) => axios.post(REST_API_BASE_URL+"/
 
 export const createNewVoucherTypeMaster = (voucher) => axios.post(REST_API_BASE_URL+"/addVoucherTypeMaster", voucher);
 
+export const createNewLedgerMaster = (ledger) => axios.post(REST_API_BASE_URL+"/addLedgerMaster", ledger);
+
 // DISPLAY
 export const listOfRegions = () => {return axios.get(REST_API_BASE_URL+"/allRegion")};
 
@@ -34,6 +36,8 @@ export const listOfGodowns = () => {return axios.get(REST_API_BASE_URL+"/allGodo
 export const listOfVoucherTypeNames = () => {return axios.get(REST_API_BASE_URL+"/allVoucherTypeMaster")};
 
 export const listOfVoucherTypes = () => {return axios.get(REST_API_BASE_URL+"/allVoucherTypes")};
+
+export const listOfLedgers = () => {return axios.get(REST_API_BASE_URL+"/allLedgers")};
 
 
 // ALTER

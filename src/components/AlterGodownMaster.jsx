@@ -74,7 +74,6 @@ const AlterGodownMaster = () => {
       if (event.ctrlKey && event.key === 'a') {
         event.preventDefault();
         acceptButtonRef.current.click();
-        saveRegionMaster(event);
       }
     };
 

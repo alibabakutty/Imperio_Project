@@ -2,7 +2,9 @@ import React from 'react'
 
 const GodownMasterAlteredCheck = () => {
   return (
-    <div>GodownMasterAlteredCheck</div>
+    <div>
+      <h1>Hi Buddy Godown Master Altered!</h1>
+    </div>
   )
 }
 

@@ -162,54 +162,79 @@ const AlterDistributorMaster = () => {
 
     const handleExecutiveInputChange = (e) => {
       const executiveValue = e.target.value;
-      setDistributor({ ...distributor, executiveCode: executiveValue });
-
-      if(executiveValue.trim() !== ''){
-        const filteredSuggestions = executiveSuggestions.filter((executive) => executive.executiveCode.toLowerCase().includes(executiveValue.toLowerCase()) );
-        setFilteredExecutiveSuggestions(filteredSuggestions);
-
-        const exactMatch = executiveSuggestions.find((executive) => executive.executiveCode.toLowerCase() === executiveValue.toLowerCase());
-
-        if(exactMatch){
-          setDistributor({ ...distributor, executiveMaster: exactMatch.executiveMaster });
+      setDistributor((prevState) => ({
+        ...prevState,
+        executiveCode: executiveValue,
+        executiveMaster: ''
+      }));
+  
+      if (executiveValue.trim() !== '') {
+        const filtered = executiveSuggestions.filter((executive) =>
+          executive.executiveCode.toLowerCase().includes(executiveValue.toLowerCase())
+        );
+        setFilteredExecutiveSuggestions(filtered);
+  
+        const exactMatch = executiveSuggestions.find((executive) =>
+          executive.executiveCode.toLowerCase() === executiveValue.toLowerCase()
+        );
+  
+        if (exactMatch) {
+          setDistributor((prevState) => ({
+            ...prevState,
+            executiveMaster: exactMatch.executiveMaster
+          }));
         }
-      }else{
+      } else {
         setFilteredExecutiveSuggestions([]);
-        setDistributor({ ...distributor, executiveMaster: '' });
       }
-      
     };
 
 
     const selectExecutive = (executive) => {
-      setDistributor({ ...distributor, executiveCode: executive.executiveCode });
-      setDistributor({ ...distributor, executiveMaster: executive.executiveMaster });
+      setDistributor((prevState) => ({
+        ...prevState,
+        executiveCode: executive.executiveCode,
+        executiveMaster: executive.executiveMaster
+      }));
       setFilteredExecutiveSuggestions([]);
     };
 
 
     const handleRegionInputChange = (e) => {
       const regionValue = e.target.value;
-      setDistributor({ ...distributor, regionCode: regionValue });
-
-      if(regionValue.trim() !== ''){
-        const filteredSuggestions = regionSuggestions.filter((region) => region.regionMasterId.toLowerCase().includes(regionValue.toLowerCase()));
-        setFilteredRegionSuggestions(filteredSuggestions);
-
-        const exactMatch = regionSuggestions.find((region) => region.regionMasterId,toLowerCase() === regionValue.toLowerCase());
-
-        if(exactMatch){
-          setDistributor({ ...distributor, regionMaster: exactMatch.regionMaster})
+      setDistributor((prevState) => ({
+        ...prevState,
+        regionCode: regionValue,
+        regionMaster: ''
+      }));
+  
+      if (regionValue.trim() !== '') {
+        const filtered = regionSuggestions.filter((region) =>
+          region.regionMasterId.toLowerCase().includes(regionValue.toLowerCase())
+        );
+        setFilteredRegionSuggestions(filtered);
+  
+        const exactMatch = regionSuggestions.find((region) =>
+          region.regionMasterId.toLowerCase() === regionValue.toLowerCase()
+        );
+  
+        if (exactMatch) {
+          setDistributor((prevState) => ({
+            ...prevState,
+            regionMaster: exactMatch.regionMaster
+          }));
         }
-      }else{
+      } else {
         setFilteredRegionSuggestions([]);
-        setDistributor({ ...distributor, regionMaster: '' });
       }
     };
-
+  
     const selectRegion = (region) => {
-      setDistributor({ ...distributor, regionCode: region.regionCode });
-      setDistributor({ ...distributor, regionMaster: region.regionMaster });
+      setDistributor((prevState) => ({
+        ...prevState,
+        regionCode: region.regionMasterId,
+        regionMaster: region.regionName
+      }));
       setFilteredRegionSuggestions([]);
     };
 
