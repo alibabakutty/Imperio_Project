@@ -47,14 +47,14 @@ const Gateway = () => {
     
     <div className='flex justify-evenly' style={{ backgroundImage: 'linear-gradient(to top, white, #a4f4fc, #ffc4ff)'}}>
 
-        <div className='w-[90%] flex h-screen '>
-            <div className='w-1/2  flex items-center'>
+        <div className='w-[90%] flex h-screen ' >
+            <div className='w-1/2  flex items-center' >
                 <div>
                     {/* <img src={imperio1} alt="Imperio Golden Label" className='w-[900px]'  /> */}
                 </div>
             </div> 
 
-            <div className='w-1/2 bg-slate-100 flex justify-center'>
+            <div className='w-1/2 bg-slate-100 flex justify-center border border-l-slate-400' style={{backgroundImage: 'linear-gradient(to top, white, #a4f4fc, #ffc4ff)'}}>
 
                 <div className='w-[300px] h-96 border border-blue-400 text-sm bg-[#def1fc] mt-[82px]'>
 
