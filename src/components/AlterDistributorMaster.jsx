@@ -255,7 +255,7 @@ const AlterDistributorMaster = () => {
       } else if (keyCode === 27) { // Escape key
         event.preventDefault();
         setShowModal(true);
-      } else if (keyCode === 8) { // Backspace key
+      } else if (keyCode === 8 && target.id !== 'distributorCode') { // Backspace key
         const isEmptyOrZero = target.value.trim() === '' || (target.value === '0');
         if (isEmptyOrZero) {
           event.preventDefault();
@@ -270,6 +270,9 @@ const AlterDistributorMaster = () => {
           prevInputRef.focus();
           pulseCursor(prevInputRef); // Call pulseCursor for the previous input field
         }
+      } else if(keyCode === 46){
+        event.preventDefault();
+        setDistributor({ ...distributor, [target.name]: '' });
       }
     };
 
@@ -409,7 +412,8 @@ const AlterDistributorMaster = () => {
                             </div>
 
                             <div className='mt-[261px]'>
-                                <button type='submit' id='acceptButton' ref={(button) => {acceptButtonRef.current = button; inputRefs.current.acceptButton = button}} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'   >A: Accept</button>
+                                {/* <button type='submit' id='acceptButton' ref={(button) => {acceptButtonRef.current = button; inputRefs.current.acceptButton = button}} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'   >A: Accept</button> */}
+                                <input type="button" id='acceptButton' onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.contactMobileNo && inputRefs.current.contactMobileNo.focus){inputRefs.current.contactMobileNo.focus(); }}}} value={"A: Accept"} ref={(button) => {acceptButtonRef.current = button; }} onClick={(e) => {onSubmit(e)}} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 ml-[100px]' />
                             </div>  
                         </form>
                         

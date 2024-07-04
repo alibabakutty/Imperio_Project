@@ -128,7 +128,7 @@ const DisplayRegionMaster = () => {
             }
         } else if (keyCode === 27) { // Handle Escape key
             setShowModal(true);
-        } else if (keyCode === 8) { // Handle Backspace key
+        } else if (keyCode === 8 && target.id !== 'regionMasterId') { // Handle Backspace key
             event.preventDefault();
             const isEmptyOrZero = target.value.trim() === '' || (target.value === '0');
             

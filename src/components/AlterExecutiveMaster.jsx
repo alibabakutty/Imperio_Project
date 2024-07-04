@@ -128,7 +128,7 @@ const AlterExecutiveMaster = () => {
       }
     } else if (key === 'Escape') {
       setShowModal(true);
-    } else if (key === 'Backspace') {
+    } else if (key === 'Backspace' && target.id !== 'executiveCode') {
       if (target.selectionStart === 0 && target.selectionEnd === 0) {
         event.preventDefault();
         const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
@@ -136,6 +136,9 @@ const AlterExecutiveMaster = () => {
         prevInputRef.focus();
         pulseCursor(prevInputRef);
       }
+    } else if(key === 'Delete'){
+      event.preventDefault();
+      setExecutive({ ...executive, [target.name]: '' });
     }
   };
   
@@ -228,7 +231,8 @@ const AlterExecutiveMaster = () => {
                 : <input type="text" id='status' name='status' value={executive.status} onChange={(e) => onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.status = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
               </div>
               <div className='mt-[345px]'>
-                <button type='submit' id='acceptButton' ref={(button) => { acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' >A: Accept</button>
+                {/* <button type='submit' id='acceptButton' ref={(button) => { acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' >A: Accept</button> */}
+                <input type="button" id='acceptButton' onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.status && inputRefs.current.status.focus){inputRefs.current.status.focus();}}}} value={"A: Accept"} ref={(button) => {acceptButtonRef.current = button; }} onClick={(e) => {onSubmit(e)}} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 ml-[100px]' />
               </div>
             </form>
           </div>

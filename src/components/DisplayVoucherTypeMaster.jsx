@@ -67,6 +67,10 @@ const DisplayVoucherTypeMaster = () => {
         setVoucher({ ...voucher, [name]: capitalizedValue });
     };
 
+    const handleNavigation = () => {
+      navigate('/voucherTypeFilter');
+    }
+
     useEffect(() => {
 
       if(inputRefs.current.voucherTypeName){
@@ -135,95 +139,95 @@ const DisplayVoucherTypeMaster = () => {
 
 
       const handleKeyDown = (event) => {
-        const {keyCode, target} = event;
-
-        if(keyCode === 13){
+        const { keyCode, target } = event;
+      
+        if (keyCode === 13) { // Enter key
           event.preventDefault();
-          const currentInputIndex = Object.keys(inputRefs.current).findIndex( (key) => key === target.id );
-
-          if(target.id === 'alterAdditionalNumberingDetails'){
-            if(inputRefs.current.printingVoucherAfterSaving && inputRefs.current.printingVoucherAfterSaving.focus){
+      
+          if (target.id === 'nameOfClass') {
+            if (backButtonRef.current && backButtonRef.current.focus) {
+              backButtonRef.current.focus();
+            }
+          } else if (target.id === 'alterAdditionalNumberingDetails') {
+            if (inputRefs.current.printingVoucherAfterSaving && inputRefs.current.printingVoucherAfterSaving.focus) {
               inputRefs.current.printingVoucherAfterSaving.focus();
               pulseCursor(inputRefs.current.printingVoucherAfterSaving);
             }
-          }else if(target.id === 'suffixDetailsParticulars'){
-            if(subFormSaveButtonRef.current && subFormSaveButtonRef.current.focus){
+          } else if (target.id === 'suffixDetailsParticulars') {
+            if (subFormSaveButtonRef.current && subFormSaveButtonRef.current.focus) {
               subFormSaveButtonRef.current.focus();
             }
-          }else if(target.id === 'subFormSaveButton'){
+          } else if (target.id === 'subFormSaveButton') {
             handleSubFormSave();
-            if(inputRefs.current.printingVoucherAfterSaving && inputRefs.current.printingVoucherAfterSaving.focus){
+            if (inputRefs.current.printingVoucherAfterSaving && inputRefs.current.printingVoucherAfterSaving.focus) {
               inputRefs.current.printingVoucherAfterSaving.focus();
             }
-          }else{
-            const nextInputIndex = currentInputIndex + 1;
-            if(nextInputIndex < Object.keys(inputRefs.current).length){
-              const nextInputRef = Object.values(inputRefs.current)[nextInputIndex];
-              if(nextInputRef && nextInputRef.focus){
-                nextInputRef.focus();
-                pulseCursor(nextInputRef);
-              }
-            }else{
-              if(backButtonRef.current && backButtonRef.current.focus){
-                backButtonRef.current.focus();
-              }
+          } else {
+            const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
+            const nextInputIndex = (currentInputIndex + 1) % Object.keys(inputRefs.current).length;
+            const nextInputRef = Object.values(inputRefs.current)[nextInputIndex];
+      
+            if (nextInputRef && nextInputRef.focus) {
+              nextInputRef.focus();
+              pulseCursor(nextInputRef);
             }
           }
-        } else if(keyCode === 27){
+        } else if (keyCode === 27) { // Escape key
           setShowModal(true);
-        } else if(keyCode === 8){
-          if(target.selectionStart === 0 && target.selectionEnd === 0){
+        } else if (keyCode === 8 && target.id !== 'voucherTypeName') { // Backspace key
+          if (target.selectionStart === 0 && target.selectionEnd === 0) {
             event.preventDefault();
-
-            if(target.id === 'printingVoucherAfterSaving'){
-              if(inputRefs.current.alterAdditionalNumberingDetails && inputRefs.current.alterAdditionalNumberingDetails.focus){
+      
+            if (target.id === 'printingVoucherAfterSaving') {
+              if (inputRefs.current.alterAdditionalNumberingDetails && inputRefs.current.alterAdditionalNumberingDetails.focus) {
                 inputRefs.current.alterAdditionalNumberingDetails.focus();
                 pulseCursor(inputRefs.current.alterAdditionalNumberingDetails);
               }
-            } else if(target.id === 'acceptButton'){
-              if(inputRefs.current.nameOfClass && inputRefs.current.nameOfClass.focus){
+            } else if (target.id === 'acceptButton') {
+              if (inputRefs.current.nameOfClass && inputRefs.current.nameOfClass.focus) {
                 inputRefs.current.nameOfClass.focus();
                 pulseCursor(inputRefs.current.nameOfClass);
               }
-            }else{
-              const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id );
+            } else {
+              const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
               const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
               const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-              
-              if(prevInputRef && prevInputRef.focus){
+      
+              if (prevInputRef && prevInputRef.focus) {
                 prevInputRef.focus();
                 pulseCursor(prevInputRef);
               }
             }
           }
-        } else if(target.id === 'alterAdditionalNumberingDetails'){
-          if(keyCode === 89 || keyCode === 121){
+        } else if (target.id === 'alterAdditionalNumberingDetails') { // Specific handling for alterAdditionalNumberingDetails input
+          if (keyCode === 89 || keyCode === 121) { // 'Y' or 'y' key
             event.preventDefault();
-
+      
             setVoucher({ ...voucher, alterAdditionalNumberingDetails: 'no' });
             setShowSubFormModal(true);
-          } else if(keyCode === 78 || keyCode === 110){
+          } else if (keyCode === 78 || keyCode === 110) { // 'N' or 'n' key
             event.preventDefault();
-
+      
             setVoucher({ ...voucher, alterAdditionalNumberingDetails: 'no' });
             const nextInputRef = inputRefs.current.printingVoucherAfterSaving;
-            if(nextInputRef && nextInputRef.focus){
+            if (nextInputRef && nextInputRef.focus) {
               nextInputRef.focus();
               pulseCursor(nextInputRef);
             }
           }
-        } else if(target.id === 'printingVoucherAfterSaving'){
-          if(keyCode === 89 || keyCode === 121){
+        } else if (target.id === 'printingVoucherAfterSaving') { // Specific handling for printingVoucherAfterSaving input
+          if (keyCode === 89 || keyCode === 121) { // 'Y' or 'y' key
             event.preventDefault();
-
-            setVoucher({ ...voucher, printingVoucherAfterSaving: 'yes'});
-          }else if(keyCode === 78 || keyCode === 110){
+      
+            setVoucher({ ...voucher, printingVoucherAfterSaving: 'yes' });
+          } else if (keyCode === 78 || keyCode === 110) { // 'N' or 'n' key
             event.preventDefault();
-
+      
             setVoucher({ ...voucher, printingVoucherAfterSaving: 'no' });
           }
         }
       };
+      
 
 
     const loadVoucherTypeName = async () => {
@@ -468,7 +472,8 @@ const DisplayVoucherTypeMaster = () => {
             </div>
 
             <div>
-                <Link to={"/voucherTypeFilter"} id='backButton' ref={(button) => {backButtonRef.current = button; inputRefs.current.backButton = button; }} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800  ml-[600px]' >Q: Quit</Link>
+                {/* <Link to={"/voucherTypeFilter"} id='backButton' ref={(button) => {backButtonRef.current = button; inputRefs.current.backButton = button; }} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800  ml-[600px]' >Q: Quit</Link> */}
+                <input type="button" id='backButton' className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.nameOfClass && inputRefs.current.nameOfClass.focus){inputRefs.current.nameOfClass.focus(); }}}} value={"Q: Quit"} ref={(button) => {backButtonRef.current = button; }} onClick={handleNavigation}  />
             </div>
 
         </div>

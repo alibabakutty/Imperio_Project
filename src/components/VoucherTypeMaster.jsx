@@ -105,7 +105,7 @@ const VoucherTypeMaster = () => {
             if ((ctrlKey && key === 'q') || key === 'Escape') {
                 event.preventDefault();
                 setShowModal(true);
-            }
+            } 
         };
     
         const handleCtrlA = (event) => {
@@ -215,8 +215,8 @@ const VoucherTypeMaster = () => {
             setShowModal(true);
             break;
       
-          case 8: // Backspace key
-            if (target.selectionStart === 0 && target.selectionEnd === 0) {
+            case 8: // Backspace key
+            if (target.id !== 'voucherTypeName' && target.selectionStart === 0 && target.selectionEnd === 0) {
               event.preventDefault();
               if (target.id === 'printingVoucherAfterSaving') {
                 if (inputRefs.current.alterAdditionalNumberingDetails && inputRefs.current.alterAdditionalNumberingDetails.focus) {
@@ -224,9 +224,9 @@ const VoucherTypeMaster = () => {
                   pulseCursor(inputRefs.current.alterAdditionalNumberingDetails);
                 }
               } else if (target.id === 'acceptButton') {
-                if (inputRefs.current.nameofclass && inputRefs.current.nameofclass.focus) {
-                  inputRefs.current.nameofclass.focus();
-                  pulseCursor(inputRefs.current.nameofclass);
+                if (inputRefs.current.nameOfClass && inputRefs.current.nameOfClass.focus()) {
+                  inputRefs.current.nameOfClass.focus();
+                  pulseCursor(inputRefs.current.nameOfClass);
                 }
               } else {
                 const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
@@ -579,8 +579,8 @@ const VoucherTypeMaster = () => {
                                     <div className='fixed z-10 inset-0 overflow-y-auto'>
                                         <div className='flex items-end justify-center'>
 
-                                            <div className='fixed inset-0 transition-opacity' aria-hidden="true">
-                                                <div className='absolute inset-0 bg-gray-500 opacity-75'></div>
+                                            <div className='fixed inset-0 transition-opacity' aria-hidden="false">
+                                                <div className='absolute inset-0 bg-gray-800 opacity-70'></div>
                                             </div>
 
                                             <span className='hidden sm:inline-block' aria-hidden="true">&#8203;</span>
@@ -753,7 +753,11 @@ const VoucherTypeMaster = () => {
 
                     <div className=''>
 
-                        <button type='submit' id='acceptButton' ref={(button) => {acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }} onClick={(e) => saveVoucherTypeMaster(e)} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 ml-[100px]'>A: Accept</button>
+                        <input type='button' onKeyDown={e => 
+                        {if(e.key === 'Backspace'){ e.preventDefault();
+                          if (inputRefs.current.nameOfClass && inputRefs.current.nameOfClass.focus) {
+                            inputRefs.current.nameOfClass.focus();
+                        }}}} id='acceptButton' value={"A: Accept"} ref={(button) => {acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }} onClick={(e) => saveVoucherTypeMaster(e)} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 ml-[100px]'/>
 
                         <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800  ml-[600px]' >Q: Quit</Link>
                     </div>

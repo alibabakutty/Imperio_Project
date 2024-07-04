@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
 import { IoClose } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { createNewProductMaster } from '../services/MasterService';
+import '../assets/css/font.css';
+import axios from 'axios';
 
 const AlterProductMaster = () => {
-  let navigate = useNavigate();
-  const { productCode } = useParams();
+
+  const {productCode} = useParams();   // Use productcode for url parameters
 
   const [product, setProduct] = useState({
     productCode: "",
@@ -17,7 +19,8 @@ const AlterProductMaster = () => {
     sellingPrice: "",
     discount: ""
   });
-
+  
+  
   const inputRefs = useRef({
     productCode: null,
     productDescription: null,
@@ -30,46 +33,67 @@ const AlterProductMaster = () => {
     acceptButton: null
   });
 
+  const [errors, setErrors] = useState({});
+  
+  const [unitsSuggestions, setUnitsSuggestions] = useState([]);
+  const [filteredUnitsSuggestions, setFilteredUnitsSuggestions] = useState([]);
+  const [uomFocused, setUomFocused] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [highlightedSuggestionIndex, setHighlightedSuggestionIndex] = useState(0);
+  
+  
   const acceptButtonRef = useRef(null);
   const yesQuitButtonRef = useRef(null);
   const cancelModalConfirmRef = useRef(null);
+  const uomInputRef = useRef(null); // Ref for the uom input field
+  const suggestionRefs = useRef([]);  // Refs for suggestion items
+  
+  const navigate = useNavigate();
 
-  const [unitsSuggestions, setUnitsSuggestions] = useState([]);
-  const [filteredUnitsSuggestions, setFilteredUnitsSuggestions] = useState([]);
-  const [showAllUnits, setShowAllUnits] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-
-  const onInputChange = (e) => {
-    const { name, value } = e.target;
-    const capitalizedValue = typeof value === 'string' ? value.charAt(0).toUpperCase() + value.slice(1) : value;
-    setProduct({ ...product, [name]: capitalizedValue });
-  };
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.put(`http://localhost:8080/api/master/alterProductMaster/${productCode}`, {
-        ...product,
-        standardCost: parseFloat(product.standardCost),
-        sellingPrice: parseFloat(product.sellingPrice),
-        discount: parseFloat(product.discount)
-      });
-      navigate("/alteredProduct");
-    } catch (error) {
-      console.error("Error updating the product", error);
+  const pulseCursor = (input) => {
+    const value = input.value;
+    if (value) {
+      input.value = '';
+      setTimeout(() => {
+        input.value = value.charAt(0).toUpperCase() + value.slice(1);
+        input.setSelectionRange(0, 0);
+      }, 0);
     }
   };
 
+  const onInputChange = (e) => {
+    const {name,value} = e.target;
+    const capitalizedValue = value.charAt(0).toUpperCase() + value.slice(1);
+    setProduct({ ...product, [name]: capitalizedValue });
+  };
+
+
+  const loadProduct = async () => {
+    try{
+      const result = await axios.get(`http://localhost:8080/api/master/displayProduct/${productCode}`);
+      setProduct(result.data);
+    } catch (error) {
+      console.error('Error fetching the product data:', error);
+    }
+  }
+
   useEffect(() => {
+    // Focus on the first input element after the component mounts
     if (inputRefs.current.productCode) {
       inputRefs.current.productCode.focus();
       pulseCursor(inputRefs.current.productCode);
     }
 
+    loadProduct();
+
+    // Fetch units suggestions
     const fetchUnitSuggestions = async () => {
       try {
         const response = await axios.get('http://localhost:8080/api/master/allUnits');
         setUnitsSuggestions(response.data);
+        setFilteredUnitsSuggestions(response.data); // Initialize with all suggestions
+        // Initialize suggestionRefs for each suggestion item
+        suggestionRefs.current = response.data.map(() => React.createRef());
       } catch (error) {
         console.error('Error fetching unit data:', error);
       }
@@ -77,8 +101,7 @@ const AlterProductMaster = () => {
 
     fetchUnitSuggestions();
 
-    loadProduct();
-
+    // Add event listener for Ctrl + Q and Esc to go back
     const handleKeyDown = (event) => {
       const { ctrlKey, key } = event;
       if ((ctrlKey && key === 'q') || key === 'Escape') {
@@ -91,17 +114,19 @@ const AlterProductMaster = () => {
       if (event.ctrlKey && event.key === 'a') {
         event.preventDefault();
         acceptButtonRef.current.click();
+        saveProductMaster(event);
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keydown', handleCtrlA);
 
+    // Cleanup event listener on component unmount
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('keydown', handleCtrlA);
     };
-  }, [productCode]);
+  }, [navigate]);
 
   useEffect(() => {
     if (showModal) {
@@ -128,19 +153,24 @@ const AlterProductMaster = () => {
 
   const handleKeyDown = (event) => {
     const { keyCode, target } = event;
-    const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
+    const currentInputIndex = Object.keys(inputRefs.current).findIndex(
+      (key) => key === target.id
+    );
 
-    if (keyCode === 13) { // Enter key
+    if (keyCode === 13) {
+      // Handle Enter key
       event.preventDefault();
       if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
         acceptButtonRef.current.focus();
       } else {
         const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
         nextInputRef.focus();
+        pulseCursor(nextInputRef);
       }
-    } else if (keyCode === 27) { // Escape key
+    } else if (keyCode === 27) {
+      // Handle Escape key
       setShowModal(true);
-    } else if (keyCode === 8) { // Backspace key
+    } else if (keyCode === 8 && target.id !== 'productCode') { // Backspace key
       const isStandardCost = target.name === 'standardCost';
       const isSellingPrice = target.name === 'sellingPrice';
       const isDiscount = target.name === 'discount';
@@ -161,14 +191,77 @@ const AlterProductMaster = () => {
         pulseCursor(prevInputRef);
       }
     }
+
+    // Handle UOM input suggestions navigation
+    if (target.id === 'productUom') {
+      if (keyCode === 40) { // Down arrow
+        event.preventDefault();
+        setHighlightedSuggestionIndex((prevIndex) => (prevIndex + 1) % filteredUnitsSuggestions.length);
+      } else if (keyCode === 38) { // Up arrow
+        event.preventDefault();
+        setHighlightedSuggestionIndex((prevIndex) => (prevIndex - 1 + filteredUnitsSuggestions.length) % filteredUnitsSuggestions.length);
+      } else if (keyCode === 13 && highlightedSuggestionIndex >= 0) { // Enter key on highlighted suggestion
+        event.preventDefault();
+        selectUnit(filteredUnitsSuggestions[highlightedSuggestionIndex]);
+      }
+    }
   };
 
-  const loadProduct = async () => {
-    try {
-      const result = await axios.get(`http://localhost:8080/api/master/displayProduct/${productCode}`);
-      setProduct(result.data);
-    } catch (error) {
-      console.error("Error fetching the product data", error);
+  const handleUomChange = (e) => {
+    const value = e.target.value;
+    setProductUom(value); // Update the UOM state
+
+    const filteredSuggestions = unitsSuggestions.filter((unit) =>
+        unit.productUom.toLowerCase().includes(value.toLowerCase())
+    );
+
+    setFilteredUnitsSuggestions(filteredSuggestions); // Update filtered suggestions
+
+    // Update highlighted index based on user input or selection
+    let highlightedIndex = -1; // Initialize to -1 for no highlighted suggestion
+
+    // Find the index of the suggestion that exactly matches the input value
+    const exactMatchIndex = filteredSuggestions.findIndex((unit) =>
+        unit.productUom.toLowerCase() === value.toLowerCase()
+    );
+
+    if (exactMatchIndex !== -1) {
+        // If there's an exact match, use that index
+        highlightedIndex = exactMatchIndex;
+    } else if (filteredSuggestions.length > 0) {
+        // Otherwise, find the index of the first suggestion that starts with the input value
+        highlightedIndex = filteredSuggestions.findIndex((unit) =>
+            unit.productUom.toLowerCase().startsWith(value.toLowerCase())
+        );
+        if (highlightedIndex === -1) {
+            // If no match found, default to highlighting the first suggestion
+            highlightedIndex = 0;
+        }
+    }
+
+    setHighlightedSuggestionIndex(highlightedIndex); // Update highlighted index
+
+    // Focus on the suggestion related to the selected productUom
+    if (exactMatchIndex !== -1 && suggestionRefs.current[exactMatchIndex]) {
+        suggestionRefs.current[exactMatchIndex].focus();
+    }
+};
+
+
+
+  const selectUnit = (unit) => {
+    setProductUom(unit.productUom); // Update the UOM state with the selected unit
+    setFilteredUnitsSuggestions([]); // Clear filtered suggestions
+  };
+
+  const handleInputFocus = (e) => {
+    const { id } = e.target;
+    if (id === 'productUom') {
+      setUomFocused(true);
+      setFilteredUnitsSuggestions(unitsSuggestions); // Show all suggestions when focused
+    } else {
+      setUomFocused(false);
+      setFilteredUnitsSuggestions([]); // Clear suggestions when other inputs are focused
     }
   };
 
@@ -177,138 +270,131 @@ const AlterProductMaster = () => {
   };
 
   const handleModalConfirm = () => {
-    navigate('/productAlter');
+    setShowModal(false);
   };
 
-  const pulseCursor = (input) => {
-    const value = input.value;
-    if (value) {
-      input.value = '';
-      setTimeout(() => {
-        input.value = value.charAt(0).toUpperCase() + value.slice(1);
-        input.setSelectionRange(0, 0);
-      }, 0);
+  const validateForm = () => {
+    const validationErrors = {};
+
+    if (!productCode.trim()) {
+      validationErrors.productCode = 'Product Code is required';
+    }
+
+    setErrors(validationErrors);
+
+    return Object.keys(validationErrors).length === 0;
+  };
+
+  const saveProductMaster = (e) => {
+    e.preventDefault();
+
+    const product = { productCode, productDescription, productCategory, productUom, productGroup, standardCost, sellingPrice, discount };
+
+    if (validateForm()) {
+      createNewProductMaster(product).then((response) => {
+        console.log(response.data);
+        navigate('/addedProduct');
+
+        // Focus on the first input field
+        if (inputRefs.current.productCode) {
+          inputRefs.current.productCode.focus();
+        }
+      }).catch((error) => {
+        console.error('Error creating product master:', error);
+      })
     }
   };
 
-  const handleUomChange = (e) => {
-    const { value } = e.target;
+    
+    return (
+        <div className='w-1/2 border h-[100vh]'>
+            <div className='w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[750px] mt-10 border border-gray-500 border-b-0'>
+                <h2 className='ml-[200px]'>Product Master</h2>
+                <span className='cursor-pointer mt-[5px] mr-2'>
+                    <Link to={"/list"}><IoClose /></Link>
+                </span>
+            </div>
 
-    setProduct({ ...product, productUom: value });
-
-    if (value.trim() !== '') {
-      const filteredSuggestions = unitsSuggestions.filter((unit) =>
-        unit.uom.toLowerCase().includes(value.toLowerCase())
-      );
-      setFilteredUnitsSuggestions(filteredSuggestions);
-    } else {
-      setFilteredUnitsSuggestions([]);
-    }
-  };
-
-  const selectUnit = (unit) => {
-    setProduct({ ...product, productUom: unit.uom });
-    setFilteredUnitsSuggestions([]);
-    setShowAllUnits(false);
-  };
-
-  const toggleShowAllUnitSuggestions = () => {
-    setShowAllUnits(!showAllUnits);
-  };
-
-  return (
-    <div>
-      <div className='flex'>
-        <div className='w-1/2 h-[100vh] border border-bg-gray-500'></div>
-        <div className='w-1/2 border border-bg-gray-500'>
-          <div className='w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[80px] mt-10 border border-gray-500 border-b-0'>
-            <h2 className='ml-[200px]'>Product Master</h2>
-            <span className='cursor-pointer mt-[5px] mr-2'>
-              <Link to={"/productAlter"}><IoClose /></Link>
-            </span>
-          </div>
-          <div className='w-[550px] h-[36vh] border border-gray-500 ml-[80px]'>
-            <form onSubmit={onSubmit}>
-              {['productCode', 'productDescription', 'productCategory', 'productUom', 'productGroup', 'standardCost', 'sellingPrice', 'discount'].map((field) => (
-                <div key={field} className='input-ldgr flex items-center mt-1'>
-                  <label htmlFor={field} className='text-sm ml-2 mr-2 w-[140px]'>{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</label>
-                  <span className='mr-2'>:</span>
-                  <input
-                    type="text"
-                    id={field}
-                    name={field}
-                    value={product[field]}
-                    onChange={(e) => { onInputChange(e); handleUomChange(e); }}
-                    onFocus={(e) => {
-                      pulseCursor(e.target);
-                    }}
-                    onKeyDown={handleKeyDown}
-                    ref={input => {
-                      inputRefs.current[field] = input;
-                    }}
-                    className={`h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ${['standardCost', 'sellingPrice', 'discount'].includes(field) ? 'w-[150px]' : 'w-[300px]'}`}
-                    autoComplete='off'
-                  />
-                </div>
-              ))}
-
-              {filteredUnitsSuggestions.length > 0 && (
-                <div className=''>
-                  <div className='absolute top-[40px] left-[1028px] bg-[#CAF4FF] w-[20%] h-[550px] border border-gray-500'>
-                    <div className='text-center bg-[#003285] text-[13.5px] text-white'>
-                      <p>List Of Uom</p>
+            <div className='w-[550px] h-[35vh] border border-gray-500 ml-[750px]'>
+                <form>
+                    <div className='input-ldgr mt-3'>
+                        <label htmlFor="productCode" className='text-sm mr-[53.5px] ml-2'>Product Code</label>
+                        : <input type="text" id='productCode' name='productCode' value={product.productCode} onChange={(e) => setProductCode(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => {  inputRefs.current.productCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        {errors.productCode && <p className='text-red-500 text-xs ml-2'>{errors.productCode}</p>}
                     </div>
 
-                    <ul className='suggestions w-full text-center mt-2'>
-                      {filteredUnitsSuggestions.slice(0, 25).map((unit, index) => (
-                        <li key={index} tabIndex={0} onClick={() => selectUnit(unit)} onKeyDown={(e) => e.key === 'Enter' && selectUnit(unit)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
-                          {unit.uom.toUpperCase()}
-                        </li>
-                      ))}
-                    </ul>
+                    <div className='input-ldgr'>
+                        <label htmlFor="productDescription" className='text-sm mr-[9.5px] ml-2'>Product Descriptions</label>
+                        : <input type="text" id='productDescription' name='productDescription' value={product.productDescription} onChange={(e) => setProductDescription(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productDescription = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                    </div>
 
-                    {filteredUnitsSuggestions.length > 25 && (
-                      <div className='text-center'>
-                        <button type='button' onClick={toggleShowAllUnitSuggestions} className='text-sm text-blue-500 underline'>
-                          {showAllUnits ? 'Show Less' : 'Show More'}
-                        </button>
-                      </div>
-                    )}
+                    <div className='input-ldgr'>
+                        <label htmlFor="productCategory" className='text-sm mr-[30px] ml-2'>Product Category</label>
+                        : <input type="text" id='productCategory' name='productCategory' value={product.productCategory} onChange={(e) => setProductCategory(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productCategory = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                    </div>
 
-                    {showAllUnits && (
-                      <select size='10' className='w-full mt-2' onChange={(e) => selectUnit({ uom: e.target.value })}>
-                        {filteredUnitsSuggestions.slice(25).map((unit, index) => (
-                          <option key={index} value={unit.uom}>
-                            {unit.uom.toUpperCase()}
-                          </option>
-                        ))}
-                      </select>
-                    )}
-                  </div>
-                </div>
-              )}
+                    <div className='input-ldgr'>
+                        <label htmlFor="productUom" className='text-sm mr-[55px] ml-2'>Product UOM</label>
+                        : <input type="text" id='productUom' name='productUom' value={product.productUom} onChange={(e) => { handleUomChange(e) }} onKeyDown={handleKeyDown} ref={(input) => {inputRefs.current.productUom = input; uomInputRef.current = input; }} onFocus={handleInputFocus} onBlur={() => setUomFocused(false)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
 
-              <div className='mt-[290px]'>
-                <button
-                  type='submit'
-                  id='acceptButton'
-                  ref={button => {
-                    acceptButtonRef.current = button;
-                    inputRefs.current.acceptButton = button;
-                  }}
-                  className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'
-                >
-                  A: Accept
-                </button>
-              </div>
-            </form>
-          </div>
-          <div className='mt-[295px] ml-[480px]'>
-            <Link to={"/productFilter"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>Q: Quit</Link>
-          </div>
-        </div>
-      </div>
-      {/* Modal */}
+                        {uomFocused && filteredUnitsSuggestions.length > 0 && (
+                            <div className='absolute top-[72px] left-[1031px] text-left bg-[#CAF4FF] w-[20%] h-[550px] border border-gray-500'>
+                                <div className=' bg-[#003285] text-[13.5px] pl-2 text-white'>
+                                    <p>List Of Uom</p>
+                                </div>
+                                <ul className=' bg-[#CAF4FF] mt-5 w-full border border-gray-300 text-[12.5px]' >
+                                    {filteredUnitsSuggestions.map((unit, index) => (
+                                        <li
+                                            key={unit.id || index }
+                                            ref={(input) => (suggestionRefs.current[index] = input)}
+                                            tabIndex={0}
+                                            onClick={() => selectUnit(unit)}
+                                            onMouseDown={() => selectUnit(unit)}
+                                            onFocus={handleInputFocus}
+                                            className={`pl-2 cursor-pointer ${
+                                              highlightedSuggestionIndex === index ? 'bg-yellow-300' : ''
+                                          }`}>
+                                            {unit.productUom}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    
+                    </div>
+
+
+                    <div className='input-ldgr'>
+                        <label htmlFor="productGroup" className='text-sm mr-[48.5px] ml-2'>Product Group</label>
+                        : <input type="text" id='productGroup' name='productGroup' value={product.productGroup} onChange={(e) => setProductGroup(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productGroup = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                    </div>
+
+                    <div className='input-ldgr'>
+                        <label htmlFor="standardCost" className='text-sm mr-[51px] ml-2'>Standard Cost</label>
+                        : <input type="text" id='standardCost' name='standardCost' value={product.standardCost} onChange={(e) => setStandardCost(Number(e.target.value))} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.standardCost = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                    </div>
+
+                    <div className='input-ldgr'>
+                        <label htmlFor="sellingPrice" className='text-sm mr-[62px] ml-2'>Selling Price</label>
+                        : <input type="text" id='sellingPrice' name='sellingPrice' value={product.sellingPrice} onChange={(e) => setSellingPrice(Number(e.target.value))} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.sellingPrice = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                    </div>
+
+                    <div className='input-ldgr'>
+                        <label htmlFor="discount" className='text-sm mr-[87px] ml-2'>Discount</label>
+                        : <input type="text" id='discount' name='discount' value={product.discount} onChange={(e) => setDiscount(Number(e.target.value))} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.discount = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                    </div>
+
+                    <div className='mt-[302px]'>
+                        <input type="button" id='acceptButton' onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.discount && inputRefs.current.discount.focus){inputRefs.current.discount.focus(); }}}} value={"A: Accept"} ref={(button) => {acceptButtonRef.current = button;}} onClick={(e) => saveProductMaster(e)} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 ml-[100px]' />
+                    </div>
+                </form>
+            </div>
+
+            <div className='mt-[310px] ml-[495px]'>
+                <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>Q: Quit</Link>
+            </div>
+
+            {/* Modal */}
       {showModal && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -337,8 +423,8 @@ const AlterProductMaster = () => {
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
                   type="button"
-                  onClick={handleModalConfirm}
                   ref={yesQuitButtonRef}
+                  onClick={handleModalConfirm}
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-slate-600 text-base font-medium text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:ml-3 sm:w-auto sm:text-sm"
                 >
                   Yes, Quit
@@ -356,8 +442,10 @@ const AlterProductMaster = () => {
           </div>
         </div>
       )}
-    </div>
-  );
+
+
+        </div>
+    );
 };
 
 export default AlterProductMaster;

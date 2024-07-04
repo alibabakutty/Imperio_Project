@@ -7,228 +7,280 @@ import axios from 'axios';
 
 const Productmaster = () => {
     const [productCode, setProductCode] = useState('');
-    const [productDescription, setProductDescription] = useState('');
-    const [productCategory, setProductCategory] = useState('');
-    const [uom, setUom] = useState('');
-    const [productGroup, setProductGroup] = useState('');
-    const [standardCost, setStandardCost] = useState('');
-    const [sellingPrice, setSellingPrice] = useState('');
-    const [discount, setDiscount] = useState('');
-
-    const [errors, setErrors] = useState({});
-
-    const [unitsSuggestions, setUnitsSuggestions] = useState([]);
-    const [filteredUnitsSuggestions, setFilteredUnitsSuggestions] = useState([]);
-    const [showAllUnits, setShowAllUnits] = useState(false);
-
-    const [showModal, setShowModal] = useState(false);
-
-    const inputRefs = useRef({
-        productCode: null,
-        productDescription: null,
-        productCategory: null,
-        uom: null,
-        productGroup: null,
-        standardCost: null,
-        sellingPrice: null,
-        discount: null
-    });
-
-    const productCodeRef = useRef(null);
-    const acceptButtonRef = useRef(null);
-    const yesQuitButtonRef = useRef(null);
-    const cancelModalConfirmRef = useRef(null);
-
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        // Focus on the first input element after the component mounts
-        if (productCodeRef.current) {
-            productCodeRef.current.focus();
-        }
-
-        // fetch units suggestions
-        const fetchUnitSuggestions = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/api/master/allUnits');
-                console.log(response.data);
-                setUnitsSuggestions(response.data);
-            } catch (error) {
-                console.error('Error fetching unit data:', error);
-            }
-        };
-
-        fetchUnitSuggestions();
-
-        // Add event listener for Ctrl + Q and Esc to go back
-        const handleKeyDown = (event) => {
-            const { ctrlKey, key } = event;
-            if ((ctrlKey && key === 'q') || key === 'Escape') {
-              event.preventDefault();
-              setShowModal(true);
-            }
-          };
-      
-          const handleCtrlA = (event) => {
-            if (event.ctrlKey && event.key === 'a') {
-              event.preventDefault();
-              acceptButtonRef.current.click();
-              saveProductMaster(event);
-            }
-          };
-
-          document.addEventListener('keydown', handleKeyDown);
-          document.addEventListener('keydown', handleCtrlA);
-      
-
-        // Cleanup event listener on component unmount
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-            document.removeEventListener('keydown', handleCtrlA);
-          };
-    }, [navigate]);
-
-
-    useEffect(() => {
-
-      if(showModal){
-        yesQuitButtonRef.current.focus();
-        const handleModalKeyDown = (event) => {
-          if(event.key.toLowerCase() === 'y'){
-            handleModalConfirm();
-          }else if(event.key === 'n'){
-            handleModalClose();
-          }else if(event.key === 'ArrowLeft'){
-            cancelModalConfirmRef.current.focus();
-          }else if(event.key === 'ArrowRight'){
-            yesQuitButtonRef.current.focus();
-          }
-        }
+  const [productDescription, setProductDescription] = useState('');
+  const [productCategory, setProductCategory] = useState('');
+  const [productUom, setProductUom] = useState('');
+  const [productGroup, setProductGroup] = useState('');
+  const [standardCost, setStandardCost] = useState('');
+  const [sellingPrice, setSellingPrice] = useState('');
+  const [discount, setDiscount] = useState('');
   
-        document.addEventListener('keydown', handleModalKeyDown);
+  const [errors, setErrors] = useState({});
   
-        return() => {
-          document.removeEventListener('keydown', handleModalKeyDown);
-        }
-      };
+  const [unitsSuggestions, setUnitsSuggestions] = useState([]);
+  const [filteredUnitsSuggestions, setFilteredUnitsSuggestions] = useState([]);
+  const [uomFocused, setUomFocused] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [highlightedSuggestionIndex, setHighlightedSuggestionIndex] = useState(0);
   
+  const inputRefs = useRef({
+    productCode: null,
+    productDescription: null,
+    productCategory: null,
+    productUom: null,
+    productGroup: null,
+    standardCost: null,
+    sellingPrice: null,
+    discount: null,
+    acceptButton: null
+  });
   
-    }, [showModal]);
-    
+  const acceptButtonRef = useRef(null);
+  const yesQuitButtonRef = useRef(null);
+  const cancelModalConfirmRef = useRef(null);
+  const uomInputRef = useRef(null); // Ref for the uom input field
+  const suggestionRefs = useRef([]);  // Refs for suggestion items
+  
+  const navigate = useNavigate();
 
-    const handleKeyDown = (event) => {
-      const { keyCode, target } = event;
-  
-      if (keyCode === 13) {
-          // Handle Enter key
-          event.preventDefault();
-          const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-              (key) => key === target.id
-          );
-          if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
-              acceptButtonRef.current.focus();
-          } else {
-              const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
-              nextInputRef.focus();
-          }
-      } else if (keyCode === 27) {
-          // Handle Escape key
-          setShowModal(true);
-      } else if (keyCode === 8 && target.value === '' && target.id !== 'productCode') {
-          // Handle Backspace key
-          event.preventDefault();
-          const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-              (key) => key === target.id
-          );
-          const prevInputIndex =
-              (currentInputIndex - 1 + Object.keys(inputRefs.current).length) %
-              Object.keys(inputRefs.current).length;
-          const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-          prevInputRef.focus();
-      }
-  
-      // Handle specific input fields (standardCost, sellingPrice, discount)
-      if (['standardCost', 'sellingPrice', 'discount'].includes(target.id)) {
-          const value = target.value.trim();
-  
-          if (keyCode === 8 && value === '') {
-              // Handle Backspace to navigate to previous input field
-              event.preventDefault();
-              const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-                  (key) => key === target.id
-              );
-              const prevInputIndex =
-                  (currentInputIndex - 1 + Object.keys(inputRefs.current).length) %
-                  Object.keys(inputRefs.current).length;
-              const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-              prevInputRef.focus();
-          } else if (isNaN(value) && value !== '') {
-              // Prevent NaN in numeric fields, reset to previous valid value
-              target.value = target.defaultValue;
-          }
-      }
+  const pulseCursor = (input) => {
+    const value = input.value;
+    if (value) {
+      input.value = '';
+      setTimeout(() => {
+        input.value = value.charAt(0).toUpperCase() + value.slice(1);
+        input.setSelectionRange(0, 0);
+      }, 0);
+    }
   };
-  
-    
 
-    const handleUomChange = (e) => {
-        const value = e.target.value;
+  useEffect(() => {
+    // Focus on the first input element after the component mounts
+    if (inputRefs.current.productCode) {
+      inputRefs.current.productCode.focus();
+      pulseCursor(inputRefs.current.productCode);
+    }
 
-        setUom(value);
+    // Fetch units suggestions
+    const fetchUnitSuggestions = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/master/allUnits');
+        setUnitsSuggestions(response.data);
+        setFilteredUnitsSuggestions(response.data); // Initialize with all suggestions
+        // Initialize suggestionRefs for each suggestion item
+        suggestionRefs.current = response.data.map(() => React.createRef());
+      } catch (error) {
+        console.error('Error fetching unit data:', error);
+      }
+    };
 
-        if (value.trim() !== '') {
-            const filteredSuggestions = unitsSuggestions.filter((unit) => unit.uom.toLowerCase().includes(value.toLowerCase()));
-            setFilteredUnitsSuggestions(filteredSuggestions);
-        } else {
-            setFilteredUnitsSuggestions([]);
+    fetchUnitSuggestions();
+
+    // Add event listener for Ctrl + Q and Esc to go back
+    const handleKeyDown = (event) => {
+      const { ctrlKey, key } = event;
+      if ((ctrlKey && key === 'q') || key === 'Escape') {
+        event.preventDefault();
+        setShowModal(true);
+      }
+    };
+
+    const handleCtrlA = (event) => {
+      if (event.ctrlKey && event.key === 'a') {
+        event.preventDefault();
+        acceptButtonRef.current.click();
+        saveProductMaster(event);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', handleCtrlA);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keydown', handleCtrlA);
+    };
+  }, [navigate]);
+
+  useEffect(() => {
+    if (showModal) {
+      yesQuitButtonRef.current.focus();
+      const handleModalKeyDown = (event) => {
+        if (event.key.toLowerCase() === 'y') {
+          handleModalConfirm();
+        } else if (event.key === 'n') {
+          handleModalClose();
+        } else if (event.key === 'ArrowLeft') {
+          cancelModalConfirmRef.current.focus();
+        } else if (event.key === 'ArrowRight') {
+          yesQuitButtonRef.current.focus();
         }
-    };
-
-    const selectUnit = (unit) => {
-        setUom(unit.uom);
-        setFilteredUnitsSuggestions([]);
-        setShowAllUnits(false);
-    };
-
-    const validateForm = () => {
-        const newErrors = {};
-
-        if (!productCode.trim()) {
-            newErrors.productCode = 'Product Code is required!';
-        }
-        setErrors(newErrors);
-
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const saveProductMaster = (e) => {
-        e.preventDefault();
-
-        if (!validateForm()) {
-            return;
-        }
-
-        const product = { productCode, productDescription, productCategory, uom, productGroup, standardCost: Number(standardCost), sellingPrice, discount };
-
-        console.log(product);
-
-        createNewProductMaster(product).then((response) => {
-            console.log(response.data);
-            navigate('/addedProduct');
-        }).catch((error) => {
-            console.error('Error creating product master:', error);
-        });
-    };
-
-
-    const handleModalClose = () => {
-        setShowModal(false);
       };
-    
-      const handleModalConfirm = () => {
-        navigate('/list');
-      };
 
+      document.addEventListener('keydown', handleModalKeyDown);
+
+      return () => {
+        document.removeEventListener('keydown', handleModalKeyDown);
+      };
+    }
+  }, [showModal]);
+
+  const handleKeyDown = (event) => {
+    const { keyCode, target } = event;
+    const currentInputIndex = Object.keys(inputRefs.current).findIndex(
+      (key) => key === target.id
+    );
+
+    if (keyCode === 13) {
+      // Handle Enter key
+      event.preventDefault();
+      if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
+        acceptButtonRef.current.focus();
+      } else {
+        const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
+        nextInputRef.focus();
+        pulseCursor(nextInputRef);
+      }
+    } else if (keyCode === 27) {
+      // Handle Escape key
+      setShowModal(true);
+    } else if (keyCode === 8 && target.id !== 'productCode') { // Backspace key
+      const isStandardCost = target.name === 'standardCost';
+      const isSellingPrice = target.name === 'sellingPrice';
+      const isDiscount = target.name === 'discount';
+
+      const isEmptyOrZero = target.value.trim() === '' || (target.value === '0' && (isStandardCost || isSellingPrice || isDiscount));
+
+      if (isEmptyOrZero) {
+        event.preventDefault();
+        const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+        const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+        prevInputRef.focus();
+        pulseCursor(prevInputRef);
+      } else if (target.selectionStart === 0 && target.selectionEnd === 0) {
+        event.preventDefault();
+        const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+        const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+        prevInputRef.focus();
+        pulseCursor(prevInputRef);
+      }
+    }
+
+    // Handle UOM input suggestions navigation
+    if (target.id === 'productUom') {
+      if (keyCode === 40) { // Down arrow
+        event.preventDefault();
+        setHighlightedSuggestionIndex((prevIndex) => (prevIndex + 1) % filteredUnitsSuggestions.length);
+      } else if (keyCode === 38) { // Up arrow
+        event.preventDefault();
+        setHighlightedSuggestionIndex((prevIndex) => (prevIndex - 1 + filteredUnitsSuggestions.length) % filteredUnitsSuggestions.length);
+      } else if (keyCode === 13 && highlightedSuggestionIndex >= 0) { // Enter key on highlighted suggestion
+        event.preventDefault();
+        selectUnit(filteredUnitsSuggestions[highlightedSuggestionIndex]);
+      }
+    }
+  };
+
+  const handleUomChange = (e) => {
+    const value = e.target.value;
+    setProductUom(value); // Update the UOM state
+
+    const filteredSuggestions = unitsSuggestions.filter((unit) =>
+        unit.productUom.toLowerCase().includes(value.toLowerCase())
+    );
+
+    setFilteredUnitsSuggestions(filteredSuggestions); // Update filtered suggestions
+
+    // Update highlighted index based on user input or selection
+    let highlightedIndex = -1; // Initialize to -1 for no highlighted suggestion
+
+    // Find the index of the suggestion that exactly matches the input value
+    const exactMatchIndex = filteredSuggestions.findIndex((unit) =>
+        unit.productUom.toLowerCase() === value.toLowerCase()
+    );
+
+    if (exactMatchIndex !== -1) {
+        // If there's an exact match, use that index
+        highlightedIndex = exactMatchIndex;
+    } else if (filteredSuggestions.length > 0) {
+        // Otherwise, find the index of the first suggestion that starts with the input value
+        highlightedIndex = filteredSuggestions.findIndex((unit) =>
+            unit.productUom.toLowerCase().startsWith(value.toLowerCase())
+        );
+        if (highlightedIndex === -1) {
+            // If no match found, default to highlighting the first suggestion
+            highlightedIndex = 0;
+        }
+    }
+
+    setHighlightedSuggestionIndex(highlightedIndex); // Update highlighted index
+
+    // Focus on the suggestion related to the selected productUom
+    if (exactMatchIndex !== -1 && suggestionRefs.current[exactMatchIndex]) {
+        suggestionRefs.current[exactMatchIndex].focus();
+    }
+};
+
+
+
+  const selectUnit = (unit) => {
+    setProductUom(unit.productUom); // Update the UOM state with the selected unit
+    setFilteredUnitsSuggestions([]); // Clear filtered suggestions
+  };
+
+  const handleInputFocus = (e) => {
+    const { id } = e.target;
+    if (id === 'productUom') {
+      setUomFocused(true);
+      setFilteredUnitsSuggestions(unitsSuggestions); // Show all suggestions when focused
+    } else {
+      setUomFocused(false);
+      setFilteredUnitsSuggestions([]); // Clear suggestions when other inputs are focused
+    }
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const handleModalConfirm = () => {
+    setShowModal(false);
+  };
+
+  const validateForm = () => {
+    const validationErrors = {};
+
+    if (!productCode.trim()) {
+      validationErrors.productCode = 'Product Code is required';
+    }
+
+    setErrors(validationErrors);
+
+    return Object.keys(validationErrors).length === 0;
+  };
+
+  const saveProductMaster = (e) => {
+    e.preventDefault();
+
+    const product = { productCode, productDescription, productCategory, productUom, productGroup, standardCost, sellingPrice, discount };
+
+    if (validateForm()) {
+      createNewProductMaster(product).then((response) => {
+        console.log(response.data);
+        navigate('/addedProduct');
+
+        // Focus on the first input field
+        if (inputRefs.current.productCode) {
+          inputRefs.current.productCode.focus();
+        }
+      }).catch((error) => {
+        console.error('Error creating product master:', error);
+      })
+    }
+  };
+
+    
     return (
         <div className='w-1/2 border h-[100vh]'>
             <div className='w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[750px] mt-10 border border-gray-500 border-b-0'>
@@ -242,7 +294,7 @@ const Productmaster = () => {
                 <form>
                     <div className='input-ldgr mt-3'>
                         <label htmlFor="productCode" className='text-sm mr-[53.5px] ml-2'>Product Code</label>
-                        : <input type="text" id='productCode' name='productCode' value={productCode} onChange={(e) => setProductCode(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => { productCodeRef.current = input; inputRefs.current.productCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='productCode' name='productCode' value={productCode} onChange={(e) => setProductCode(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => {  inputRefs.current.productCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                         {errors.productCode && <p className='text-red-500 text-xs ml-2'>{errors.productCode}</p>}
                     </div>
 
@@ -257,45 +309,35 @@ const Productmaster = () => {
                     </div>
 
                     <div className='input-ldgr'>
-                        <label htmlFor="uom" className='text-sm mr-[55px] ml-2'>Product UOM</label>
-                        : <input type="text" id='uom' name='uom' value={uom} onChange={(e) => { setUom(e.target.value); handleUomChange(e); }} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.uom = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
-                    </div>
+                        <label htmlFor="productUom" className='text-sm mr-[55px] ml-2'>Product UOM</label>
+                        : <input type="text" id='productUom' name='productUom' value={productUom} onChange={(e) => { handleUomChange(e) }} onKeyDown={handleKeyDown} ref={(input) => {inputRefs.current.productUom = input; uomInputRef.current = input; }} onFocus={handleInputFocus} onBlur={() => setUomFocused(false)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
 
-                    {filteredUnitsSuggestions.length > 0 && (
-                        <div className=''>
-                            <div className='absolute top-[40px] left-[1028px] bg-[#CAF4FF] w-[20%] h-[550px] border border-gray-500'>
-                                <div className='text-center bg-[#003285] text-[13.5px] text-white'>
+                        {uomFocused && filteredUnitsSuggestions.length > 0 && (
+                            <div className='absolute top-[72px] left-[1031px] text-left bg-[#CAF4FF] w-[20%] h-[550px] border border-gray-500'>
+                                <div className=' bg-[#003285] text-[13.5px] pl-2 text-white'>
                                     <p>List Of Uom</p>
                                 </div>
-
-                                <ul className='suggestions w-full text-center mt-2'>
-                                    {filteredUnitsSuggestions.slice(0, 25).map((unit, index) => (
-                                        <li key={index} tabIndex={0} onClick={() => selectUnit(unit)} onKeyDown={(e) => e.key === 'Enter' && selectUnit(unit)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
-                                            {unit.uom.toUpperCase()}
+                                <ul className=' bg-[#CAF4FF] mt-5 w-full border border-gray-300 text-[12.5px]' >
+                                    {filteredUnitsSuggestions.map((unit, index) => (
+                                        <li
+                                            key={unit.id || index }
+                                            ref={(input) => (suggestionRefs.current[index] = input)}
+                                            tabIndex={0}
+                                            onClick={() => selectUnit(unit)}
+                                            onMouseDown={() => selectUnit(unit)}
+                                            onFocus={handleInputFocus}
+                                            className={`pl-2 cursor-pointer ${
+                                              highlightedSuggestionIndex === index ? 'bg-yellow-300' : ''
+                                          }`}>
+                                            {unit.productUom}
                                         </li>
                                     ))}
                                 </ul>
-
-                                {filteredUnitsSuggestions.length > 25 && (
-                                    <div className='text-center'>
-                                        <button type='button' onClick={() => setShowAllUnits(!showAllUnits)} className='text-sm text-blue-500 underline'>
-                                            {showAllUnits ? 'Show Less' : 'Show More'}
-                                        </button>
-                                    </div>
-                                )}
-                                
-                                {showAllUnits && (
-                                    <select size='10' className='w-full mt-2' onChange={(e) => selectUnit({ uom: e.target.value })}>
-                                        {filteredUnitsSuggestions.slice(25).map((unit, index) => (
-                                            <option key={index} value={unit.uom}>
-                                                {unit.uom.toUpperCase()}
-                                            </option>
-                                        ))}
-                                    </select>
-                                )}
                             </div>
-                        </div>
-                    )}
+                        )}
+                    
+                    </div>
+
 
                     <div className='input-ldgr'>
                         <label htmlFor="productGroup" className='text-sm mr-[48.5px] ml-2'>Product Group</label>
@@ -318,7 +360,7 @@ const Productmaster = () => {
                     </div>
 
                     <div className='mt-[302px]'>
-                        <button type='submit' ref={(button) => { acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' onClick={saveProductMaster}>A: Accept</button>
+                        <input type="button" id='acceptButton' onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.discount && inputRefs.current.discount.focus){inputRefs.current.discount.focus(); }}}} value={"A: Accept"} ref={(button) => {acceptButtonRef.current = button;}} onClick={(e) => saveProductMaster(e)} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 ml-[100px]' />
                     </div>
                 </form>
             </div>

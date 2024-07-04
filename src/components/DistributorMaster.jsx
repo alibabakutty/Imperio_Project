@@ -44,16 +44,29 @@ const DistributorMaster = () => {
         acceptButton: null,
     });
 
-    const distributorCodeRef = useRef(null);
+    
     const acceptButtonRef = useRef(null);
     const yesQuitButtonRef = useRef(null);
     const cancelModalConfirmRef = useRef(null);
 
     const navigator = useNavigate();
 
+
+    const pulseCursor = (input) => {
+        const value = input.value;
+        if(value){
+            input.value = '';
+            setTimeout(() => {
+                input.value = value.charAt(0).toUpperCase() + value.slice(1);
+                input.setSelectionRange(0,0);
+            },0)
+        }
+    };
+
     useEffect(() => {
-        if (distributorCodeRef.current) {
-            distributorCodeRef.current.focus();
+        if (inputRefs.current.distributorCode) {
+            inputRefs.current.distributorCode.focus();
+            pulseCursor(inputRefs.current.distributorCode);
         }
 
         const fetchExecutiveSuggestions = async () => {
@@ -269,16 +282,18 @@ const DistributorMaster = () => {
             } else {
                 const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
                 nextInputRef.focus();
+                pulseCursor(nextInputRef)
             }
         } else if (keyCode === 27) {
             setShowModal(true);
-        } else if (keyCode === 8 && target.value === '') {
+        } else if (keyCode === 8 && target.id !== 'distributorCode') {
             event.preventDefault();
 
             const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key ===  target.id);
             const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
             const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
             prevInputRef.focus();
+            pulseCursor(prevInputRef)
         }
     };
 
@@ -322,7 +337,7 @@ const DistributorMaster = () => {
 
             <div className='input-ldgr  mr-4 mt-3   '  >
             <label htmlFor="distributorCode" className='text-sm mr-[79px] ml-2'>Distributor Code</label>
-            : <input type="text" id='distributorCode' name='distributorCode' value={distributorCode} onChange={(e) => {handleDistributorChange(e); setDistributorCode(e.target.value);}} onKeyDown={handleKeyDown}  ref={(input) => {distributorCodeRef.current = input; inputRefs.current.distributorCode = input; }}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
+            : <input type="text" id='distributorCode' name='distributorCode' value={distributorCode} onChange={(e) => {handleDistributorChange(e); setDistributorCode(e.target.value);}} onKeyDown={handleKeyDown}  ref={(input) => { inputRefs.current.distributorCode = input; }}  className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off'    />
             {errors.distributorCode && <p className='text-red-500 text-xs ml-2'>{errors.distributorCode}</p>}
 
             {filteredLedgerSuggestions.length > 0 && (
@@ -446,7 +461,7 @@ const DistributorMaster = () => {
             </div>
 
             <div className='mt-[250px] '>
-                <button type='submit' ref={(button) => {acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }} id='acceptButton' className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' onClick={saveDsitributorMaster}   >A: Accept</button>
+                <input type="button" id='acceptButton' onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.contactMobileNo && inputRefs.current.contactMobileNo.focus){inputRefs.current.contactMobileNo.focus(); }} }} value={"A: Accept"} ref={(button) => {acceptButtonRef.current = button; }} onClick={(e) => saveDsitributorMaster(e)} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 ml-[100px]' />
             </div>
 
 

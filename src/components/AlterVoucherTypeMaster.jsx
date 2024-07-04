@@ -77,7 +77,7 @@ const AlterVoucherTypeMaster = () => {
         input.value = '';
         setTimeout(() => {
           input.value = value.charAt(0).toUpperCase() + value.slice(1);
-          input.setSelectionRange(0, 0);
+          input.setSelectionRange(0, 0);  // Set cursor position at the beginning
         }, 0);
       }
     };
@@ -176,96 +176,139 @@ const AlterVoucherTypeMaster = () => {
       }, [showModal]);
 
 
-      const handleKeyDown = (event) => {
-        const {keyCode, target} = event;
-
-        if(keyCode === 13){
+      const handleBackspace = (event, target) => {
+        if (target.selectionStart === 0 && target.selectionEnd === 0) {
           event.preventDefault();
-          const currentInputIndex = Object.keys(inputRefs.current).findIndex( (key) => key === target.id );
+      
+          if (target.id === "printingVoucherAfterSaving") {
+            if (
+              inputRefs.current.alterAdditionalNumberingDetails &&
+              inputRefs.current.alterAdditionalNumberingDetails.focus
+            ) {
+              inputRefs.current.alterAdditionalNumberingDetails.focus();
+              pulseCursor(inputRefs.current.alterAdditionalNumberingDetails);
+            }
+          } else {
+            const currentInputIndex = Object.keys(inputRefs.current).findIndex(
+              (key) => key === target.id
+            );
+            const prevInputIndex =
+              (currentInputIndex - 1 + Object.keys(inputRefs.current).length) %
+              Object.keys(inputRefs.current).length;
+            const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+      
+            if (prevInputRef && prevInputRef.focus) {
+              prevInputRef.focus();
+              pulseCursor(prevInputRef);
+            }
+          }
+        }
+      };
 
-          if(target.id === 'alterAdditionalNumberingDetails'){
-            if(inputRefs.current.printingVoucherAfterSaving && inputRefs.current.printingVoucherAfterSaving.focus){
+
+      const handleDelete = (event, target) => {
+        
+          event.preventDefault();
+      
+         setVoucher({ ...voucher, [target.name]: '' });
+       
+      };
+      
+      
+      
+      
+
+
+      const handleKeyDown = (event) => {
+        const { keyCode, target } = event;
+      
+        if (keyCode === 13) {
+          // Handle Enter key press
+          event.preventDefault();
+          const currentInputIndex = Object.keys(inputRefs.current).findIndex(
+            (key) => key === target.id
+          );
+      
+          // Handle special cases for specific inputs
+          if (target.id === "alterAdditionalNumberingDetails") {
+            if (
+              inputRefs.current.printingVoucherAfterSaving &&
+              inputRefs.current.printingVoucherAfterSaving.focus
+            ) {
               inputRefs.current.printingVoucherAfterSaving.focus();
               pulseCursor(inputRefs.current.printingVoucherAfterSaving);
             }
-          }else if(target.id === 'suffixDetailsParticulars'){
-            if(subFormSaveButtonRef.current && subFormSaveButtonRef.current.focus){
+          } else if (target.id === "suffixDetailsParticulars") {
+            if (
+              subFormSaveButtonRef.current &&
+              subFormSaveButtonRef.current.focus
+            ) {
               subFormSaveButtonRef.current.focus();
             }
-          }else if(target.id === 'subFormSaveButton'){
+          } else if (target.id === "subFormSaveButton") {
             handleSubFormSave();
-            if(inputRefs.current.printingVoucherAfterSaving && inputRefs.current.printingVoucherAfterSaving.focus){
+            if (
+              inputRefs.current.printingVoucherAfterSaving &&
+              inputRefs.current.printingVoucherAfterSaving.focus
+            ) {
               inputRefs.current.printingVoucherAfterSaving.focus();
             }
-          }else{
+          } else if (target.id === "nameOfClass") {
+            if (acceptButtonRef.current && acceptButtonRef.current.focus) {
+              acceptButtonRef.current.focus();
+            }
+          } else {
+            // Move focus to the next input field
             const nextInputIndex = currentInputIndex + 1;
-            if(nextInputIndex < Object.keys(inputRefs.current).length){
+            if (nextInputIndex < Object.keys(inputRefs.current).length) {
               const nextInputRef = Object.values(inputRefs.current)[nextInputIndex];
-              if(nextInputRef && nextInputRef.focus){
+              if (nextInputRef && nextInputRef.focus) {
                 nextInputRef.focus();
                 pulseCursor(nextInputRef);
               }
-            }else{
-              if(acceptButtonRef.current && acceptButtonRef.current.focus){
+            } else {
+              // If at the last input, focus on the accept button
+              if (acceptButtonRef.current && acceptButtonRef.current.focus) {
                 acceptButtonRef.current.focus();
               }
             }
           }
-        } else if(keyCode === 27){
+        } else if (keyCode === 27) {
+          // Handle Escape key press
           setShowModal(true);
-        } else if(keyCode === 8){
-          if(target.selectionStart === 0 && target.selectionEnd === 0){
+        } else if (keyCode === 8 && target.id !== "voucherTypeName") {
+          // Handle Backspace key press
+          handleBackspace(event, target);
+        } else if (keyCode === 46) {
+          // Handle Delete key press
+          handleDelete(event, target);
+        } else if (target.id === "alterAdditionalNumberingDetails") {
+          // Handle specific behavior for alterAdditionalNumberingDetails input
+          if (keyCode === 89 || keyCode === 121) {
             event.preventDefault();
-
-            if(target.id === 'printingVoucherAfterSaving'){
-              if(inputRefs.current.alterAdditionalNumberingDetails && inputRefs.current.alterAdditionalNumberingDetails.focus){
-                inputRefs.current.alterAdditionalNumberingDetails.focus();
-                pulseCursor(inputRefs.current.alterAdditionalNumberingDetails);
-              }
-            } else if(target.id === 'acceptButton'){
-              if(inputRefs.current.nameOfClass && inputRefs.current.nameOfClass.focus){
-                inputRefs.current.nameOfClass.focus();
-                pulseCursor(inputRefs.current.nameOfClass);
-              }
-            }else{
-              const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id );
-              const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
-              const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-              
-              if(prevInputRef && prevInputRef.focus){
-                prevInputRef.focus();
-                pulseCursor(prevInputRef);
-              }
-            }
-          }
-        } else if(target.id === 'alterAdditionalNumberingDetails'){
-          if(keyCode === 89 || keyCode === 121){
-            event.preventDefault();
-
-            setVoucher({ ...voucher, alterAdditionalNumberingDetails: 'no' });
+            setVoucher({ ...voucher, alterAdditionalNumberingDetails: "no" });
             setShowSubFormModal(true);
-          } else if(keyCode === 78 || keyCode === 110){
+          } else if (keyCode === 78 || keyCode === 110) {
             event.preventDefault();
-
-            setVoucher({ ...voucher, alterAdditionalNumberingDetails: 'no' });
+            setVoucher({ ...voucher, alterAdditionalNumberingDetails: "no" });
             const nextInputRef = inputRefs.current.printingVoucherAfterSaving;
-            if(nextInputRef && nextInputRef.focus){
+            if (nextInputRef && nextInputRef.focus) {
               nextInputRef.focus();
               pulseCursor(nextInputRef);
             }
           }
-        } else if(target.id === 'printingVoucherAfterSaving'){
-          if(keyCode === 89 || keyCode === 121){
+        } else if (target.id === "printingVoucherAfterSaving") {
+          // Handle specific behavior for printingVoucherAfterSaving input
+          if (keyCode === 89 || keyCode === 121) {
             event.preventDefault();
-
-            setVoucher({ ...voucher, printingVoucherAfterSaving: 'yes'});
-          }else if(keyCode === 78 || keyCode === 110){
+            setVoucher({ ...voucher, printingVoucherAfterSaving: "yes" });
+          } else if (keyCode === 78 || keyCode === 110) {
             event.preventDefault();
-
-            setVoucher({ ...voucher, printingVoucherAfterSaving: 'no' });
+            setVoucher({ ...voucher, printingVoucherAfterSaving: "no" });
           }
         }
       };
+      
       
       
 
@@ -696,13 +739,14 @@ const AlterVoucherTypeMaster = () => {
             </div>
 
             <div>
-                <div className='ml-[300px]'>
-                    <button type='submit' id='acceptButton' onClick={(e) => onSubmit(e)} ref={(button) => { acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' style={{position: 'absolute', top: '575px'}}>A: Accept</button>
+                <div className='ml-[480px]'>
+                    {/* <button type='submit' id='acceptButton' onClick={(e) => onSubmit(e)} ref={(button) => { acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' style={{position: 'absolute', top: '575px'}}>A: Accept</button> */}
+                    <input type="button" id='acceptButton' onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.nameOfClass && inputRefs.current.nameOfClass.focus){inputRefs.current.nameOfClass.focus(); }}}} value={"A: Accept"} ref={(button) => {acceptButtonRef.current = button; }} onClick={(e) => onSubmit(e)} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' />
+
+                    <Link to={"/voucherTypeAlter"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 ml-[250px]' >Q: Quit</Link>
                 </div>
 
-                <div className='ml-[850px] mt-[25px]'>
-                    <Link to={"/voucherTypeAlter"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800' >Q: Quit</Link>
-                </div>
+                
             </div>
 
         </div>

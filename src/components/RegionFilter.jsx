@@ -125,7 +125,7 @@ const RegionFilter = () => {
                                 <option value="" className='block text-left text-[13px]'>Select Other Regions</option>
                                 {region.slice(20).map(reg => (
                                     <option key={reg.regionMasterId} value={reg.regionMasterId} className='block text-left text-[13px]'>
-                                        {reg.regionMasterId}
+                                        {reg.regionMasterId} - {reg.regionName}
                                     </option>
                                 ))}
                             </select>

@@ -141,7 +141,7 @@ const DisplayDistributorMaster = () => {
         }
     } else if (keyCode === 27) {
         setShowModal(true);
-    } else if (keyCode === 8) {
+    } else if (keyCode === 8 && target.id !== 'distributorCode') {
         event.preventDefault();
 
 

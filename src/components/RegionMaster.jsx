@@ -27,15 +27,28 @@ const RegionMaster = () => {
     acceptButton: null,
   });
 
-  const regionMasterIdRef = useRef(null);
+
   const acceptButtonRef = useRef(null);
   const yesQuitButtonRef = useRef(null);
   const cancelModalConfirmRef = useRef(null);
   const navigate = useNavigate();
 
+  const pulseCursor = (input) => {
+    const value = input.value;
+    if(value){
+      input.value = '';
+      setTimeout(() => {
+        input.value = value.charAt(0).toUpperCase() + value.slice(1);
+        input.setSelectionRange(0,0);
+
+      },0)
+    }
+  };
+
   useEffect(() => {
-    if (regionMasterIdRef.current) {
-      regionMasterIdRef.current.focus();
+    if (inputRefs.current.regionMasterId) {
+      inputRefs.current.regionMasterId.focus();
+      pulseCursor(inputRefs.current.regionMasterId)
     }
 
 
@@ -110,16 +123,18 @@ const RegionMaster = () => {
       } else {
         const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
         nextInputRef.focus();
+        pulseCursor(nextInputRef)
       }
     } else if (keyCode === 27) {
       setShowModal(true);
-    } else if (keyCode === 8 && target.value === '') {
+    } else if (keyCode === 8 && target.id !== 'regionMasterId') {
       const currentInputIndex = Object.keys(inputRefs.current).findIndex(
         (key) => key === target.id
       );
       const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
       const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
       prevInputRef.focus();
+      pulseCursor(prevInputRef)
     }
   };
 
@@ -185,7 +200,7 @@ const RegionMaster = () => {
                 value={regionMasterId}
                 onChange={(e) => setRegionMasterId(e.target.value)}
                 onKeyDown={handleKeyDown}
-                ref={(input) => { regionMasterIdRef.current = input; inputRefs.current.regionMasterId = input;}}
+                ref={(input) => { inputRefs.current.regionMasterId = input;}}
                 className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none'
                 autoComplete='off'
               />
@@ -240,12 +255,7 @@ const RegionMaster = () => {
           
 
           <div className='mt-[400px]'>
-            <button
-              type='submit'
-              ref={(button) => { acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }}
-              className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'
-              id='accptButton'
-            >A: Accept</button>
+            <input type="button" id='acceptButton' onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.country && inputRefs.current.country.focus){inputRefs.current.country.focus(); }}}} value={"A: Accept"} ref={(button) => {acceptButtonRef.current = button;}} onClick={(e) => saveRegionMaster(e)} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 ml-[100px]' />
           </div>
 
         </form>

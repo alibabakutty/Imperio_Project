@@ -8,30 +8,21 @@ const AlterRegionMaster = () => {
   const navigate = useNavigate();
 
   const [region, setRegion] = useState({
-    ledgerCode: "",
-    ledgerName: "",
+    
     regionMasterId: "",
     regionName: "",
     regionState: "",
-    country: "",
-    godownCode: "",
-    godownName: ""
+    country: ""
   });
 
   const inputRefs = useRef({
-    // ledgerCode: null,
-    // ledgerName: null,
+    
     regionMasterId: null,
     regionName: null,
+    regionState: null,
     country: null
-    // godownCode: null,
-    // godownName: null
-  })
-
-  const [godownSuggestions, setGodownSuggestions] = useState([]);
-  // const [filteredGodownSuggestions, setFilteredGodownSuggestions] = useState([]);
-  // const [godownCode, setGodownCode] = useState('');
-  // const [godownName, setGodownName] = useState('');
+    
+  });
 
   
   const acceptButtonRef = useRef(null);
@@ -68,28 +59,19 @@ const AlterRegionMaster = () => {
     }
   };
 
-  const fetchGodownSuggestions = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/api/master/allGodown');
-      setGodownSuggestions(response.data);
-    } catch (error) {
-      console.error('Error fetching godown data:', error);
-    }
-  };
+  
 
   const loadRegion = async () => {
     try {
       const result = await axios.get(`http://localhost:8080/api/master/displayRegion/${regionMasterId}`);
       setRegion(result.data);
-      setGodownCode(result.data.godownCode); // Set initial godownCode
-      setGodownName(result.data.godownName); // Set initial godownName
     } catch (error) {
       console.error("Error fetching the region data", error);
     }
   };
 
   useEffect(() => {
-    fetchGodownSuggestions();
+    
     loadRegion();
 
     // Focus on ledgerCode input and pulse cursor
@@ -153,7 +135,7 @@ const AlterRegionMaster = () => {
     if (keyCode === 13) { // Enter key
       event.preventDefault();
 
-      if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
+      if (currentInputIndex === Object.keys(inputRefs.current).length - 1) {
         acceptButtonRef.current.focus();
       } else {
         const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
@@ -163,7 +145,7 @@ const AlterRegionMaster = () => {
     } else if (keyCode === 27) { // Escape key
       event.preventDefault();
       setShowModal(true);
-    } else if (keyCode === 8) { // Backspace key
+    } else if (keyCode === 8 && target.id !== 'regionMasterId') { // Backspace key
       const isEmptyOrZero = target.value.trim() === '' || (target.value === '0');
       if (isEmptyOrZero) {
         event.preventDefault();
@@ -178,43 +160,13 @@ const AlterRegionMaster = () => {
         prevInputRef.focus();
         pulseCursor(prevInputRef);  // Call pulseCursor for the previous input field
       }
+    } else if(keyCode === 46){
+      event.preventDefault();
+      setRegion({ ...region, [target.name]: '' });
     }
   };
 
-  const handleGodownInputChange = (e) => {
-    const value = e.target.value;
-    setGodownCode(value);
-
-    if (value.trim() !== '') {
-      const filteredSuggestions = godownSuggestions.filter((godown) =>
-        godown.godownCode.toLowerCase().includes(value.toLowerCase())
-      );
-      setFilteredGodownSuggestions(filteredSuggestions);
-
-      const exactMatch = godownSuggestions.find((godown) =>
-        godown.godownCode.toLowerCase() === value.toLowerCase()
-      );
-      if (exactMatch) {
-        setGodownName(exactMatch.godownName);
-        setRegion({ ...region, godownName: exactMatch.godownName });
-      } else {
-        setGodownName('');
-        setRegion({ ...region, godownName: '' });
-      }
-    } else {
-      setFilteredGodownSuggestions([]);
-      setGodownName(region.godownName);
-      setRegion({ ...region, godownName: region.godownName });
-    }
-  };
-
-  // const selectGodown = (godown) => {
-  //   setGodownCode(godown.godownCode);
-  //   setGodownName(godown.godownName);
-  //   setRegion({ ...region, godownCode: godown.godownCode, godownName: godown.godownName });
-  //   setFilteredGodownSuggestions([]);
-  // };
-
+  
   const handleModalClose = () => {
     setShowModal(false);
   };
@@ -248,27 +200,18 @@ const AlterRegionMaster = () => {
                     type="text"
                     id={field}
                     name={field}
-                    value={field === 'godownCode' ? godownCode : region[field]}
-                    onChange={field === 'godownCode' ? handleGodownInputChange : onInputChange}
+                    value={region[field]}
+                    onChange={onInputChange}
                     onFocus={(e) => { pulseCursor(e.target); }}
                     onKeyDown={handleKeyDown}
                     ref={input => inputRefs.current[field] = input}
-                    className={`h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ${
-                      ['godownCode', 'godownName'].includes(field) ? 'w-[150px]' : 'w-[300px]'
-                    }`}
+                    className={`h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none  `}
                     autoComplete="off"
                   />
                 </div>
               ))}
               <div className='mt-[395px]'>
-                <button
-                  type='submit'
-                  id='acceptButton'
-                  ref={acceptButtonRef}
-                  className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'
-                >
-                  A: Accept
-                </button>
+                <input type="button" id='acceptButton' onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.country && inputRefs.current.country.focus){inputRefs.current.country.focus(); }}}} value={"A: Accept"} ref={(button) => {acceptButtonRef.current = button; }} onClick={(e) => onSubmit(e)} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 ml-[100px]' />
               </div>
             </form>
           </div>
@@ -326,20 +269,7 @@ const AlterRegionMaster = () => {
         </div>
       )}
 
-      {/* {filteredGodownSuggestions.length > 0 && (
-        <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '40px', left: '1028px' }}>
-          <div className='text-center bg-[#003285] text-[13.5px] text-white'>
-            <p>List Of Godown Codes</p>
-          </div>
-          <ul className='suggestions w-full h-[20vh] text-center mt-2'>
-            {filteredGodownSuggestions.map((godown, index) => (
-              <li key={index} tabIndex={0} onClick={() => selectGodown(godown)} onKeyDown={(e) => e.key === 'Enter' && selectGodown(godown)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px]'>
-                {godown.godownCode.toUpperCase()} - {godown.godownName.toUpperCase()}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )} */}
+      
     </div>
   );
 }

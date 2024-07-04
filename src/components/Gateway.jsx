@@ -64,12 +64,12 @@ const Gateway = () => {
                         <li className=" py-3 ml-20 text-[10px] text-[#2a67b1] ">
                             <h2>MASTERS</h2>
                         </li>
-                        <Link to={"/list"} ref={createRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
+                        <Link to={"/list"} ref={createRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
                             <li className="w-full  pl-20 ">
                                 Create
                             </li>
                         </Link>
-                        <Link to={"/alter"} ref={displayRef} className='block outline-none focus:bg-yellow-500 mb-[0.5px]'>
+                        <Link to={"/alter"} ref={displayRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
                             <li className="w-full pl-20 p-0">
                                 Alter
                             </li>

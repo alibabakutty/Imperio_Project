@@ -136,7 +136,7 @@ const DisplayExecutiveMaster = () => {
             }
         } else if (keyCode === 27) {
             setShowModal(true);
-        } else if (keyCode === 8) {
+        } else if (keyCode === 8 && target.id !== 'executiveCode') {
             event.preventDefault();
             
             const isEmptyOrZero = target.value.trim() === '' || (target.value === '0');

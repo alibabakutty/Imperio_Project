@@ -132,7 +132,7 @@ const AlterGodownMaster = () => {
     } else if (keyCode === 27) { // Escape key
       event.preventDefault();
       setShowModal(true);
-    } else if (keyCode === 8) { // Backspace key
+    } else if (keyCode === 8 && target.id !== 'godownCode') { // Backspace key
       const isEmptyOrZero = target.value.trim() === '' || (target.value === '0');
       if (isEmptyOrZero) {
         event.preventDefault();
@@ -147,6 +147,9 @@ const AlterGodownMaster = () => {
         prevInputRef.focus();
         pulseCursor(prevInputRef)
       }
+    } else if(keyCode === 46){
+      event.preventDefault();
+      setGodown({ ...godown, [target.name]: ''})
     }
   };
 
@@ -193,7 +196,8 @@ const AlterGodownMaster = () => {
               ))}
 
               <div className='mt-[440px]'>
-                <button type='submit' id='acceptButton' ref={button => {acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'> A: Accept</button>
+                {/* <button type='submit' id='acceptButton' ref={button => {acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800'> A: Accept</button> */}
+                <input type="button" id='acceptButton' onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.godownName && inputRefs.current.godownName.focus){inputRefs.current.godownName.focus(); }}}} value={"A: Accept"} ref={(button) => {acceptButtonRef.current = button; }} onClick={(e) => {onSubmit(e)}} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' />
               </div>
 
             </form>

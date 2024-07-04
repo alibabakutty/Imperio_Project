@@ -30,7 +30,7 @@ const ExecutiveMaster = () => {
     });
 
 
-    const executiveCodeRef = useRef(null);
+    
     const acceptButtonRef = useRef(null);
     const yesQuitButtonRef = useRef(null);
     const cancelModalConfirmRef = useRef(null);
@@ -38,11 +38,23 @@ const ExecutiveMaster = () => {
 
     const navigator = useNavigate();
 
+    const pulseCursor = (input) => {
+        const value = input.value;
+        if(value){
+            input.value = '';
+            setTimeout(() => {
+                input.value = value.charAt(0).toUpperCase() + value.slice(1);
+                setSelectionRange(0,0);
+            },0)
+        }
+    };
+
 
     useEffect(() =>{
         // Focus on the first input element after the component mounts
-        if(executiveCodeRef.current){
-            executiveCodeRef.current.focus();
+        if(inputRefs.current.executiveCode){
+            inputRefs.current.executiveCode.focus();
+            pulseCursor(inputRefs.current.executiveCode);
         }
 
         // Add event listener for Ctrl + B to go back
@@ -101,15 +113,17 @@ const ExecutiveMaster = () => {
           } else {
             const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
             nextInputRef.focus();
+            pulseCursor(nextInputRef)
           }
         } else if (keyCode === 27) {
           setShowModal(true);
-        } else if (keyCode === 8 && target.value === '') {
+        } else if (keyCode === 8 && target.id !== 'executiveCode') {
           event.preventDefault();
           const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
           const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
           const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
           prevInputRef.focus();
+          pulseCursor(prevInputRef);
         }
       };
       
@@ -211,7 +225,7 @@ const ExecutiveMaster = () => {
 
                 <div className='input-ldgr  mr-4 mt-3 ' >
                     <label htmlFor="executiveCode" className='text-sm mr-[30px] ml-2'>Executive Code</label>
-                    : <input type="text" id='executiveCode' name='executiveCode' value={executiveCode} onChange={(e) => setExecutiveCode(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => {executiveCodeRef.current = input; inputRefs.current.executiveCode = input; }} className='w-[300px] ml-[6px] h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ' autoComplete='off'  /> <br />
+                    : <input type="text" id='executiveCode' name='executiveCode' value={executiveCode} onChange={(e) => setExecutiveCode(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.executiveCode = input; }} className='w-[300px] ml-[6px] h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ' autoComplete='off'  /> <br />
                     
 
                     {errors.executiveCode  && <p className='text-red-500 text-xs ml-2'>{errors.executiveCode}</p>}
@@ -248,7 +262,7 @@ const ExecutiveMaster = () => {
                 
 
                 <div className='mt-[350px] '>
-                    <button type='submit' ref={(button) => {acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' onClick={saveExecutiveMaster}   >A: Accept</button>
+                   <input type="button" id='acceptButton' onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.status && inputRefs.current.status.focus){inputRefs.current.status.focus(); }} }} value={"A: Accept"} ref={(button) => {acceptButtonRef.current = button; }} onClick={(e) => {saveExecutiveMaster(e);}} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 ml-[100px]' />
                 </div>
 
 
