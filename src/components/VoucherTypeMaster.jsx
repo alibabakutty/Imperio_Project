@@ -30,6 +30,8 @@ const VoucherTypeMaster = () => {
     const [filteredVoucherTypeSuggestions, setFilteredVoucherTypeSuggestions] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [showSubFormModal, setShowSubFormModal] = useState(false);
+    const [voucherTypeFocused, setVoucherTypeFocused] = useState(false);
+    const [methodOfVoucherNumberingFocused, setMethodOfVoucherNumberingFocused] = useState(false);
 
 
     const inputRefs = useRef({
@@ -71,8 +73,8 @@ const VoucherTypeMaster = () => {
             input.value = '';
             setTimeout(() => {
                 input.value = value.charAt(0).toUpperCase() + value.slice(1);
-                input.setSelectionRange(0, 0);
-            }, 0);
+                input.setSelectionRange(0,0);
+            },0);
         }
     }
 
@@ -277,11 +279,6 @@ const VoucherTypeMaster = () => {
       };
       
       
-    
-    
-    
-    
-    
     
     const handleVoucherTypeChange = (e) => {
         const value = e.target.value;
@@ -507,6 +504,30 @@ const VoucherTypeMaster = () => {
                   break;
           }
       };
+
+      const handleVoucherTypeFocus = (e) => {
+        const {id} = e.target;
+        if(id === 'voucherType'){
+          setVoucherTypeFocused(true);
+          setFilteredVoucherTypeSuggestions(voucherTypeSuggestions); // show all suggestions when focused
+        }else{
+          setVoucherTypeFocused(false);
+          setFilteredVoucherTypeSuggestions([]);  // clear suggestions when other inputs are focused
+        }
+      };
+
+
+      const handleMethodOfVoucherNumberingFocus = (e) => {
+        setMethodOfVoucherNumberingFocused(true);
+          setShowVoucherNumberingOptions(true);
+      };
+
+      const handleMethodOfVoucherNumberingBlur = () => {
+        
+          setMethodOfVoucherNumberingFocused(false);
+          setShowVoucherNumberingOptions(false);
+        
+      }
     
 
   return (
@@ -538,11 +559,11 @@ const VoucherTypeMaster = () => {
 
                             <div>
                                 <label htmlFor="voucherType" className='mr-[130px] ml-1'>Select type of voucher</label>
-                                : <input type="text" id='voucherType' name='voucherType' value={voucherType} onChange={(e) => {setVoucherType(e.target.value); handleVoucherTypeChange(e)}} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.voucherType = input} className='w-[200px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                : <input type="text" id='voucherType' name='voucherType' value={voucherType} onChange={(e) => {setVoucherType(e.target.value); handleVoucherTypeChange(e)}} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.voucherType = input} onFocus={handleVoucherTypeFocus} onBlur={() => setVoucherTypeFocused(false)} className='w-[200px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
 
-                                {filteredVoucherTypeSuggestions.length > 0 && (
-                                    <div className='bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500' style={{ position: 'absolute', top: '18px', left: '956px' }}>
-                                        <div className='text-center bg-[#003285] text-[13.5px] text-white'>
+                                {voucherTypeFocused && filteredVoucherTypeSuggestions.length > 0 && (
+                                    <div className='bg-[#CAF4FF] w-[20%] h-[85.5vh] border border-gray-500' style={{ position: 'absolute', top: '18px', left: '956px' }}>
+                                        <div className='text-left bg-[#003285] text-[13.5px] text-white pl-2'>
                                             <p>List of Voucher Types</p>
                                         </div>
 
@@ -559,11 +580,11 @@ const VoucherTypeMaster = () => {
 
                             <div>
                                 <label htmlFor="methodOfVoucherNumbering" className='mr-[77.5px] ml-1'>Method of Voucher Numbering</label>
-                                : <input type="text" id='methodOfVoucherNumbering' name='methodOfVoucherNumbering' value={methodOfVoucherNumbering} onChange={(e) => {setMethodVoucherNumbering(e.target.value); handleVoucherNumberingInputChange(e); }} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.methodOfVoucherNumbering = input} className='w-[200px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                : <input type="text" id='methodOfVoucherNumbering' name='methodOfVoucherNumbering' value={methodOfVoucherNumbering} onChange={(e) => {setMethodVoucherNumbering(e.target.value); handleVoucherNumberingInputChange(e); }} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.methodOfVoucherNumbering = input} onFocus={handleMethodOfVoucherNumberingFocus} onBlur={handleMethodOfVoucherNumberingBlur} className='w-[200px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
 
-                                {showVoucherNumberingOptions && (
-                                    <div ref={voucherNumberingOptionsRef} className='w-[15%] border text-center text-sm bg-[#CAF4FF] absolute top-[100px] left-[405px]'>
-                                        <div className='bg-[#003285] px-5 text-white'>
+                                {methodOfVoucherNumberingFocused && showVoucherNumberingOptions && (
+                                    <div ref={voucherNumberingOptionsRef} className='w-[15%] border text-left text-sm bg-[#CAF4FF] absolute top-[102px] left-[405px]'>
+                                        <div className='bg-[#003285] px-2 text-white'>
                                             <p>Methods of Numbering</p>
                                         </div>
                                         {voucherNumberRenderingOptions()}

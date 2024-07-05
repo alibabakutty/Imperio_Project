@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IoClose } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { createNewProductMaster } from '../services/MasterService';
-import '../assets/css/font.css';
 import axios from 'axios';
 
 const AlterProductMaster = () => {
@@ -62,9 +60,10 @@ const AlterProductMaster = () => {
   };
 
   const onInputChange = (e) => {
-    const {name,value} = e.target;
-    const capitalizedValue = value.charAt(0).toUpperCase() + value.slice(1);
-    setProduct({ ...product, [name]: capitalizedValue });
+    const { name, value } = e.target;
+    
+    // Update the product state with the new value
+    setProduct({ ...product, [name]: value });
   };
 
 
@@ -72,6 +71,7 @@ const AlterProductMaster = () => {
     try{
       const result = await axios.get(`http://localhost:8080/api/master/displayProduct/${productCode}`);
       setProduct(result.data);
+      console.log(result.data);
     } catch (error) {
       console.error('Error fetching the product data:', error);
     }
@@ -114,7 +114,7 @@ const AlterProductMaster = () => {
       if (event.ctrlKey && event.key === 'a') {
         event.preventDefault();
         acceptButtonRef.current.click();
-        saveProductMaster(event);
+        
       }
     };
 
@@ -153,12 +153,9 @@ const AlterProductMaster = () => {
 
   const handleKeyDown = (event) => {
     const { keyCode, target } = event;
-    const currentInputIndex = Object.keys(inputRefs.current).findIndex(
-      (key) => key === target.id
-    );
+    const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
 
     if (keyCode === 13) {
-      // Handle Enter key
       event.preventDefault();
       if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
         acceptButtonRef.current.focus();
@@ -168,9 +165,8 @@ const AlterProductMaster = () => {
         pulseCursor(nextInputRef);
       }
     } else if (keyCode === 27) {
-      // Handle Escape key
       setShowModal(true);
-    } else if (keyCode === 8 && target.id !== 'productCode') { // Backspace key
+    } else if (keyCode === 8 && target.id !== 'productCode') {
       const isStandardCost = target.name === 'standardCost';
       const isSellingPrice = target.name === 'sellingPrice';
       const isDiscount = target.name === 'discount';
@@ -192,24 +188,26 @@ const AlterProductMaster = () => {
       }
     }
 
-    // Handle UOM input suggestions navigation
     if (target.id === 'productUom') {
-      if (keyCode === 40) { // Down arrow
+      if (keyCode === 40) {
         event.preventDefault();
         setHighlightedSuggestionIndex((prevIndex) => (prevIndex + 1) % filteredUnitsSuggestions.length);
-      } else if (keyCode === 38) { // Up arrow
+      } else if (keyCode === 38) {
         event.preventDefault();
         setHighlightedSuggestionIndex((prevIndex) => (prevIndex - 1 + filteredUnitsSuggestions.length) % filteredUnitsSuggestions.length);
-      } else if (keyCode === 13 && highlightedSuggestionIndex >= 0) { // Enter key on highlighted suggestion
+      } else if (keyCode === 13 && highlightedSuggestionIndex >= 0) {
         event.preventDefault();
         selectUnit(filteredUnitsSuggestions[highlightedSuggestionIndex]);
       }
+    } else if (keyCode === 46) {
+      event.preventDefault();
+      setProduct({ ...product, [target.name]: '' });
     }
   };
 
   const handleUomChange = (e) => {
     const value = e.target.value;
-    setProductUom(value); // Update the UOM state
+    setProduct({ ...product, productUom: value }); // Update the UOM state
 
     const filteredSuggestions = unitsSuggestions.filter((unit) =>
         unit.productUom.toLowerCase().includes(value.toLowerCase())
@@ -250,7 +248,7 @@ const AlterProductMaster = () => {
 
 
   const selectUnit = (unit) => {
-    setProductUom(unit.productUom); // Update the UOM state with the selected unit
+    setProduct({ ...product, productUom: unit.productUom }); // Update the UOM state with the selected unit
     setFilteredUnitsSuggestions([]); // Clear filtered suggestions
   };
 
@@ -285,23 +283,22 @@ const AlterProductMaster = () => {
     return Object.keys(validationErrors).length === 0;
   };
 
-  const saveProductMaster = (e) => {
+  const onSubmit = async (e) =>{
     e.preventDefault();
-
-    const product = { productCode, productDescription, productCategory, productUom, productGroup, standardCost, sellingPrice, discount };
-
-    if (validateForm()) {
-      createNewProductMaster(product).then((response) => {
-        console.log(response.data);
-        navigate('/addedProduct');
-
-        // Focus on the first input field
-        if (inputRefs.current.productCode) {
-          inputRefs.current.productCode.focus();
-        }
-      }).catch((error) => {
-        console.error('Error creating product master:', error);
-      })
+    
+    if(validateForm()){
+      try{
+        await axios.put(`http://localhost:8080/api/master/alterProductMaster/${productCode}`, {
+          ...product,
+          standardCost: parseFloat(product.standardCost),
+          sellingPrice: parseFloat(product.sellingPrice),
+          discount: parseFloat(product.discount)
+        });
+  
+        navigate('/alteredProduct');
+      }catch (error){
+        console.error("Error updating the product", error);
+      }
     }
   };
 
@@ -316,26 +313,26 @@ const AlterProductMaster = () => {
             </div>
 
             <div className='w-[550px] h-[35vh] border border-gray-500 ml-[750px]'>
-                <form>
+                <form onSubmit={onSubmit}>
                     <div className='input-ldgr mt-3'>
                         <label htmlFor="productCode" className='text-sm mr-[53.5px] ml-2'>Product Code</label>
-                        : <input type="text" id='productCode' name='productCode' value={product.productCode} onChange={(e) => setProductCode(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => {  inputRefs.current.productCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='productCode' name='productCode' value={product.productCode} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => {  inputRefs.current.productCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                         {errors.productCode && <p className='text-red-500 text-xs ml-2'>{errors.productCode}</p>}
                     </div>
 
                     <div className='input-ldgr'>
                         <label htmlFor="productDescription" className='text-sm mr-[9.5px] ml-2'>Product Descriptions</label>
-                        : <input type="text" id='productDescription' name='productDescription' value={product.productDescription} onChange={(e) => setProductDescription(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productDescription = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='productDescription' name='productDescription' value={product.productDescription} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productDescription = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                     </div>
 
                     <div className='input-ldgr'>
                         <label htmlFor="productCategory" className='text-sm mr-[30px] ml-2'>Product Category</label>
-                        : <input type="text" id='productCategory' name='productCategory' value={product.productCategory} onChange={(e) => setProductCategory(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productCategory = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='productCategory' name='productCategory' value={product.productCategory} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productCategory = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                     </div>
 
                     <div className='input-ldgr'>
                         <label htmlFor="productUom" className='text-sm mr-[55px] ml-2'>Product UOM</label>
-                        : <input type="text" id='productUom' name='productUom' value={product.productUom} onChange={(e) => { handleUomChange(e) }} onKeyDown={handleKeyDown} ref={(input) => {inputRefs.current.productUom = input; uomInputRef.current = input; }} onFocus={handleInputFocus} onBlur={() => setUomFocused(false)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='productUom' name='productUom' value={product.productUom} onChange={handleUomChange} onKeyDown={handleKeyDown} ref={(input) => {inputRefs.current.productUom = input; uomInputRef.current = input; }} onFocus={handleInputFocus} onBlur={() => setUomFocused(false)} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
 
                         {uomFocused && filteredUnitsSuggestions.length > 0 && (
                             <div className='absolute top-[72px] left-[1031px] text-left bg-[#CAF4FF] w-[20%] h-[550px] border border-gray-500'>
@@ -366,31 +363,31 @@ const AlterProductMaster = () => {
 
                     <div className='input-ldgr'>
                         <label htmlFor="productGroup" className='text-sm mr-[48.5px] ml-2'>Product Group</label>
-                        : <input type="text" id='productGroup' name='productGroup' value={product.productGroup} onChange={(e) => setProductGroup(e.target.value)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productGroup = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='productGroup' name='productGroup' value={product.productGroup} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.productGroup = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                     </div>
 
                     <div className='input-ldgr'>
                         <label htmlFor="standardCost" className='text-sm mr-[51px] ml-2'>Standard Cost</label>
-                        : <input type="text" id='standardCost' name='standardCost' value={product.standardCost} onChange={(e) => setStandardCost(Number(e.target.value))} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.standardCost = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='standardCost' name='standardCost' value={product.standardCost} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.standardCost = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                     </div>
 
                     <div className='input-ldgr'>
                         <label htmlFor="sellingPrice" className='text-sm mr-[62px] ml-2'>Selling Price</label>
-                        : <input type="text" id='sellingPrice' name='sellingPrice' value={product.sellingPrice} onChange={(e) => setSellingPrice(Number(e.target.value))} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.sellingPrice = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='sellingPrice' name='sellingPrice' value={product.sellingPrice} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.sellingPrice = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                     </div>
 
                     <div className='input-ldgr'>
                         <label htmlFor="discount" className='text-sm mr-[87px] ml-2'>Discount</label>
-                        : <input type="text" id='discount' name='discount' value={product.discount} onChange={(e) => setDiscount(Number(e.target.value))} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.discount = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                        : <input type="text" id='discount' name='discount' value={product.discount} onChange={onInputChange} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.discount = input} className='w-[150px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
                     </div>
 
                     <div className='mt-[302px]'>
-                        <input type="button" id='acceptButton' onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.discount && inputRefs.current.discount.focus){inputRefs.current.discount.focus(); }}}} value={"A: Accept"} ref={(button) => {acceptButtonRef.current = button;}} onClick={(e) => saveProductMaster(e)} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 ml-[100px]' />
+                        <input type="button" id='acceptButton' onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.discount && inputRefs.current.discount.focus){inputRefs.current.discount.focus(); }}}} value={"A: Accept"} ref={(button) => {acceptButtonRef.current = button;}} onClick={(e) => onSubmit(e)} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 ml-[100px]' />
                     </div>
                 </form>
             </div>
 
-            <div className='mt-[310px] ml-[495px]'>
+            <div className='mt-[300px] ml-[495px]'>
                 <Link to={"/list"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800'>Q: Quit</Link>
             </div>
 
