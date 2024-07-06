@@ -122,10 +122,14 @@ const GodownMaster = () => {
       const currentInputIndex = Object.keys(inputRefs.current).findIndex(
         (key) => key === target.id
       );
-      const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
-      const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-      prevInputRef.focus();
-      pulseCursor(prevInputRef)
+      if(target.selectionStart === 0 && target.selectionEnd === 0){
+        event.preventDefault();
+
+        const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+        const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+        prevInputRef.focus();
+        pulseCursor(prevInputRef)
+      }
     }
   };
 
@@ -166,6 +170,11 @@ const GodownMaster = () => {
 
   const handleModalClose = () => {
     setShowModal(false);
+
+    if(inputRefs.current.godownCode){
+      inputRefs.current.godownCode.focus();
+      pulseCursor(inputRefs.current.godownCode);
+    }
   };
 
   const handleModalConfirm = () => {

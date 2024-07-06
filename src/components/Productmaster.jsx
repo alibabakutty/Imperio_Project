@@ -242,10 +242,15 @@ const Productmaster = () => {
 
   const handleModalClose = () => {
     setShowModal(false);
+
+    if (inputRefs.current.productCode) {
+      inputRefs.current.productCode.focus();
+      pulseCursor(inputRefs.current.productCode);
+    }
   };
 
   const handleModalConfirm = () => {
-    setShowModal(false);
+    navigate('/list');
   };
 
   const validateForm = () => {

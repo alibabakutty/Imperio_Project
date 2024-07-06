@@ -265,10 +265,15 @@ const AlterProductMaster = () => {
 
   const handleModalClose = () => {
     setShowModal(false);
+
+    if (inputRefs.current.productCode) {
+      inputRefs.current.productCode.focus();
+      pulseCursor(inputRefs.current.productCode);
+    }
   };
 
   const handleModalConfirm = () => {
-    setShowModal(false);
+    navigate('/productAlter');
   };
 
   const validateForm = () => {

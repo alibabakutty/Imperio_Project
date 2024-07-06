@@ -166,6 +166,11 @@ const DisplayProductMaster = () => {
 
   const handleModalClose = () => {
     setShowModal(false);
+
+    if(inputRefs.current.productCode){
+      inputRefs.current.productCode.focus();
+      pulseCursor(inputRefs.current.productCode);
+    };
 };
 
 const handleModalConfirm = () => {

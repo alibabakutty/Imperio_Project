@@ -169,6 +169,11 @@ const AlterRegionMaster = () => {
   
   const handleModalClose = () => {
     setShowModal(false);
+
+    if (inputRefs.current.regionMasterId) {
+      inputRefs.current.regionMasterId.focus();
+      pulseCursor(inputRefs.current.regionMasterId);
+    }
   };
 
   const handleModalConfirm = () => {

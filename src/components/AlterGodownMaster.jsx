@@ -164,6 +164,11 @@ const AlterGodownMaster = () => {
 
   const handleModalClose = () => {
     setShowModal(false);
+
+    if(inputRefs.current.godownCode){
+      inputRefs.current.godownCode.focus();
+      pulseCursor(inputRefs.current.godownCode);
+    }
   };
 
   const handleModalConfirm = () => {

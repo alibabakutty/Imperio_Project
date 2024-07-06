@@ -122,19 +122,20 @@ const LedgerMaster = () => {
       const currentInputIndex = Object.keys(inputRefs.current).findIndex(
         (key) => key === target.id
       );
-
-      if(target.id === 'acceptButton'){
-        if(inputRefs.current.ledgerName && inputRefs.current.ledgerName.focus){
-          inputRefs.current.ledgerName.focus();
-          
-        }
-      }else{
-
+      
+      if(target.selectionStart === 0 && target.selectionEnd === 0){
+        event.preventDefault();
         const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
         const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
         prevInputRef.focus();
         pulseCursor(prevInputRef);
+      }else if(target.id === 'acceptButton'){
+        if(inputRefs.current.ledgerName && inputRefs.current.ledgerName.focus){
+          inputRefs.current.ledgerName.focus();
+          
+        }
 
+      
       }
       
     }
@@ -177,6 +178,11 @@ const LedgerMaster = () => {
 
   const handleModalClose = () => {
     setShowModal(false);
+
+    if(inputRefs.current.ledgerCode){
+      inputRefs.current.ledgerCode.focus();
+      pulseCursor(inputRefs.current.ledgerCode);
+    }
   };
 
   const handleModalConfirm = () => {

@@ -118,12 +118,15 @@ const ExecutiveMaster = () => {
         } else if (keyCode === 27) {
           setShowModal(true);
         } else if (keyCode === 8 && target.id !== 'executiveCode') {
-          event.preventDefault();
-          const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
-          const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
-          const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
-          prevInputRef.focus();
-          pulseCursor(prevInputRef);
+          
+          if(target.selectionStart === 0 && target.selectionEnd === 0){
+            event.preventDefault();
+            const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
+            const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+            const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
+            prevInputRef.focus();
+            pulseCursor(prevInputRef);
+          }
         }
       };
       
@@ -167,6 +170,11 @@ const ExecutiveMaster = () => {
 
     const handleModalClose = () => {
         setShowModal(false);
+
+        if(inputRefs.current.executiveCode){
+            inputRefs.current.executiveCode.focus();
+            pulseCursor(inputRefs.current.executiveCode);
+        }
     };
 
     const handleModalConfirm = () => {

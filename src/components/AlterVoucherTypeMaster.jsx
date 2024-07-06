@@ -370,6 +370,11 @@ const AlterVoucherTypeMaster = () => {
 
     const handleModalClose = () => {
         setShowModal(false);
+
+        if(inputRefs.current.voucherTypeName){
+          inputRefs.current.voucherTypeName.focus();
+          pulseCursor(inputRefs.current.voucherTypeName);
+        }
     };
 
     const handleModalConfirm = () => {

@@ -159,6 +159,11 @@ const DisplayLedgerMaster = () => {
 
   const handleModalClose = () => {
     setShowModal(false);
+
+    if(inputRefs.current.ledgerCode){
+      inputRefs.current.ledgerCode.focus();
+      pulseCursor(inputRefs.current.ledgerCode);
+    }
   };
 
   const handleModalConfirm = () => {

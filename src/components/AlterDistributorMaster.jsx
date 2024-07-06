@@ -288,6 +288,11 @@ const AlterDistributorMaster = () => {
 
     const handleModalClose = () => {
         setShowModal(false);
+
+        if(inputRefs.current.distributorCode){
+          inputRefs.current.distributorCode.focus();
+          pulseCursor(inputRefs.current.distributorCode);
+        }
       };
     
       const handleModalConfirm = () => {

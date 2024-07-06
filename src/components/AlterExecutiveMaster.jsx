@@ -154,6 +154,11 @@ const AlterExecutiveMaster = () => {
 
   const handleModalClose = () => {
     setShowModal(false);
+
+    if (inputRefs.current.executiveCode) {
+      inputRefs.current.executiveCode.focus();
+      pulseCursor(inputRefs.current.executiveCode);
+    }
   };
 
   const handleModalConfirm = () => {

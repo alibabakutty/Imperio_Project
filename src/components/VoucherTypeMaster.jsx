@@ -7,7 +7,7 @@ import { createNewVoucherTypeMaster } from '../services/MasterService';
 const VoucherTypeMaster = () => {
 
     const [voucherTypeName, setVoucherTypeName] = useState('');
-    const [voucherType, setVoucherType] = useState('Sales Order');
+    const [voucherType, setVoucherType] = useState('');
     const [methodOfVoucherNumbering, setMethodVoucherNumbering] = useState('automatic');
     const [showVoucherNumberingOptions, setShowVoucherNumberingOptions] = useState(false);
     const [alterAdditionalNumberingDetails, setAlterAdditionalNumberingDetails] = useState('no');
@@ -32,6 +32,8 @@ const VoucherTypeMaster = () => {
     const [showSubFormModal, setShowSubFormModal] = useState(false);
     const [voucherTypeFocused, setVoucherTypeFocused] = useState(false);
     const [methodOfVoucherNumberingFocused, setMethodOfVoucherNumberingFocused] = useState(false);
+    const [highlightedSuggestionVoucherType, setHighlightedSuggestionVoucherType] = useState(0);
+    const [highlightedMethodOfVoucherNumbering, setHighlightedMethodOfVoucherNumbering] = useState(0);
 
 
     const inputRefs = useRef({
@@ -50,8 +52,7 @@ const VoucherTypeMaster = () => {
         suffixDetailsApplicationForm: null,
         suffixDetailsParticulars: null,
         printingVoucherAfterSaving: null,
-        nameOfClass: null,
-        acceptButton: null
+        nameOfClass: null
     });
     
     
@@ -63,6 +64,8 @@ const VoucherTypeMaster = () => {
     const subFormCancelButtonRef = useRef(null);
     const yesQuitButtonRef = useRef(null);
     const cancelModalConfirmRef = useRef(null);
+    const suggestionVoucherTypeRef = useRef([]);
+
 
 
     const navigate = useNavigate();
@@ -205,11 +208,7 @@ const VoucherTypeMaster = () => {
                   nextInputRef.focus();
                   pulseCursor(nextInputRef);
                 }
-              } else {
-                if (acceptButtonRef.current && acceptButtonRef.current.focus) {
-                  acceptButtonRef.current.focus();
-                }
-              }
+              } 
             }
             break;
       
@@ -224,11 +223,6 @@ const VoucherTypeMaster = () => {
                 if (inputRefs.current.alterAdditionalNumberingDetails && inputRefs.current.alterAdditionalNumberingDetails.focus) {
                   inputRefs.current.alterAdditionalNumberingDetails.focus();
                   pulseCursor(inputRefs.current.alterAdditionalNumberingDetails);
-                }
-              } else if (target.id === 'acceptButton') {
-                if (inputRefs.current.nameOfClass && inputRefs.current.nameOfClass.focus()) {
-                  inputRefs.current.nameOfClass.focus();
-                  pulseCursor(inputRefs.current.nameOfClass);
                 }
               } else {
                 const currentInputIndex = Object.keys(inputRefs.current).findIndex((key) => key === target.id);
@@ -275,6 +269,21 @@ const VoucherTypeMaster = () => {
               }
             }
             break;
+        }
+
+        // Handle vouchertype input suggestion navigation
+        if(target.id === 'voucherType'){
+          if(keyCode === 40){   // Down Arrow
+            event.preventDefault();
+            setHighlightedSuggestionVoucherType((prevIndex) => (prevIndex + 1) % filteredVoucherTypeSuggestions.length);
+
+          }else if(keyCode === 38){  // Up Arrow
+            event.preventDefault();
+            setHighlightedSuggestionVoucherType((prevIndex) => (prevIndex - 1 + filteredVoucherTypeSuggestions.length) % filteredVoucherTypeSuggestions.length);
+          }else if(keyCode === 13 && highlightedSuggestionVoucherType >= 0){
+            event.preventDefault();
+            selectVoucherType(filteredVoucherTypeSuggestions[highlightedSuggestionVoucherType]);
+          }
         }
       };
       
@@ -351,6 +360,11 @@ const VoucherTypeMaster = () => {
 
     const handleModalClose = () => {
         setShowModal(false);
+
+        if(inputRefs.current.voucherTypeName){
+          inputRefs.current.voucherTypeName.focus();
+          pulseCursor(inputRefs.current.voucherTypeName);
+      }
       };
     
       const handleModalConfirm = () => {
@@ -454,8 +468,8 @@ const VoucherTypeMaster = () => {
 
       const voucherNumberRenderingOptions = () => {
         const methodsOfNumberingDatas = ["Automatic", "Manual"];
-        return methodsOfNumberingDatas.map((methodsOfNumbering) => (
-            <p key={methodsOfNumbering} tabIndex={0} onClick={() => handleVoucherNumberingClick(methodsOfNumbering)} onKeyDown={(e) => {if(e.key === 'Enter'){handleVoucherNumberingClick(methodsOfNumbering)}}} className='h-5 pl-2 text-sm focus:bg-yellow-200 focus:outline-none text-left'>{methodsOfNumbering}</p>
+        return methodsOfNumberingDatas.map((methodsOfNumbering, index) => (
+            <p key={methodsOfNumbering} tabIndex={0} onClick={() => handleVoucherNumberingClick(methodsOfNumbering)} onKeyDown={(e) => {if(e.key === 'Enter'){handleVoucherNumberingClick(methodsOfNumbering)}}} onMouseEnter={() => handleVoucherNumberingMouseEnter(index)} onMouseLeave={handleVoucherNumberingMouseLeave} className={`h-5 pl-2 text-sm focus:outline-none text-left ${highlightedMethodOfVoucherNumbering === index ? 'bg-yellow-200': ''}`}>{methodsOfNumbering}</p>
         ))
       };
 
@@ -527,6 +541,25 @@ const VoucherTypeMaster = () => {
           setMethodOfVoucherNumberingFocused(false);
           setShowVoucherNumberingOptions(false);
         
+      };
+
+      const handleVoucherNumberingKeyDown = (e) => {
+        const methodsOfNumberingDatas = ['Automatic', 'Manual'];
+        if(e.key === 'ArrowDown'){
+          setHighlightedMethodOfVoucherNumbering((prev) => (prev + 1) % methodsOfNumberingDatas.length);
+        }else if(e.key === 'ArrowUp'){
+          setHighlightedMethodOfVoucherNumbering((prev) => (prev - 1 + methodsOfNumberingDatas.length) % methodsOfNumberingDatas.length);
+        }else if(e.key === 'Enter' && highlightedMethodOfVoucherNumbering >= 0){
+          handleVoucherNumberingClick(methodsOfNumberingDatas[highlightedMethodOfVoucherNumbering]);
+        }
+      };
+
+      const handleVoucherNumberingMouseEnter = (index) => {
+        setHighlightedMethodOfVoucherNumbering(index);
+      };
+
+      const handleVoucherNumberingMouseLeave = () => {
+        setHighlightedMethodOfVoucherNumbering(0);
       }
     
 
@@ -562,14 +595,14 @@ const VoucherTypeMaster = () => {
                                 : <input type="text" id='voucherType' name='voucherType' value={voucherType} onChange={(e) => {setVoucherType(e.target.value); handleVoucherTypeChange(e)}} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.voucherType = input} onFocus={handleVoucherTypeFocus} onBlur={() => setVoucherTypeFocused(false)} className='w-[200px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
 
                                 {voucherTypeFocused && filteredVoucherTypeSuggestions.length > 0 && (
-                                    <div className='bg-[#CAF4FF] w-[20%] h-[85.5vh] border border-gray-500' style={{ position: 'absolute', top: '18px', left: '956px' }}>
+                                    <div className='bg-[#CAF4FF] w-[18%] h-[85.5vh] border border-gray-500' style={{ position: 'absolute', top: '18px', left: '983px' }}>
                                         <div className='text-left bg-[#003285] text-[13.5px] text-white pl-2'>
                                             <p>List of Voucher Types</p>
                                         </div>
 
                                         <ul className='suggestions w-full h-[20vh] text-left mt-2'>
                                             {filteredVoucherTypeSuggestions.map((voucher, index) => (
-                                                <li key={index} tabIndex={0} onClick={() => selectVoucherType(voucher)} onKeyDown={(e) => e.key === 'Enter' && selectVoucherType(voucher)} className='suggestion-item focus:bg-[#FEB941] outline-none text-[13px] pl-2'>
+                                                <li key={index} tabIndex={0} onClick={() => selectVoucherType(voucher)} ref={(input) => {suggestionVoucherTypeRef.current[index] = input}} onKeyDown={(e) => e.key === 'Enter' && selectVoucherType(voucher)} className={`pl-2 cursor-pointer ${highlightedSuggestionVoucherType === index ? 'bg-yellow-200': ''}`}>
                                                     {voucher.voucherType}
                                                 </li>
                                             ))}
@@ -580,10 +613,10 @@ const VoucherTypeMaster = () => {
 
                             <div>
                                 <label htmlFor="methodOfVoucherNumbering" className='mr-[77.5px] ml-1'>Method of Voucher Numbering</label>
-                                : <input type="text" id='methodOfVoucherNumbering' name='methodOfVoucherNumbering' value={methodOfVoucherNumbering} onChange={(e) => {setMethodVoucherNumbering(e.target.value); handleVoucherNumberingInputChange(e); }} onKeyDown={handleFormKeyDown} ref={(input) => inputRefs.current.methodOfVoucherNumbering = input} onFocus={handleMethodOfVoucherNumberingFocus} onBlur={handleMethodOfVoucherNumberingBlur} className='w-[200px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+                                : <input type="text" id='methodOfVoucherNumbering' name='methodOfVoucherNumbering' value={methodOfVoucherNumbering} onChange={(e) => {setMethodVoucherNumbering(e.target.value); handleVoucherNumberingInputChange(e); }} onKeyDown={(e) => {handleFormKeyDown(e); handleVoucherNumberingKeyDown(e);}} ref={(input) => inputRefs.current.methodOfVoucherNumbering = input} onFocus={handleMethodOfVoucherNumberingFocus} onBlur={handleMethodOfVoucherNumberingBlur} className='w-[200px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
 
                                 {methodOfVoucherNumberingFocused && showVoucherNumberingOptions && (
-                                    <div ref={voucherNumberingOptionsRef} className='w-[15%] border text-left text-sm bg-[#CAF4FF] absolute top-[102px] left-[405px]'>
+                                    <div ref={voucherNumberingOptionsRef} className='w-[13%] border text-left text-sm bg-[#CAF4FF] absolute top-[102px] left-[405px]'>
                                         <div className='bg-[#003285] px-2 text-white'>
                                             <p>Methods of Numbering</p>
                                         </div>
