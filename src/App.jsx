@@ -41,7 +41,6 @@ import GodownAlter from "./components/GodownAlter"
 import DisplayGodownMaster from "./components/DisplayGodownMaster"
 import AlterGodownMaster from "./components/AlterGodownMaster"
 import GodownMasterAlteredCheck from "./message/GodownMasterAlteredCheck"
-import PaymentVoucher from "./components/PaymentVoucher"
 import VoucherTypeMaster from "./components/VoucherTypeMaster"
 import VoucherTypeMasterAddedCheck from "./message/VoucherTypeMasterAddedCheck"
 import VoucherTypeFilter from "./components/VoucherTypeFilter"
@@ -231,9 +230,7 @@ function App() {
          <Route path="/alteredLedger" element = {<LedgerMasterAlteredCheck /> } />
 
 
-         {/* VOUCHERS */}
-         {/* http://localhost:4000/paymentVoucher */}
-         <Route path="/paymentVoucher" element = {<PaymentVoucher />} />
+        
 
 
 

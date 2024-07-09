@@ -44,12 +44,11 @@ const DistributorMaster = () => {
   const [highlightedExecutiveIndex, setHighlightedExecutiveIndex] = useState(0);
   const [highlightedRegionIndex, setHighlightedRegionIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [region, setRegion] = useState([]);   // Assuming this holds all region data
 
   const acceptButtonRef = useRef(null);
   const yesQuitButtonRef = useRef(null);
   const cancelModalConfirmRef = useRef(null);
-  const suggestionExecutiveRef = useRef([]);
+  const suggestionExecutiveRef = useRef([]); 
   const suggestionRegionRef = useRef([]);
   const dropdownRef = useRef(null);
 
@@ -75,7 +74,7 @@ const DistributorMaster = () => {
     const fetchExecutiveSuggestions = async () => {
       try {
         const responseExecutive = await axios.get(
-          "http://localhost:8080/api/master/allExecutive"
+          "http://localhost:8080/executiveMasterApi/allExecutives"
         );
         setExecutiveSuggestions(responseExecutive.data);
       } catch (error) {
@@ -86,10 +85,10 @@ const DistributorMaster = () => {
     const fetchRegionSuggestions = async () => {
       try {
         const responseRegion = await axios.get(
-          "http://localhost:8080/api/master/allRegion"
+          "http://localhost:8080/regionMasterApi/allRegions"
         );
         setRegionSuggestions(responseRegion.data);
-		setFilteredRegionSuggestions(responseRegion.data.slice(0,25)); // Initially show the 25 regions
+		setFilteredRegionSuggestions(responseRegion.data); // Initially show the 25 regions
         console.log(responseRegion.data);
       } catch (error) {
         console.error("Error fetching region data:", error);
@@ -589,19 +588,19 @@ const DistributorMaster = () => {
                     ))}
                   </ul>
 
-				  {filteredRegionSuggestions.length > 25 && (
-				<div className="mt-2 bg-[#BBE9FF]">
-					<label htmlFor="regionDropdown" className="block text-center text-[13px] mb-1"></label>
-					<select name="regionDropdown" id="regionDropdown" ref={(el) => (dropdownRef.current = el)} className={`w-full border border-gray-600 bg-[#BBE9FF] p-1 text-[13px] focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ${selectedIndex === filteredRegions.length + 2 }`} onChange={handleDropDownRegionChange}>
-						<option value="" className="block text-left text-[13px]">Select Other Regions</option>
-						{region.slice(20).map(reg => (
-							<option key={reg.regionMasterId} value={reg.regionMasterId} className="block text-left text-[13px]">
-								{reg.regionMasterId} - {reg.regionName}
-							</option>
-						))}
-					</select>
-				</div>
-			)}
+            {/* {filteredRegionSuggestions.length > 25 && (
+              <div className="mt-2 bg-[#BBE9FF]">
+                <label htmlFor="regionDropdown" className="block text-center text-[13px] mb-1"></label>
+                <select name="regionDropdown" id="regionDropdown" ref={(el) => (dropdownRef.current = el)} className={`w-full border border-gray-600 bg-[#BBE9FF] p-1 text-[13px] focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ${selectedIndex === filteredRegions.length + 2 }`} onChange={handleDropDownRegionChange}>
+                  <option value="" className="block text-left text-[13px]">Select Other Regions</option>
+                  {region.slice(25).map(reg => (
+                    <option key={reg.regionMasterId} value={reg.regionMasterId} className="block text-left text-[13px]">
+                      {reg.regionMasterId} - {reg.regionName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )} */}
                 </div>
               </div>
             )}

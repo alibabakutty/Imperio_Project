@@ -232,7 +232,7 @@ const DisplayVoucherTypeMaster = () => {
 
     const loadVoucherTypeName = async () => {
         try{
-            const result = await axios.get(`http://localhost:8080/api/master/displayVoucherTypeName/${voucherTypeName}`);
+            const result = await axios.get(`http://localhost:8080/voucherTypeMasterApi/displayVoucher/${voucherTypeName}`);
             console.log(result.data);
             setVoucher(result.data);
         }catch(error){
@@ -242,7 +242,7 @@ const DisplayVoucherTypeMaster = () => {
 
     const loadVoucherType = async () => {
         try{
-            const result = await axios.get(`http://localhost:8080/api/master/displayVoucherType/${voucherType}`);
+            const result = await axios.get(`http://localhost:8080/voucherTypeApi/displayVoucherType/${voucherType}`);
             console.log(result.data);
             setVoucher(result.data);
 

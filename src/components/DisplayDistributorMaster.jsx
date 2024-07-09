@@ -164,7 +164,7 @@ const DisplayDistributorMaster = () => {
 
   const loadDistributor = async () => {
     try {
-      const result = await axios.get(`http://localhost:8080/api/master/displayDistributor/${distributorCode}`);
+      const result = await axios.get(`http://localhost:8080/distributorMasterApi/displayDistributor/${distributorCode}`);
       setDistributor(result.data);
     } catch (error) {
       console.error("Error fetching the distributor data", error);

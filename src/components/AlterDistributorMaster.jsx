@@ -70,7 +70,7 @@ const AlterDistributorMaster = () => {
     const onSubmit = async (e) => {
       e.preventDefault();
 
-      await axios.put(`http://localhost:8080/api/master/alterDistributorMaster/${distributorCode}`, distributor);
+      await axios.put(`http://localhost:8080/distributorMasterApi/alterDistributorMaster/${distributorCode}`, distributor);
 
       navigate("/alteredDistributor");
     };
@@ -86,7 +86,7 @@ const AlterDistributorMaster = () => {
 
         const fetchExecutiveSuggestions = async () => {
           try{
-            const responseExecutive = await axios.get('http://localhost:8080/api/master/allExecutive');
+            const responseExecutive = await axios.get('http://localhost:8080/executiveMasterApi/allExecutives');
             setExecutiveSuggestions(responseExecutive.data);
           }catch (error){
             console.error('Error fetching executive data:', error);
@@ -97,7 +97,7 @@ const AlterDistributorMaster = () => {
 
         const fetchRegionSuggestions = async () => {
           try{
-            const responseRegion = await axios.get('http://localhost:8080/api/master/allRegion');
+            const responseRegion = await axios.get('http://localhost:8080/regionMasterApi/allRegions');
             setRegionSuggestions(responseRegion.data);
           }catch (error){
             console.error('Error fetching region data:', error);
@@ -278,7 +278,7 @@ const AlterDistributorMaster = () => {
 
     const loadDistributor = async () => {
         try{
-            const result = await axios.get(`http://localhost:8080/api/master/displayDistributor/${distributorCode}`);
+            const result = await axios.get(`http://localhost:8080/distributorMasterApi/displayDistributor/${distributorCode}`);
             setDistributor(result.data);
         }catch(error){
             console.error("Error fetching the executive data",error);

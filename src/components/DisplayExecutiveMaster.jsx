@@ -157,7 +157,7 @@ const DisplayExecutiveMaster = () => {
 
     const loadExecutive = async () => {
         try{
-            const result = await axios.get(`http://localhost:8080/api/master/displayExecutive/${executiveCode}`);
+            const result = await axios.get(`http://localhost:8080/executiveMasterApi/displayExecutive/${executiveCode}`);
             setExecutive(result.data);
         }catch(error){
             console.error("Error fetching the executive data",error);

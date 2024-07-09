@@ -51,7 +51,7 @@ const AlterExecutiveMaster = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    await axios.put(`http://localhost:8080/api/master/alterExecutiveMaster/${executiveCode}`, executive);
+    await axios.put(`http://localhost:8080/executiveMasterApi/alterExecutiveMaster/${executiveCode}`, executive);
     navigate("/alteredExecutive");
   };
 
@@ -145,7 +145,7 @@ const AlterExecutiveMaster = () => {
 
   const loadExecutive = async () => {
     try {
-      const result = await axios.get(`http://localhost:8080/api/master/displayExecutive/${executiveCode}`);
+      const result = await axios.get(`http://localhost:8080/executiveMasterApi/displayExecutive/${executiveCode}`);
       setExecutive(result.data);
     } catch (error) {
       console.error("Error fetching the executive data", error);

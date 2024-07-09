@@ -111,7 +111,7 @@ const AlterVoucherTypeMaster = () => {
 
         const fetchVoucherTypeSuggestions = async () => {
           try{
-            const response = await axios.get('http://localhost:8080/api/master/allVoucherTypes');
+            const response = await axios.get('http://localhost:8080/voucherTypeApi/allVoucherTypes');
             setVoucherTypeSuggestions(response.data);
           }catch(error){
             console.error('Error fetching voucher type names:', error);
@@ -341,7 +341,7 @@ const AlterVoucherTypeMaster = () => {
 
     const loadVoucherTypeName = async () => {
         try{
-            const result = await axios.get(`http://localhost:8080/api/master/displayVoucherTypeName/${voucherTypeName}`);
+            const result = await axios.get(`http://localhost:8080/voucherTypeMasterApi/displayVoucher/${voucherTypeName}`);
             console.log(result.data);
             setVoucher(result.data);
         }catch(error){
@@ -351,7 +351,7 @@ const AlterVoucherTypeMaster = () => {
 
     const loadVoucherType = async () => {
         try{
-            const result = await axios.get(`http://localhost:8080/api/master/displayVoucherType/${voucherType}`);
+            const result = await axios.get(`http://localhost:8080/voucherTypeApi/displayVoucherType/${voucherType}`);
             console.log(result.data);
             setVoucher(result.data);
 
@@ -362,7 +362,7 @@ const AlterVoucherTypeMaster = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        await axios.put(`http://localhost:8080/api/master/alterVoucherTypeMaster/${voucherTypeName}`, voucher);
+        await axios.put(`http://localhost:8080/voucherTypeMasterApi/alterVoucherTypeMaster/${voucherTypeName}`, voucher);
         navigate('/alteredVoucherTypeMaster');
     }
 
@@ -384,7 +384,7 @@ const AlterVoucherTypeMaster = () => {
 
     const handleSubFormSave = async () => {
       try {
-        const response = await axios.put(`http://localhost:8080/api/master/alterVoucherTypeMaster/${voucherTypeName}`, voucher);
+        const response = await axios.put(`http://localhost:8080/voucherTypeMasterApi/alterVoucherTypeMaster/${voucherTypeName}`, voucher);
         console.log('Response:', response.data); // Log response for debugging
         // Optionally handle success scenario (e.g., show confirmation)
       } catch (error) {
