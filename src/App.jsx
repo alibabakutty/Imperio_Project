@@ -4,14 +4,12 @@ import RegionMaster from "./pages/master/region_master/RegionMaster"
 import Gateway from "./components/Gateway"
 import ExecutiveMaster from "./pages/master/executive_master/ExecutiveMaster"
 import DistributorMaster from "./pages/master/distributor_master/DistributorMaster"
-import Productmaster from "./pages/master/product_master/Productmaster"
 import ListofMasters from "./components/ListofMasters"
 import RegionMasterAddedCheck from "./message/RegionMasterAddedCheck"
 import ExecutiveMasterAddedCheck from "./message/ExecutiveMasterAddedCheck"
 import DistributorMasterAddedCheck from "./message/DistributorMasterAddedCheck"
 import ProductMasterAddedCheck from "./message/ProductMasterAddedCheck"
 
-import './assets/css/font.css'
 import DisplayOFMasters from "./components/DisplayOFMasters"
 import RegionFilter from "./pages/master/region_master/RegionFilter"
 import DisplayRegionMaster from "./pages/master/region_master/DisplayRegionMaster"
@@ -55,6 +53,9 @@ import LedgerAlter from "./pages/master/ledger_master/LedgerAlter"
 import DisplayLedgerMaster from "./pages/master/ledger_master/DisplayLedgerMaster"
 import AlterLedgerMaster from "./pages/master/ledger_master/AlterLedgerMaster"
 import LedgerMasterAlteredCheck from "./message/LedgerMasterAlteredCheck"
+import ProductMaster from "./pages/master/product_master/ProductMaster"
+
+
 
 
 
@@ -82,7 +83,7 @@ function App() {
           <Route path="/distributor" element = {<DistributorMaster />} />
           
          {/* http://localhost:4000/product */}
-         <Route path="/product" element = {<Productmaster />} />
+         <Route path="/product" element = {<ProductMaster />} />
 
           {/* http://localhost:4000/goodown */}
           <Route path="/godown" element = {<GodownMaster />} />
