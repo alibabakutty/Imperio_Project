@@ -69,7 +69,7 @@ const AlterProductMaster = () => {
 
   const loadProduct = async () => {
     try{
-      const result = await axios.get(`http://localhost:8080/productMasterApi/displayProduct/${productCode}`);
+      const result = await axios.get(`http://localhost:9080/products/displayProduct/${productCode}`);
       setProduct(result.data);
       console.log(result.data);
     } catch (error) {
@@ -89,7 +89,7 @@ const AlterProductMaster = () => {
     // Fetch units suggestions
     const fetchUnitSuggestions = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/unitMasterApi/allUnits');
+        const response = await axios.get('http://localhost:9080/unitMasterApi/allUnits');
         setUnitsSuggestions(response.data);
         setFilteredUnitsSuggestions(response.data); // Initialize with all suggestions
         // Initialize suggestionRefs for each suggestion item
@@ -293,7 +293,7 @@ const AlterProductMaster = () => {
     
     if(validateForm()){
       try{
-        await axios.put(`http://localhost:8080/productMasterApi/alterProductMaster/${productCode}`, {
+        await axios.put(`http://localhost:9080/products/alterProductMaster/${productCode}`, {
           ...product,
           standardCost: parseFloat(product.standardCost),
           sellingPrice: parseFloat(product.sellingPrice),

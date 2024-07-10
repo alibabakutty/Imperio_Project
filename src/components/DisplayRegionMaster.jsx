@@ -151,7 +151,7 @@ const DisplayRegionMaster = () => {
 
     const loadRegion = async () => {
         try {
-            const result = await axios.get(`http://localhost:8080/regionMasterApi/displayRegion/${regionMasterId}`);
+            const result = await axios.get(`http://localhost:9080/regionMasterApi/displayRegion/${regionMasterId}`);
             setRegion(result.data);
         } catch (error) {
             console.error("Error fetching the region data", error);

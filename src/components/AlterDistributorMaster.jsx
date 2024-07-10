@@ -40,13 +40,19 @@ const AlterDistributorMaster = () => {
     const acceptButtonRef = useRef(null);
     const yesQuitButtonRef = useRef(null);
     const cancelModalConfirmRef = useRef(null);
+    const suggestionExecutiveRef = useRef([]);
+    const suggestionRegionRef = useRef([]);
 
     const [showModal, setShowModal] = useState(false);
     const [executiveSuggestions, setExecutiveSuggestions] = useState([]);
     const [regionSuggestions, setRegionSuggestions] = useState([]);
     const [filteredExecutiveSuggestions, setFilteredExecutiveSuggestions] = useState([]);
     const [filteredRegionSuggestions, setFilteredRegionSuggestions] = useState([]);
-    const [showAllRegionSuggestions, setShowAllRegionSuggestions] = useState(false);
+    const [executiveFocused, setExecutiveFocused] = useState(false);
+    const [regionFocused, setRegionFocused] = useState(false);
+    const [highlightedExecutiveIndex, setHighlightedExecutiveIndex] = useState(0);
+    const [highlightedRegionIndex, setHighlightedRegionIndex] = useState(0);
+    const [showOtherRegionDropdown, setShowOtherRegionDropdown] = useState(0);
 
 
     const pulseCursor = (input) => {
@@ -70,7 +76,7 @@ const AlterDistributorMaster = () => {
     const onSubmit = async (e) => {
       e.preventDefault();
 
-      await axios.put(`http://localhost:8080/distributorMasterApi/alterDistributorMaster/${distributorCode}`, distributor);
+      await axios.put(`http://localhost:9080/distributorMasterApi/alterDistributorMaster/${distributorCode}`, distributor);
 
       navigate("/alteredDistributor");
     };
@@ -86,7 +92,7 @@ const AlterDistributorMaster = () => {
 
         const fetchExecutiveSuggestions = async () => {
           try{
-            const responseExecutive = await axios.get('http://localhost:8080/executiveMasterApi/allExecutives');
+            const responseExecutive = await axios.get('http://localhost:9080/executiveMasterApi/allExecutives');
             setExecutiveSuggestions(responseExecutive.data);
           }catch (error){
             console.error('Error fetching executive data:', error);
@@ -97,7 +103,7 @@ const AlterDistributorMaster = () => {
 
         const fetchRegionSuggestions = async () => {
           try{
-            const responseRegion = await axios.get('http://localhost:8080/regionMasterApi/allRegions');
+            const responseRegion = await axios.get('http://localhost:9080/regionMasterApi/allRegions');
             setRegionSuggestions(responseRegion.data);
           }catch (error){
             console.error('Error fetching region data:', error);
@@ -278,7 +284,7 @@ const AlterDistributorMaster = () => {
 
     const loadDistributor = async () => {
         try{
-            const result = await axios.get(`http://localhost:8080/distributorMasterApi/displayDistributor/${distributorCode}`);
+            const result = await axios.get(`http://localhost:9080/distributorMasterApi/displayDistributor/${distributorCode}`);
             setDistributor(result.data);
         }catch(error){
             console.error("Error fetching the executive data",error);
@@ -299,9 +305,28 @@ const AlterDistributorMaster = () => {
         navigate('/distributorAlter');
       };
 
-      const toggleShowAllRegionSuggestions = () => {
-    setShowAllRegionSuggestions(!showAllRegionSuggestions);
-  };
+      const handleExecutiveFocus = (e) => {
+        const {id} = e.target;
+        if(id === 'executiveCode'){
+          setExecutiveFocused(true);
+          setFilteredExecutiveSuggestions(executiveSuggestions);
+
+        }else{
+          setExecutiveFocused(false);
+          setFilteredExecutiveSuggestions([]);
+        }
+      };
+
+      const handleRegionFocus = (e) => {
+        const {id} = e.target;
+        if(id === 'regionCode'){
+          setRegionFocused(true);
+          setFilteredRegionSuggestions(regionSuggestions.slice(0,25));
+        }else{
+          setRegionFocused(false);
+          setFilteredRegionSuggestions([]);
+        }
+      }
 
 
   return (

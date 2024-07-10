@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const REST_API_BASE_URL = "http://localhost:8080";
+const REST_API_BASE_URL = "http://localhost:9080";
 
 
 // ADD
@@ -14,7 +14,7 @@ export const createNewExecutiveMaster = (executive) => axios.post(REST_API_BASE_
 export const createNewDistributorMaster = (distributor) => axios.post(REST_API_BASE_URL+"/distributorMasterApi/addDistributor", distributor);
 
 
-export const createNewProductMaster = (product) => axios.post(REST_API_BASE_URL+"/productMasterApi/addProduct", product);
+export const createNewProductMaster = (product) => axios.post(REST_API_BASE_URL+"/products/addProduct", product);
 
 export const createNewGodownMaster = (godown) => axios.post(REST_API_BASE_URL+"/godownMasterApi/addGodown", godown);
 
@@ -29,7 +29,7 @@ export const listOfExecutives = () => {return axios.get(REST_API_BASE_URL+"/exec
 
 export const listOfDistributors = () => {return axios.get(REST_API_BASE_URL+"/distributorMasterApi/allDistributors")};
 
-export const listOfProducts = () => {return axios.get(REST_API_BASE_URL+"/productMasterApi/allProducts")};
+export const listOfProducts = () => {return axios.get(REST_API_BASE_URL+"/products/allProducts")};
 
 export const listOfGodowns = () => {return axios.get(REST_API_BASE_URL+"/godownMasterApi/allGodowns")};
 

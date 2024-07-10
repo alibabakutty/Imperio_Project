@@ -64,7 +64,7 @@ const Productmaster = () => {
     // Fetch units suggestions
     const fetchUnitSuggestions = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/unitMasterApi/allUnits');
+        const response = await axios.get('http://localhost:9080/unitMasterApi/allUnits');
         setUnitsSuggestions(response.data);
         setFilteredUnitsSuggestions(response.data); // Initialize with all suggestions
         // Initialize suggestionRefs for each suggestion item

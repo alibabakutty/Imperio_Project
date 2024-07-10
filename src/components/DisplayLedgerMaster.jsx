@@ -150,7 +150,7 @@ const DisplayLedgerMaster = () => {
 
   const loadLedger = async () => {
     try {
-      const result = await axios.get(`http://localhost:8080/ledgerMasterApi/displayLedger/${ledgerCode}`);
+      const result = await axios.get(`http://localhost:9080/ledgerMasterApi/displayLedger/${ledgerCode}`);
       setLedger(result.data);
     } catch (error) {
       console.error("Error fetching the godown data", error);

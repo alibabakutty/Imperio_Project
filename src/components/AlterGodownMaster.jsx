@@ -46,7 +46,7 @@ const AlterGodownMaster = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:8080/godownMasterApi/alterGodownMaster/${godownCode}`, godown);
+      await axios.put(`http://localhost:9080/godownMasterApi/alterGodownMaster/${godownCode}`, godown);
       navigate("/alteredGodown");
     } catch (error) {
       console.error("Error updating the godown", error);
@@ -155,7 +155,7 @@ const AlterGodownMaster = () => {
 
   const loadGodown = async () => {
     try {
-      const result = await axios.get(`http://localhost:8080/godownMasterApi/displayGodown/${godownCode}`);
+      const result = await axios.get(`http://localhost:9080/godownMasterApi/displayGodown/${godownCode}`);
       setGodown(result.data);
     } catch (error) {
       console.error("Error fetching the godown data", error);

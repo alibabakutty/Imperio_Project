@@ -151,7 +151,7 @@ const DisplayGodownMaster = () => {
 
   const loadGodown = async () =>{
     try{
-      const result = await axios.get(`http://localhost:8080/godownMasterApi/displayGodown/${godownCode}`);
+      const result = await axios.get(`http://localhost:9080/godownMasterApi/displayGodown/${godownCode}`);
       setGodown(result.data);
     }catch(error){
       console.error("Error fetching the godown data",error);

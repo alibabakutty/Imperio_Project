@@ -43,14 +43,13 @@ const DistributorMaster = () => {
   const [regionFocused, setRegionFocused] = useState(false);
   const [highlightedExecutiveIndex, setHighlightedExecutiveIndex] = useState(0);
   const [highlightedRegionIndex, setHighlightedRegionIndex] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [showOtherRegionDropdown, setShowOtherRegionDropdown] = useState(false);
 
   const acceptButtonRef = useRef(null);
   const yesQuitButtonRef = useRef(null);
   const cancelModalConfirmRef = useRef(null);
   const suggestionExecutiveRef = useRef([]); 
   const suggestionRegionRef = useRef([]);
-  const dropdownRef = useRef(null);
 
   const navigator = useNavigate();
 
@@ -74,7 +73,7 @@ const DistributorMaster = () => {
     const fetchExecutiveSuggestions = async () => {
       try {
         const responseExecutive = await axios.get(
-          "http://localhost:8080/executiveMasterApi/allExecutives"
+          "http://localhost:9080/executiveMasterApi/allExecutives"
         );
         setExecutiveSuggestions(responseExecutive.data);
       } catch (error) {
@@ -85,7 +84,7 @@ const DistributorMaster = () => {
     const fetchRegionSuggestions = async () => {
       try {
         const responseRegion = await axios.get(
-          "http://localhost:8080/regionMasterApi/allRegions"
+          "http://localhost:9080/regionMasterApi/allRegions"
         );
         setRegionSuggestions(responseRegion.data);
 		setFilteredRegionSuggestions(responseRegion.data); // Initially show the 25 regions
@@ -181,6 +180,13 @@ const DistributorMaster = () => {
         region.regionMasterId.toLowerCase().includes(regionValue.toLowerCase())
       );
       setFilteredRegionSuggestions(filteredSuggestions);
+
+      // Check if there are more than 25 regions
+      if (filtered.length > 25) {
+        setShowOtherRegionDropdown(true);
+      } else {
+        setShowOtherRegionDropdown(false);
+      }
     } else {
       setFilteredRegionSuggestions([]); // Clear suggestions if input is empty
       setRegionMaster(""); // Reset regionMaster when input is empty
@@ -588,22 +594,30 @@ const DistributorMaster = () => {
                     ))}
                   </ul>
 
-            {/* {filteredRegionSuggestions.length > 25 && (
-              <div className="mt-2 bg-[#BBE9FF]">
-                <label htmlFor="regionDropdown" className="block text-center text-[13px] mb-1"></label>
-                <select name="regionDropdown" id="regionDropdown" ref={(el) => (dropdownRef.current = el)} className={`w-full border border-gray-600 bg-[#BBE9FF] p-1 text-[13px] focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none ${selectedIndex === filteredRegions.length + 2 }`} onChange={handleDropDownRegionChange}>
-                  <option value="" className="block text-left text-[13px]">Select Other Regions</option>
-                  {region.slice(25).map(reg => (
-                    <option key={reg.regionMasterId} value={reg.regionMasterId} className="block text-left text-[13px]">
-                      {reg.regionMasterId} - {reg.regionName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )} */}
                 </div>
               </div>
             )}
+
+            {showOtherRegionDropdown && (
+              <div className="input-ldgr">
+                <label htmlFor="otherRegions" className="text-sm mr-[45px] ml-2">
+                  Select Other Regions
+                </label>
+                :{" "}
+                <select
+                  id="otherRegions"
+                  name="otherRegions"
+                  onChange={(e) => selectRegion(filteredRegionSuggestions[e.target.selectedIndex + 25])}
+                  className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
+                >
+                  {filteredRegionSuggestions.slice(25).map((region) => (
+                    <option key={region.regionCode} value={region.regionCode}>
+                      {region.regionCode} - {region.regionName}
+                    </option>
+                  ))}
+                </select>
+            </div>
+          )}
 
 			
           </div>

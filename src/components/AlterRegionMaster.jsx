@@ -51,7 +51,7 @@ const AlterRegionMaster = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:8080/regionMasterApi/alterRegionMaster/${regionMasterId}`, region);
+      await axios.put(`http://localhost:9080/regionMasterApi/alterRegionMaster/${regionMasterId}`, region);
       navigate("/alteredRegion");
     } catch (error) {
       console.error('Error updating region:', error);
@@ -63,7 +63,7 @@ const AlterRegionMaster = () => {
 
   const loadRegion = async () => {
     try {
-      const result = await axios.get(`http://localhost:8080/regionMasterApi/displayRegion/${regionMasterId}`);
+      const result = await axios.get(`http://localhost:9080/regionMasterApi/displayRegion/${regionMasterId}`);
       setRegion(result.data);
     } catch (error) {
       console.error("Error fetching the region data", error);
