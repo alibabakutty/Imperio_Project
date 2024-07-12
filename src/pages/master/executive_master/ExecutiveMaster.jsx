@@ -160,7 +160,7 @@ const ExecutiveMaster = () => {
 
         createNewExecutiveMaster(executive).then((response) => {
             console.log(response.data);
-            navigator('/addedExecutive')
+            // navigator('/addedExecutive')
         }).catch((error) => {
             console.error('Error creating executive master:', error);
         })

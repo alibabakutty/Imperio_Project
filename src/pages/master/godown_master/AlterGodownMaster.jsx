@@ -47,7 +47,7 @@ const AlterGodownMaster = () => {
     e.preventDefault();
     try {
       await axios.put(`http://localhost:9080/godownMasterApi/alterGodownMaster/${godownCode}`, godown);
-      navigate("/alteredGodown");
+      // navigate("/alteredGodown");
     } catch (error) {
       console.error("Error updating the godown", error);
     }

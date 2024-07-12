@@ -161,7 +161,7 @@ const GodownMaster = () => {
     createNewGodownMaster(godown).then((response) =>{
       console.log(response.data);
 
-      navigator('/addedGodown');
+      // navigator('/addedGodown');
     }).catch((error) =>{
       console.error('Error creating godown master:', error);
     })

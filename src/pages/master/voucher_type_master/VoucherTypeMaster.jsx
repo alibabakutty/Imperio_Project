@@ -348,7 +348,7 @@ const VoucherTypeMaster = () => {
         createNewVoucherTypeMaster(voucher).then((response) => {
             console.log(response.data);
 
-            navigate('/addedVoucherType');
+            // navigate('/addedVoucherType');
 
 
         }).catch((error) =>{

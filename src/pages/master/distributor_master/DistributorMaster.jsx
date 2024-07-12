@@ -233,7 +233,7 @@ const DistributorMaster = () => {
     createNewDistributorMaster(distributor)
       .then((response) => {
         console.log(response.data);
-        navigator("/addedDistributor");
+        // navigator("/addedDistributor");
       })
       .catch((error) => {
         console.error("Error catching distributor master:", error);

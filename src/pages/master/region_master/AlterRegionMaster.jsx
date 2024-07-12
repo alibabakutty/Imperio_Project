@@ -52,7 +52,7 @@ const AlterRegionMaster = () => {
     e.preventDefault();
     try {
       await axios.put(`http://localhost:9080/regionMasterApi/alterRegionMaster/${regionMasterId}`, region);
-      navigate("/alteredRegion");
+      // navigate("/alteredRegion");
     } catch (error) {
       console.error('Error updating region:', error);
       // Implement error handling here

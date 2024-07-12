@@ -363,7 +363,7 @@ const AlterVoucherTypeMaster = () => {
     const onSubmit = async (e) => {
         e.preventDefault();
         await axios.put(`http://localhost:9080/voucherTypeMasterApi/alterVoucherTypeMaster/${voucherTypeName}`, voucher);
-        navigate('/alteredVoucherTypeMaster');
+        // navigate('/alteredVoucherTypeMaster');
     }
 
 

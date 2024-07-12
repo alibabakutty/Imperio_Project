@@ -78,7 +78,7 @@ const AlterDistributorMaster = () => {
 
       await axios.put(`http://localhost:9080/distributorMasterApi/alterDistributorMaster/${distributorCode}`, distributor);
 
-      navigate("/alteredDistributor");
+      // navigate("/alteredDistributor");
     };
 
     useEffect(() => {

@@ -168,7 +168,7 @@ const RegionMaster = () => {
 
     createNewRegionMaster(region).then((response) => {
       console.log(response.data);
-      navigate('/addedRegion');
+      // navigate('/addedRegion');
     }).catch((error) => {
       console.error('Error creating region master:', error);
     });

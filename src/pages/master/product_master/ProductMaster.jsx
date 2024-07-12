@@ -272,7 +272,7 @@ const ProductMaster = () => {
     if (validateForm()) {
       createNewProductMaster(product).then((response) => {
         console.log(response.data);
-        navigate('/addedProduct');
+        // navigate('/addedProduct');
 
         // Focus on the first input field
         if (inputRefs.current.productCode) {

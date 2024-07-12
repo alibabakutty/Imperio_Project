@@ -47,7 +47,7 @@ const AlterLedgerMaster = () => {
     e.preventDefault();
     try {
       await axios.put(`http://localhost:9080/ledgerMasterApi/alterLedgerMaster/${ledgerCode}`, ledger);
-      navigate("/alteredLedger");
+      // navigate("/alteredLedger");
     } catch (error) {
       console.error("Error updating the godown", error);
     }

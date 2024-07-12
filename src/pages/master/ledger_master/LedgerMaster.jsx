@@ -169,7 +169,7 @@ const LedgerMaster = () => {
     createNewLedgerMaster(ledger).then((response) => {
         console.log(response.data);
 
-        navigator('/addedLedger');
+        // navigator('/addedLedger');
     }).catch((error) => {
         console.error('Error creating ledger master:', ledger);
     })

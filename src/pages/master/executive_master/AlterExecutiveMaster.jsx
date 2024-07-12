@@ -52,7 +52,7 @@ const AlterExecutiveMaster = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     await axios.put(`http://localhost:9080/executiveMasterApi/alterExecutiveMaster/${executiveCode}`, executive);
-    navigate("/alteredExecutive");
+    // navigate("/alteredExecutive");
   };
 
   useEffect(() => {

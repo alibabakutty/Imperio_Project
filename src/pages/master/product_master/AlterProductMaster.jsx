@@ -300,7 +300,7 @@ const AlterProductMaster = () => {
           discount: parseFloat(product.discount)
         });
   
-        navigate('/alteredProduct');
+        // navigate('/alteredProduct');
       }catch (error){
         console.error("Error updating the product", error);
       }
