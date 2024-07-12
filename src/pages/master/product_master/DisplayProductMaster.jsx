@@ -157,7 +157,7 @@ const DisplayProductMaster = () => {
 
   const loadProduct = async () => {
     try {
-      const result = await axios.get(`http://localhost:9080/productMasterApi/displayProduct/${productCode}`);
+      const result = await axios.get(`http://localhost:9080/products/displayProduct/${productCode}`);
       setProduct(result.data);
     } catch (error) {
       console.error("Error fetching the product data", error);
