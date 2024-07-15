@@ -39,10 +39,19 @@ const ListofMasters = () => {
       }
     };
 
+    const handleMouseDown = (event) => {
+      // check if the clicked element is one of the links
+      if(!links.some(link => link.current === event.target)){
+        event.preventDefault();
+      }
+    };
+
     document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handleMouseDown);
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleMouseDown);
     };
 
 }, [links]);
@@ -62,31 +71,31 @@ const ListofMasters = () => {
                 <h2>DOMSS MASTER</h2>
               </li>
 
-              <Link to={'/list/voucherType'} ref={voucherTypeRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
+              <Link to={'/create/voucherType'} ref={voucherTypeRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
                 <li className='w-full pl-20'>Voucher Type Master</li>
               </Link>
 
-              <Link to={'/list/ledger'} ref={ledgerRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
+              <Link to={'/create/ledger'} ref={ledgerRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
                 <li className='w-full pl-20'>Ledger Master</li>
               </Link>
 
-              <Link to={'/list/region'} ref={regionRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
+              <Link to={'/create/region'} ref={regionRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
                 <li className='w-full pl-20'>Region Master</li>
               </Link>
 
-              <Link to={'/list/executive'} ref={executiveRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
+              <Link to={'/create/executive'} ref={executiveRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
                 <li className='w-full pl-20'>Executive Master</li>
               </Link>
 
-              <Link to={'/list/distributor'} ref={distributorRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
+              <Link to={'/create/distributor'} ref={distributorRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
                 <li className='w-full pl-20'>Distributor Master</li>
               </Link>
               
-              <Link to={'/list/product'} ref={productRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
+              <Link to={'/create/product'} ref={productRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
                 <li className='w-full pl-20'>Product Master</li>
               </Link>
               
-              <Link to={'/list/godown'} ref={godownRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
+              <Link to={'/create/godown'} ref={godownRef} className='block outline-none focus:bg-yellow-500 mb-[2px]'>
               <li className='w-full pl-20'>Godown Master</li>
               </Link>
 

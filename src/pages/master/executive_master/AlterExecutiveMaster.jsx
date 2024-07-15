@@ -1,11 +1,11 @@
-import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
-import { IoClose } from 'react-icons/io5';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import axios from "axios";
+import React, { useEffect, useRef, useState } from "react";
+import { IoClose } from "react-icons/io5";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const AlterExecutiveMaster = () => {
   let navigate = useNavigate();
-  const { executiveCode } = useParams();   //Use executiveCode from URL parameters
+  const { executiveCode } = useParams(); //Use executiveCode from URL parameters
 
   const [executive, setExecutive] = useState({
     executiveCode: "",
@@ -13,7 +13,7 @@ const AlterExecutiveMaster = () => {
     dateOfJoin: "",
     mobileNo: "",
     emailId: "",
-    status: ""
+    status: "",
   });
 
   const inputRefs = useRef({
@@ -23,7 +23,7 @@ const AlterExecutiveMaster = () => {
     mobileNo: null,
     emailId: null,
     status: null,
-    acceptButton: null
+    acceptButton: null,
   });
 
   const acceptButtonRef = useRef(null);
@@ -35,7 +35,7 @@ const AlterExecutiveMaster = () => {
   const pulseCursor = (input) => {
     if (input && input.value) {
       const value = input.value;
-      input.value = '';
+      input.value = "";
       setTimeout(() => {
         input.value = value.charAt(0).toUpperCase() + value.slice(1);
         input.setSelectionRange(0, 0);
@@ -51,8 +51,11 @@ const AlterExecutiveMaster = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    await axios.put(`http://localhost:9080/executiveMasterApi/alterExecutiveMaster/${executiveCode}`, executive);
-    // navigate("/alteredExecutive");
+    await axios.put(
+      `http://localhost:9080/executiveMasterApi/alterExecutiveMaster/${executiveCode}`,
+      executive
+    );
+    navigate("/executiveAlter/filter");
   };
 
   useEffect(() => {
@@ -65,26 +68,26 @@ const AlterExecutiveMaster = () => {
 
     const handleKeyDown = (event) => {
       const { ctrlKey, key } = event;
-      if ((ctrlKey && key === 'q') || key === 'Escape') {
+      if ((ctrlKey && key === "q") || key === "Escape") {
         event.preventDefault();
         setShowModal(true);
       }
     };
 
     const handleCtrlA = (event) => {
-      if (event.ctrlKey && event.key === 'a') {
+      if (event.ctrlKey && event.key === "a") {
         event.preventDefault();
         acceptButtonRef.current.click();
         saveRegionMaster(event);
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keydown', handleCtrlA);
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleCtrlA);
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('keydown', handleCtrlA);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleCtrlA);
     };
   }, [navigate]);
 
@@ -92,21 +95,21 @@ const AlterExecutiveMaster = () => {
     if (showModal) {
       yesQuitButtonRef.current.focus();
       const handleModalKeyDown = (event) => {
-        if (event.key.toLowerCase() === 'y') {
+        if (event.key.toLowerCase() === "y") {
           handleModalConfirm();
-        } else if (event.key === 'n') {
+        } else if (event.key === "n") {
           handleModalClose();
-        } else if (event.key === 'ArrowLeft') {
+        } else if (event.key === "ArrowLeft") {
           cancelModalConfirmRef.current.focus();
-        } else if (event.key === 'ArrowRight') {
+        } else if (event.key === "ArrowRight") {
           yesQuitButtonRef.current.focus();
         }
       };
 
-      document.addEventListener('keydown', handleModalKeyDown);
+      document.addEventListener("keydown", handleModalKeyDown);
 
       return () => {
-        document.removeEventListener('keydown', handleModalKeyDown);
+        document.removeEventListener("keydown", handleModalKeyDown);
       };
     }
   }, [showModal]);
@@ -116,36 +119,41 @@ const AlterExecutiveMaster = () => {
     const currentInputIndex = Object.keys(inputRefs.current).findIndex(
       (key) => key === target.id
     );
-  
-    if (key === 'Enter') {
+
+    if (key === "Enter") {
       event.preventDefault();
       if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
         acceptButtonRef.current.focus();
       } else {
-        const nextInputRef = Object.values(inputRefs.current)[currentInputIndex + 1];
+        const nextInputRef = Object.values(inputRefs.current)[
+          currentInputIndex + 1
+        ];
         nextInputRef.focus();
         pulseCursor(nextInputRef);
       }
-    } else if (key === 'Escape') {
+    } else if (key === "Escape") {
       setShowModal(true);
-    } else if (key === 'Backspace' && target.id !== 'executiveCode') {
+    } else if (key === "Backspace" && target.id !== "executiveCode") {
       if (target.selectionStart === 0 && target.selectionEnd === 0) {
         event.preventDefault();
-        const prevInputIndex = (currentInputIndex - 1 + Object.keys(inputRefs.current).length) % Object.keys(inputRefs.current).length;
+        const prevInputIndex =
+          (currentInputIndex - 1 + Object.keys(inputRefs.current).length) %
+          Object.keys(inputRefs.current).length;
         const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
         prevInputRef.focus();
         pulseCursor(prevInputRef);
       }
-    } else if(key === 'Delete'){
+    } else if (key === "Delete") {
       event.preventDefault();
-      setExecutive({ ...executive, [target.name]: '' });
+      setExecutive({ ...executive, [target.name]: "" });
     }
   };
-  
 
   const loadExecutive = async () => {
     try {
-      const result = await axios.get(`http://localhost:9080/executiveMasterApi/displayExecutive/${executiveCode}`);
+      const result = await axios.get(
+        `http://localhost:9080/executiveMasterApi/displayExecutive/${executiveCode}`
+      );
       setExecutive(result.data);
     } catch (error) {
       console.error("Error fetching the executive data", error);
@@ -162,7 +170,7 @@ const AlterExecutiveMaster = () => {
   };
 
   const handleModalConfirm = () => {
-    navigate('/executiveAlter');
+    navigate("/executiveAlter/filter");
   };
 
   // Function to format date input
@@ -175,7 +183,20 @@ const AlterExecutiveMaster = () => {
       const month = match[2];
       const year = match[3];
 
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
 
       const formattedMonth = months[parseInt(month, 10) - 1];
 
@@ -190,7 +211,7 @@ const AlterExecutiveMaster = () => {
   const handleDateInputChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === 'dateOfJoin') {
+    if (name === "dateOfJoin") {
       const formattedValue = formatDateInput(value);
       setExecutive({ ...executive, [name]: formattedValue });
     } else {
@@ -200,49 +221,171 @@ const AlterExecutiveMaster = () => {
 
   return (
     <div>
-      <div className='flex'>
-        <div className='w-1/2 h-[100vh] border border-bg-gray-500'></div>
-        <div className='w-1/2 border border-bg-gray-500'>
-          <div className='w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[80px] mt-10 border border-gray-500 border-b-0'>
-            <h2 className='ml-[200px]'>Executive Master</h2>
-            <span className='cursor-pointer mt-[5px] mr-2'>
-              <Link to={"/executiveAlter"}><IoClose /></Link>
+      <div className="flex">
+        <div className="w-1/2 h-[100vh] border border-bg-gray-500"></div>
+        <div className="w-1/2 border border-bg-gray-500">
+          <div className="w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[80px] mt-10 border border-gray-500 border-b-0">
+            <h2 className="ml-[200px]">Executive Master</h2>
+            <span className="cursor-pointer mt-[5px] mr-2">
+              <Link to={"/executiveAlter/filter"}>
+                <IoClose />
+              </Link>
             </span>
           </div>
-          <div className='w-[550px] h-[30vh] border border-gray-500 ml-[80px] '>
-            <form onSubmit={(e) => { onSubmit(e) }}>
-              <div className='input-ldgr mt-3'>
-                <label htmlFor="executiveCode" className='text-sm ml-2 mr-[49px]'>Executive Code</label>
-                : <input type="text" id='executiveCode' name='executiveCode' value={executive.executiveCode} onChange={(e) => onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => { inputRefs.current.executiveCode = input; }} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+          <div className="w-[550px] h-[30vh] border border-gray-500 ml-[80px] ">
+            <form
+              onSubmit={(e) => {
+                onSubmit(e);
+              }}
+            >
+              <div className="input-ldgr mt-3">
+                <label
+                  htmlFor="executiveCode"
+                  className="text-sm ml-2 mr-[49px]"
+                >
+                  Executive Code
+                </label>
+                :{" "}
+                <input
+                  type="text"
+                  id="executiveCode"
+                  name="executiveCode"
+                  value={executive.executiveCode}
+                  onChange={(e) => onInputChange(e)}
+                  onKeyDown={handleKeyDown}
+                  ref={(input) => {
+                    inputRefs.current.executiveCode = input;
+                  }}
+                  className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
+                  autoComplete="off"
+                />
               </div>
-              <div className='input-ldgr mt-1'>
-                <label htmlFor="executiveMaster" className='text-sm mr-[39.5px] ml-2'>Executive Master</label>
-                : <input type="text" id='executiveMaster' name='executiveMaster' value={executive.executiveMaster} onChange={(e) => onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.executiveMaster = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+              <div className="input-ldgr mt-1">
+                <label
+                  htmlFor="executiveMaster"
+                  className="text-sm mr-[39.5px] ml-2"
+                >
+                  Executive Master
+                </label>
+                :{" "}
+                <input
+                  type="text"
+                  id="executiveMaster"
+                  name="executiveMaster"
+                  value={executive.executiveMaster}
+                  onChange={(e) => onInputChange(e)}
+                  onKeyDown={handleKeyDown}
+                  ref={(input) => (inputRefs.current.executiveMaster = input)}
+                  className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
+                  autoComplete="off"
+                />
               </div>
-              <div className='input-ldgr'>
-                <label htmlFor="dateOfJoin" className='text-sm mr-[69px] ml-2'>Date Of Join</label>
-                : <input type="text" id='dateOfJoin' name='dateOfJoin' value={executive.dateOfJoin} onChange={(e) => { onInputChange(e); handleDateInputChange(e); }} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.dateOfJoin = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+              <div className="input-ldgr">
+                <label htmlFor="dateOfJoin" className="text-sm mr-[69px] ml-2">
+                  Date Of Join
+                </label>
+                :{" "}
+                <input
+                  type="text"
+                  id="dateOfJoin"
+                  name="dateOfJoin"
+                  value={executive.dateOfJoin}
+                  onChange={(e) => {
+                    onInputChange(e);
+                    handleDateInputChange(e);
+                  }}
+                  onKeyDown={handleKeyDown}
+                  ref={(input) => (inputRefs.current.dateOfJoin = input)}
+                  className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
+                  autoComplete="off"
+                />
               </div>
-              <div className='input-ldgr'>
-                <label htmlFor="mobileNo" className='text-sm mr-[83.5px] ml-2'>Mobile No</label>
-                : <input type="text" id='mobileNo' name='mobileNo' value={executive.mobileNo} onChange={(e) => onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.mobileNo = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+              <div className="input-ldgr">
+                <label htmlFor="mobileNo" className="text-sm mr-[83.5px] ml-2">
+                  Mobile No
+                </label>
+                :{" "}
+                <input
+                  type="text"
+                  id="mobileNo"
+                  name="mobileNo"
+                  value={executive.mobileNo}
+                  onChange={(e) => onInputChange(e)}
+                  onKeyDown={handleKeyDown}
+                  ref={(input) => (inputRefs.current.mobileNo = input)}
+                  className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
+                  autoComplete="off"
+                />
               </div>
-              <div className='input-ldgr'>
-                <label htmlFor="emailId" className='text-sm mr-[97.5px] ml-2'>Email Id</label>
-                : <input type="text" id='emailId' name='emailId' value={executive.emailId} onChange={(e) => onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.emailId = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+              <div className="input-ldgr">
+                <label htmlFor="emailId" className="text-sm mr-[97.5px] ml-2">
+                  Email Id
+                </label>
+                :{" "}
+                <input
+                  type="text"
+                  id="emailId"
+                  name="emailId"
+                  value={executive.emailId}
+                  onChange={(e) => onInputChange(e)}
+                  onKeyDown={handleKeyDown}
+                  ref={(input) => (inputRefs.current.emailId = input)}
+                  className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
+                  autoComplete="off"
+                />
               </div>
-              <div className='input-ldgr'>
-                <label htmlFor="status" className='text-sm mr-[106.5px] ml-2'>Status</label>
-                : <input type="text" id='status' name='status' value={executive.status} onChange={(e) => onInputChange(e)} onKeyDown={handleKeyDown} ref={(input) => inputRefs.current.status = input} className='w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none' autoComplete='off' />
+              <div className="input-ldgr">
+                <label htmlFor="status" className="text-sm mr-[106.5px] ml-2">
+                  Status
+                </label>
+                :{" "}
+                <input
+                  type="text"
+                  id="status"
+                  name="status"
+                  value={executive.status}
+                  onChange={(e) => onInputChange(e)}
+                  onKeyDown={handleKeyDown}
+                  ref={(input) => (inputRefs.current.status = input)}
+                  className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
+                  autoComplete="off"
+                />
               </div>
-              <div className='mt-[345px]'>
-                {/* <button type='submit' id='acceptButton' ref={(button) => { acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' >A: Accept</button> */}
-                <input type="button" id='acceptButton' onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.status && inputRefs.current.status.focus){inputRefs.current.status.focus();}}}} value={"A: Accept"} ref={(button) => {acceptButtonRef.current = button; }} onClick={(e) => {onSubmit(e)}} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 ml-[100px]' />
+              <div className="mt-[336px] ml-[70px]">
+                <input
+                  type="button"
+                  id="acceptButton"
+                  onKeyDown={(e) => {
+                    if (e.key === "Backspace") {
+                      e.preventDefault();
+                      if (
+                        inputRefs.current.status &&
+                        inputRefs.current.status.focus
+                      ) {
+                        inputRefs.current.status.focus();
+                      }
+                    }
+                  }}
+                  value={": Accept"}
+                  ref={(button) => {
+                    acceptButtonRef.current = button;
+                  }}
+                  onClick={(e) => {
+                    onSubmit(e);
+                  }}
+                  className="text-sm px-8 py-[5px] mt-3 bg-slate-600 hover:bg-slate-800 relative"
+                />
+                <span className="text-sm absolute top-[585px] left-[857px] underline decoration-black" style={{textDecorationThickness: '2px'}}>A</span>
               </div>
             </form>
           </div>
-          <div className='mt-[329px] ml-[480px]'>
-            <Link to={"/executiveFilter"} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>Q: Quit</Link>
+          <div className="mt-[325px] absolute left-[400px]">
+            <Link
+              to={"/executiveFilter/filter"}
+              className="px-11 py-[6px] text-sm bg-slate-600 hover:bg-slate-800 "
+            >
+              <span className="border-b-2 border-black">Q</span>: Quit
+            </Link>
           </div>
         </div>
       </div>
@@ -251,15 +394,26 @@ const AlterExecutiveMaster = () => {
       {showModal && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+            <div
+              className="fixed inset-0 transition-opacity"
+              aria-hidden="true"
+            >
               <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
-            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <span
+              className="hidden sm:inline-block sm:align-middle sm:h-screen"
+              aria-hidden="true"
+            >
+              &#8203;
+            </span>
             <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
               <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                    <h3
+                      className="text-lg leading-6 font-medium text-gray-900"
+                      id="modal-title"
+                    >
                       Quit Confirmation
                     </h3>
                     <div className="mt-2">

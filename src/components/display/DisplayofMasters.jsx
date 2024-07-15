@@ -35,12 +35,22 @@ const DisplayOFMasters = () => {
             }
         };
 
+        const handleMouseDown = (event) => {
+          // Check if the clicked element is one of the links
+
+          if(!links.some(link => link.current === event.target)){
+            event.preventDefault();
+          }
+        }
+
         document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('mousedown', handleMouseDown);
 
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('mousedown', handleMouseDown);
         };
-    }, [links])
+    }, [links]);
   return (
     <>
       <div className='flex justify-evenly'>

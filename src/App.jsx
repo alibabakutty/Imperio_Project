@@ -29,9 +29,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Gateway />} />
-          <Route path=":master" element = {<Master />} />
-          <Route path="/list/:create" element={<MasterForm />} />
-          <Route path="/alter/:altFilter" element={<MasterAlterFilter />} />
+          <Route path=":type" element = {<Master />} />
+          <Route path="/create/:type" element={<MasterForm />} />
+          <Route path=":type/filter" element={<MasterAlterFilter />} />
+          <Route path="/display/:type" element={<MasterDisplayFilter />} />
+
           <Route path="alterRegionMaster/:regionMasterId" element = {<AlterRegionMaster />} />
           <Route path="alterExecutiveMaster/:executiveCode" element = {<AlterExecutiveMaster />} />
           <Route path="alterDistributorMaster/:distributorCode" element = {<AlterDistributorMaster />} />
@@ -40,7 +42,8 @@ function App() {
           <Route path="alterVoucherTypeMaster/:voucherTypeName" element = {<AlterVoucherTypeMaster />} />
           <Route path="alterLedgerMaster/:ledgerCode" element = {<AlterLedgerMaster /> } />
 
-          <Route path="/display/:disFilter" element={<MasterDisplayFilter />} />
+          
+
           <Route path="displayRegion/:regionMasterId" element = {<DisplayRegionMaster />} />
           <Route path="displayExecutive/:executiveCode" element = {<DisplayExecutiveMaster />} />
           <Route path="displayDistributor/:distributorCode" element={<DisplayDistributorMaster />} />

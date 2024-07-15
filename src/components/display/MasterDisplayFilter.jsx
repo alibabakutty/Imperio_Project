@@ -9,10 +9,10 @@ import GodownFilter from '../../pages/master/godown_master/GodownFilter'
 
 const MasterDisplayFilter = () => {
 
-  const {disFilter} = useParams();
+  const {type} = useParams();
 
   const renderComp = () => {
-    switch(disFilter){
+    switch(type){
       case 'voucherTypeFilter':
         return <VoucherTypeFilter />
       case 'ledgerFilter':
@@ -27,6 +27,8 @@ const MasterDisplayFilter = () => {
         return <ProductFilter />
       case 'godownFilter':
         return <GodownFilter />
+      default:
+        return <div>404 Not Found</div>
     }
   }
   return (

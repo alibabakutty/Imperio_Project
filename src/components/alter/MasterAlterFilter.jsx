@@ -9,10 +9,10 @@ import GodownAlter from '../../pages/master/godown_master/GodownAlter'
 
 const MasterAlterFilter = () => {
 
-  const { altFilter } = useParams();
+  const { type } = useParams();
 
   const renderComp = () => {
-    switch(altFilter){
+    switch(type){
       case 'voucherTypeAlter':
         return <VoucherTypeAlter />
       case 'ledgerAlter':
@@ -27,6 +27,8 @@ const MasterAlterFilter = () => {
         return <ProductAlter />
       case 'godownAlter':
         return <GodownAlter />
+      default:
+        return <div>404 Not Found</div>
     }
   }
   return (
