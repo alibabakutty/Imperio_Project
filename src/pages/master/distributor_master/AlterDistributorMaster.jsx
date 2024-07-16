@@ -181,17 +181,7 @@ const AlterDistributorMaster = () => {
       );
       setFilteredExecutiveSuggestions(filtered);
 
-      const exactMatch = executiveSuggestions.find(
-        (executive) =>
-          executive.executiveCode.toLowerCase() === executiveValue.toLowerCase()
-      );
-
-      if (exactMatch) {
-        setDistributor((prevState) => ({
-          ...prevState,
-          executiveMaster: exactMatch.executiveMaster,
-        }));
-      }
+      
     } else {
       setFilteredExecutiveSuggestions([]);
     }
@@ -220,17 +210,13 @@ const AlterDistributorMaster = () => {
       );
       setFilteredRegionSuggestions(filtered);
 
-      const exactMatch = regionSuggestions.find(
-        (region) =>
-          region.regionMasterId.toLowerCase() === regionValue.toLowerCase()
-      );
-
-      if (exactMatch) {
-        setDistributor((prevState) => ({
-          ...prevState,
-          regionMaster: exactMatch.regionMaster,
-        }));
+      // Check if there are more than 25 regions
+      if (filtered.length > 25) {
+        setShowOtherRegionDropdown(true);
+      } else {
+        setShowOtherRegionDropdown(false);
       }
+      
     } else {
       setFilteredRegionSuggestions([]);
     }
@@ -340,8 +326,49 @@ const AlterDistributorMaster = () => {
     }
   };
 
+  const handleExecutiveKeyDown = (e) => {
+    const {key} = e;
+
+    if(key === 'ArrowDown'){
+      e.preventDefault();
+      setHighlightedExecutiveIndex((prevIndex) => 
+        prevIndex + 1 <filteredExecutiveSuggestions.length ? prevIndex + 1 : prevIndex
+      );
+    } else if (key === 'ArrowUp'){
+      e.preventDefault();
+      setHighlightedExecutiveIndex((prevIndex) => 
+        prevIndex > 0 ? prevIndex - 1 : prevIndex
+      );
+    } else if (key === 'Enter'){
+      e.preventDefault();
+      if(filteredExecutiveSuggestions.length > 0){
+        selectExecutive(filteredExecutiveSuggestions[highlightedExecutiveIndex]);
+      }
+    }
+  };
+
+  const handleRegionKeyDown = (e) => {
+
+    if(e.key === 'ArrowDown'){
+      e.preventDefault();
+      const newIndex = highlightedRegionIndex + 1;
+      if(newIndex < filteredRegionSuggestions.length){
+        setHighlightedRegionIndex(newIndex);
+      }
+    } else if (e.key === 'ArrowUp'){
+      e.preventDefault();
+      const newIndex = highlightedRegionIndex - 1;
+      if(newIndex >= 0){
+        setHighlightedRegionIndex(newIndex);
+      }
+    } else if (e.key === 'Enter' && highlightedRegionIndex !== -1){
+      e.preventDefault();
+      selectRegion(filteredRegionSuggestions[highlightedRegionIndex]);
+    }
+  };
+
   return (
-    <div>
+    <>
       <div className="flex">
         <div className="w-1/2 h-[100vh] border border-bg-gray-500"></div>
 
@@ -465,25 +492,27 @@ const AlterDistributorMaster = () => {
                     onInputChange(e);
                     handleExecutiveInputChange(e);
                   }}
-                  onKeyDown={handleKeyDown}
+                  onKeyDown={(e) => {handleKeyDown(e); handleExecutiveKeyDown(e);}}
                   ref={(input) => (inputRefs.current.executiveCode = input)}
-                  className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
+                  onFocus={handleExecutiveFocus}
+                  onBlur={() => setExecutiveFocused(false)}
+                  className="w-[300px] ml-2 h-5 capitalize pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
                   autoComplete="off"
                 />
-                {filteredExecutiveSuggestions.length > 0 && (
+                {executiveFocused && filteredExecutiveSuggestions.length > 0 && (
                   <div
                     className="bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500"
                     style={{
                       position: "absolute",
                       top: "70px",
-                      left: "1028px",
+                      left: "1041px",
                     }}
                   >
-                    <div className="text-center bg-[#003285] text-[13.5px] text-white">
+                    <div className="text-left bg-[#003285] text-[13.5px] text-white pl-2">
                       <p>List Of Executive Master</p>
                     </div>
 
-                    <ul className="suggestions w-full h-[20vh] text-left mt-2">
+                    <ul className="suggestions w-full h-[20vh] text-left text-[13px] mt-2" onMouseDown={(e) => e.preventDefault()}>
                       {filteredExecutiveSuggestions.map((executive, index) => (
                         <li
                           key={index}
@@ -492,7 +521,8 @@ const AlterDistributorMaster = () => {
                           onKeyDown={(e) =>
                             e.key === "Enter" && selectExecutive(executive)
                           }
-                          className="suggestion-item focus:bg-[#FEB941] outline-none text-[13px] pl-2"
+                          ref={(input) => suggestionExecutiveRef.current[index] = input}
+                          className={`pl-2 cursor-pointer ${highlightedExecutiveIndex === index ? 'bg-yellow-200': ''}`}
                         >
                           {executive.executiveCode.toUpperCase()} -{" "}
                           {executive.executiveMaster.toUpperCase()}
@@ -538,37 +568,40 @@ const AlterDistributorMaster = () => {
                     onInputChange(e);
                     handleRegionInputChange(e);
                   }}
-                  onKeyDown={handleKeyDown}
+                  onKeyDown={(e) => {handleKeyDown(e); handleRegionKeyDown(e);}}
                   ref={(input) => (inputRefs.current.regionCode = input)}
+                  onFocus={handleRegionFocus}
+                  onBlur={() => setRegionFocused(false)}
                   className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
                   autoComplete="off"
                 />
-                {filteredRegionSuggestions.length > 0 && (
+                {regionFocused && filteredRegionSuggestions.length > 0 && (
                   <div
                     className="bg-[#CAF4FF] w-[20%] h-[85vh] border border-gray-500"
                     style={{
                       position: "absolute",
                       top: "70px",
-                      left: "1028px",
+                      left: "1041px",
                     }}
                   >
-                    <div className="text-center bg-[#003285] text-[13.5px] text-white">
+                    <div className="text-left pl-2 bg-[#003285] text-[13.5px] text-white">
                       <p>List Of Region Master</p>
                     </div>
 
                     <div className="suggestions-dropdown">
-                      <ul className="suggestions w-full h-[50vh] text-left mt-2">
+                      <ul className="suggestions w-full h-[50vh] text-left mt-2 text-[13px]" onMouseDown={(e) => e.preventDefault()}>
                         {filteredRegionSuggestions
-                          .slice(0, showAllRegionSuggestions ? undefined : 15)
-                          .map((region) => (
+                          .map((region, index) => (
                             <li
                               key={region.regionCode}
                               tabIndex={0}
                               onClick={() => selectRegion(region)}
+                              ref={(input) => {suggestionRegionRef.current[index] = input;}}
                               onKeyDown={(e) =>
                                 e.key === "Enter" && selectRegion(region)
                               }
-                              className="suggestion-item focus:bg-[#FEB941] outline-none text-[13px] pl-2"
+                              onMouseEnter={() => setHighlightedRegionIndex(index)}
+                              className={`pl-2 cursor-pointer ${highlightedRegionIndex === index ? 'bg-yellow-200': ''}`}
                             >
                               {region.regionMasterId.toUpperCase()} -{" "}
                               {region.regionName.toUpperCase()}
@@ -576,17 +609,7 @@ const AlterDistributorMaster = () => {
                           ))}
                       </ul>
 
-                      {filteredRegionSuggestions.length > 15 &&
-                        !showAllRegionSuggestions && (
-                          <div className="text-center">
-                            <button
-                              onClick={toggleShowAllRegionSuggestions}
-                              className="suggestion-item focus:bg-[#FEB941] outline-none text-[13px]"
-                            >
-                              Show All
-                            </button>
-                          </div>
-                        )}
+                      
                     </div>
                   </div>
                 )}
@@ -753,7 +776,7 @@ const AlterDistributorMaster = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
