@@ -45,7 +45,7 @@ const ProductAlter = () => {
         e.preventDefault();
       } else if (e.key === "Enter") {
         if (selectedIndex === 0) {
-          navigate("/list/product");
+          navigate("/create/product");
           e.preventDefault();
         } else if (selectedIndex === 1) {
           navigate("/alter");
@@ -130,7 +130,7 @@ const ProductAlter = () => {
                     className={`block text-center text-[13px] ${
                       selectedIndex === 0 ? "bg-[#FEB941]" : ""
                     }`}
-                    to={"/product"}
+                    to={"/create/product"}
                   >
                     <p className="ml-[285px] text-[14px]">Create</p>
                   </Link>

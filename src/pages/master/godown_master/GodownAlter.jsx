@@ -48,7 +48,7 @@ const GodownAlter = () => {
         );
       } else if (e.key === "Enter") {
         if (selectedIndex === 0) {
-          navigate("/list/godown");
+          navigate("/create/godown");
           e.preventDefault();
         } else if (selectedIndex === 1) {
           navigate("/alter");
@@ -119,7 +119,7 @@ const GodownAlter = () => {
                     className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${
                       selectedIndex === 0 ? "bg-[#FEB941]" : ""
                     }`}
-                    to={"/godown"}
+                    to={"/create/godown"}
                   >
                     <p className="ml-[285px]">Create</p>
                   </Link>

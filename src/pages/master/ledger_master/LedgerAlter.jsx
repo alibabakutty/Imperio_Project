@@ -48,7 +48,7 @@ const LedgerAlter = () => {
         );
       } else if (e.key === "Enter") {
         if (selectedIndex === 0) {
-          navigate("/list/ledger");
+          navigate("/create/ledger");
           e.preventDefault();
         } else if (selectedIndex === 1) {
           navigate("/alter");
@@ -118,7 +118,7 @@ const LedgerAlter = () => {
                     className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${
                       selectedIndex === 0 ? "bg-[#FEB941]" : ""
                     }`}
-                    to={"/godown"}
+                    to={"/create/ledger"}
                   >
                     <p className="ml-[285px]">Create</p>
                   </Link>
@@ -141,7 +141,7 @@ const LedgerAlter = () => {
                     >
                       <Link
                         className="block text-left pl-2 text-[13px] focus:bg-[#FEB941] outline-none"
-                        to={`alterLedgerMaster/${led.ledgerCode}`}
+                        to={`/alterLedgerMaster/${led.ledgerCode}`}
                       >
                         <td>{led.ledgerCode}</td>
                       </Link>
