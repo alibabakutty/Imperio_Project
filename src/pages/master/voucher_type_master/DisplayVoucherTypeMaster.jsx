@@ -65,7 +65,7 @@ const DisplayVoucherTypeMaster = () => {
   };
 
   const handleNavigation = () => {
-    navigate("/voucherTypeFilter");
+    navigate("/display/voucherTypeFilter");
   };
 
   useEffect(() => {
@@ -279,7 +279,7 @@ const DisplayVoucherTypeMaster = () => {
   };
 
   const handleModalConfirm = () => {
-    navigate("/voucherTypeFilter");
+    navigate("/display/voucherTypeFilter");
   };
 
   const handleSubFormSave = () => {
@@ -304,7 +304,7 @@ const DisplayVoucherTypeMaster = () => {
         <div className="text-[12px] flex justify-between bg-[#80C4E9]">
           <p className="ml-1 mt-[1px]">Voucher Type Display</p>
           <span>
-            <Link to={"/voucherTypeFilter"}>
+            <Link to={"/display/voucherTypeFilter"}>
               <IoClose />
             </Link>
           </span>

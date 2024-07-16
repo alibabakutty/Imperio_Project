@@ -37,7 +37,7 @@ const DisplayLedgerMaster = () => {
   };
 
   const handleNavigation = () => {
-    navigate("/ledgerFilter");
+    navigate("/display/ledgerFilter");
   };
 
   const onInputChange = (e) => {
@@ -168,7 +168,7 @@ const DisplayLedgerMaster = () => {
   };
 
   const handleModalConfirm = () => {
-    navigate("/ledgerAlter");
+    navigate("/display/ledgerFilter");
   };
 
   return (
@@ -180,7 +180,7 @@ const DisplayLedgerMaster = () => {
           <div className="w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[750px] mt-10 border border-gray-500 border-b-0">
             <h2 className="ml-[200px]">Ledger Master</h2>
             <span className="cursor-pointer mt-[5px] mr-2">
-              <Link to={"/ledgerFilter"}>
+              <Link to={"/display/ledgerFilter"}>
                 <IoClose />
               </Link>
             </span>

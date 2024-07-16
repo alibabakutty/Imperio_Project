@@ -163,7 +163,7 @@ const DisplayGodownMaster = () => {
   };
 
   const handleModalConfirm = () => {
-    navigate("/godownFilter");
+    navigate("/display/godownFilter");
   };
 
   return (
@@ -172,7 +172,7 @@ const DisplayGodownMaster = () => {
         <div className="w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[750px] mt-10 border border-gray-500 border-b-0">
           <h2 className="ml-[200px]">Godown Master</h2>
           <span className="cursor-pointer mt-[5px] mr-2">
-            <Link to={"/godownFilter"}>
+            <Link to={"/display/godownFilter"}>
               <IoClose />
             </Link>
           </span>
@@ -221,7 +221,7 @@ const DisplayGodownMaster = () => {
 
           <div className="mt-[465px]">
             <Link
-              to={"/godownFilter"}
+              to={"/display/godownFilter"}
               id="backButton"
               ref={(button) => {
                 backButtonRef.current = button;

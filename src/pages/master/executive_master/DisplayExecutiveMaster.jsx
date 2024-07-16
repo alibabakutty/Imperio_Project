@@ -170,7 +170,7 @@ const DisplayExecutiveMaster = () => {
   };
 
   const handleModalConfirm = () => {
-    navigate("/executiveFilter");
+    navigate("/display/executiveFilter");
   };
 
   return (
@@ -182,7 +182,9 @@ const DisplayExecutiveMaster = () => {
           <div className="w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[80px] mt-10 border border-gray-500 border-b-0">
             <h2 className="ml-[200px]">Executive Master</h2>
             <span className="cursor-pointer mt-[5px] mr-2">
-              <IoClose />
+              <Link to={'/display/executiveFilter'}>
+                <IoClose />
+              </Link>
             </span>
           </div>
 
@@ -308,7 +310,7 @@ const DisplayExecutiveMaster = () => {
 
           <div className="mt-[345px] ml-[30px]">
             <Link
-              to={"/executiveFilter"}
+              to={"/display/executiveFilter"}
               id="backButton"
               ref={(button) => {
                 backButtonRef.current = button;

@@ -58,9 +58,7 @@ const Gateway = () => {
       >
         <div className="w-[90%] flex h-screen ">
           <div className="w-1/2  flex items-center">
-            <div>
-              {/* <img src={imperio1} alt="Imperio Golden Label" className='w-[900px]'  /> */}
-            </div>
+            
           </div>
 
           <div
