@@ -305,7 +305,7 @@ const DistributorMaster = () => {
     const { id } = e.target;
     if (id === "regionCode") {
       setRegionFocused(true);
-      setFilteredRegionSuggestions(regionSuggestions.slice(0, 25)); // Show all regions suggestions when focused
+      setFilteredRegionSuggestions(regionSuggestions); // Show all regions suggestions when focused
     } else {
       setRegionFocused(false);
       setFilteredRegionSuggestions([]); // Clear suggestions when other inputs are focused
@@ -586,9 +586,9 @@ const DistributorMaster = () => {
                     <p>List of Region Master</p>
                   </div>
 
-                  <div className="suggestions-dropdown">
+                  <div className="suggestions-dropdown overflow-y-scroll">
                     <ul
-                      className="suggestions w-full h-[50vh] text-left text-[13px] mt-2"
+                      className="suggestions w-full h-[80vh] text-left text-[13px] mt-2"
                       onMouseDown={(e) => e.preventDefault()}
                     >
                       {filteredRegionSuggestions.map((region, index) => (
@@ -614,33 +614,6 @@ const DistributorMaster = () => {
                       ))}
                     </ul>
                   </div>
-                </div>
-              )}
-              {showOtherRegionDropdown && (
-                <div className="input-ldgr">
-                  <label
-                    htmlFor="otherRegions"
-                    className="text-sm mr-[45px] ml-2"
-                  >
-                    Select Other Regions
-                  </label>
-                  :{" "}
-                  <select
-                    id="otherRegions"
-                    name="otherRegions"
-                    onChange={(e) =>
-                      selectRegion(
-                        filteredRegionSuggestions[e.target.selectedIndex + 25]
-                      )
-                    }
-                    className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
-                  >
-                    {filteredRegionSuggestions.slice(25).map((region) => (
-                      <option key={region.regionCode} value={region.regionCode}>
-                        {region.regionCode} - {region.regionName}
-                      </option>
-                    ))}
-                  </select>
                 </div>
               )}
             </div>

@@ -223,7 +223,7 @@ const AlterLedgerMaster = () => {
                     ref={(input) => {
                       inputRefs.current[field] = input;
                     }}
-                    className="w-[300px] h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
+                    className="w-[320px] h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
                     autoComplete="off"
                   />
                 </div>
