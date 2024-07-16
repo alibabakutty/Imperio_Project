@@ -48,7 +48,7 @@ const LedgerFilter = () => {
         );
       } else if (e.key === "Enter") {
         if (selectedIndex === 0) {
-          navigate("/list/ledger");
+          navigate("/create/ledger");
           e.preventDefault();
         } else if (selectedIndex === 1) {
           navigate("/display");
@@ -116,7 +116,7 @@ const LedgerFilter = () => {
                     className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${
                       selectedIndex === 0 ? "bg-[#FEB941]" : ""
                     }`}
-                    to={"/ledger"}
+                    to={"/create/ledger"}
                   >
                     <p className="ml-[285px] text-[14px]">Create</p>
                   </Link>
@@ -139,7 +139,7 @@ const LedgerFilter = () => {
                     >
                       <Link
                         className="block text-center text-[13px] focus:bg-[#FEB941] outline-none"
-                        to={`displayLedger/${led.ledgerCode}`}
+                        to={`/displayLedger/${led.ledgerCode}`}
                       >
                         <td className="flex text-left capitalize pl-2">
                           {led.ledgerCode}
