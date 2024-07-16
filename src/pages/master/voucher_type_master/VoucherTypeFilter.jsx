@@ -60,7 +60,7 @@ const VoucherTypeFilter = () => {
         );
       } else if (e.key === "Enter") {
         if (selectedIndex === 0) {
-          navigate("/list/voucherType");
+          navigate("/create/voucherType");
           e.preventDefault();
         } else if (selectedIndex === 1) {
           navigate("/display");
@@ -150,7 +150,7 @@ const VoucherTypeFilter = () => {
                   className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${
                     selectedIndex === 0 ? "bg-[#FEB941]" : ""
                   }`}
-                  to={"/voucherType"}
+                  to={"/create/voucherType"}
                 >
                   <p className="ml-[285px] ">Create</p>
                 </Link>
