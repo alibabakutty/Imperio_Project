@@ -580,7 +580,7 @@ const DistributorMaster = () => {
               {regionFocused && filteredRegionSuggestions.length > 0 && (
                 <div
                   className="bg-[#CAF4FF] w-[18%] h-[85vh] border border-gray-500"
-                  style={{ position: "absolute", top: "70px", left: "1058px" }}
+                  style={{ position: "absolute", top: "70px", left: "1055px" }}
                 >
                   <div className="text-left bg-[#003285] text-[13.5px] text-white pl-2">
                     <p>List of Region Master</p>
