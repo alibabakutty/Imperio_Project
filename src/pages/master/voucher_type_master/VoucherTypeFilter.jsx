@@ -81,6 +81,8 @@ const VoucherTypeFilter = () => {
             }`
           );
         }
+      } else if (e.key === 'Escape'){
+        navigate("/display");
       }
     };
 
@@ -183,7 +185,7 @@ const VoucherTypeFilter = () => {
                     >
                       <td className="w-[350px]">
                         <Link
-                          className={`text-[13px]`}
+                          className={`text-[12.5px]`}
                           to={`/displayVoucherTypeName/${vou.voucherTypeName}`}
                           tabIndex={0}
                           onFocus={() => setSelectedIndex(index + 2)}
@@ -208,7 +210,7 @@ const VoucherTypeFilter = () => {
                     >
                       <td className="w-[350px]">
                         <Link
-                          className="text-[13px]"
+                          className="text-[12.5px]"
                           to={`/displayVoucherType/${vou.voucherType}`}
                           tabIndex={0}
                           onFocus={() =>

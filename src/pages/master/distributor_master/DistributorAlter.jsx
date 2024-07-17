@@ -58,6 +58,8 @@ const DistributorAlter = () => {
             }`
           );
         }
+      } else if (e.key === 'Escape'){
+        navigate('/alter');
       }
     };
 

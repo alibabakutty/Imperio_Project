@@ -59,6 +59,8 @@ const GodownAlter = () => {
             }`
           );
         }
+      } else if (e.key === 'Escape'){
+        navigate('/alter');
       }
     };
 

@@ -6,9 +6,6 @@ import { createNewLedgerMaster } from "../../../services/MasterService";
 const LedgerMaster = () => {
   const [ledgerCode, setLedgerCode] = useState("");
   const [ledgerName, setLedgerName] = useState("");
-
-  const [errors, setErrors] = useState({});
-
   const [showModal, setShowModal] = useState(false);
 
   const inputRefs = useRef({
@@ -96,6 +93,10 @@ const LedgerMaster = () => {
 
     if (keyCode === 13) {
       event.preventDefault();
+      if(target.id === 'ledgerCode' && !ledgerCode.trim()){
+        // If ledgercode is empty do not proceed to the next input
+        return;
+      }
       const currentInputIndex = Object.keys(inputRefs.current).findIndex(
         (key) => key === target.id
       );
@@ -134,23 +135,9 @@ const LedgerMaster = () => {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!ledgerCode.trim()) {
-      newErrors.ledgerCode = "ledger Code is required!.";
-    }
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
-
+  
   function saveLedgerMaster(e) {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
 
     const ledger = { ledgerCode, ledgerName };
 
@@ -215,9 +202,6 @@ const LedgerMaster = () => {
                 className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
                 autoComplete="off"
               />
-              {errors.ledgerCode && (
-                <p className="text-red-500 text-xs ml-2">{errors.ledgerCode}</p>
-              )}
             </div>
 
             <div className="input-ldgr">

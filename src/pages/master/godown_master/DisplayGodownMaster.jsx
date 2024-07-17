@@ -138,6 +138,7 @@ const DisplayGodownMaster = () => {
           Object.keys(inputRefs.current).length;
         const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
         prevInputRef.focus();
+        pulseCursor(prevInputRef);
       }
     }
   };
@@ -164,7 +165,11 @@ const DisplayGodownMaster = () => {
 
   const handleModalConfirm = () => {
     navigate("/display/godownFilter");
-  };
+  };  
+
+  const handleNavigation = () => {
+    navigate("/display/godownFilter");
+  }
 
   return (
     <div className="flex">
@@ -219,18 +224,9 @@ const DisplayGodownMaster = () => {
             </div>
           </form>
 
-          <div className="mt-[465px]">
-            <Link
-              to={"/display/godownFilter"}
-              id="backButton"
-              ref={(button) => {
-                backButtonRef.current = button;
-                inputRefs.current.backButton = button;
-              }}
-              className="border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800"
-            >
-              Q: Quit
-            </Link>
+          <div className="mt-[465px] ml-[205px]">
+            <input type="button" id="backButton" ref={(button) => {backButtonRef.current = button; inputRefs.current.backButton = button;}} onKeyDown={(e) =>{if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.godownName && inputRefs.current.godownName.focus){inputRefs.current.godownName.focus();}}}} className="px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800" value={': Quit'} onClick={handleNavigation} />
+            <span className="text-sm underline decoration-black absolute left-[989px] top-[602px]" style={{textDecorationThickness: '2px'}}>Q</span>
           </div>
         </div>
 

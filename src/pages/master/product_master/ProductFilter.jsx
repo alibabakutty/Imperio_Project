@@ -46,7 +46,7 @@ const ProductFilter = () => {
         e.preventDefault();
       } else if (e.key === "Enter") {
         if (selectedIndex === 0) {
-          navigate("/list/product");
+          navigate("/create/product");
           e.preventDefault();
         } else if (selectedIndex === 1) {
           navigate("/display");
@@ -61,6 +61,8 @@ const ProductFilter = () => {
             `/displayProduct/${filteredProducts[selectedIndex - 2].productCode}`
           ); //Navigate to the selected product
         }
+      } else if (e.key === 'Escape'){
+        navigate("/display");
       }
     };
 
@@ -130,7 +132,7 @@ const ProductFilter = () => {
                     className={`block text-center text-[13px] ${
                       selectedIndex === 0 ? "bg-[#FEB941]" : ""
                     }`}
-                    to={"/product"}
+                    to={"/create/product"}
                   >
                     <p className="ml-[285px]">Create</p>
                   </Link>

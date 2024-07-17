@@ -81,6 +81,8 @@ const VoucherTypeAlter = () => {
             }`
           );
         }
+      } else if (e.key === 'Escape'){
+        navigate('/alter');
       }
     };
 
@@ -160,7 +162,7 @@ const VoucherTypeAlter = () => {
                   className={`block text-center text-[14px] focus:bg-[#FEB941] outline-none ${
                     selectedIndex === 1 ? "bg-[#FEB941]" : ""
                   }`}
-                  to={"/display"}
+                  to={"/alter"}
                 >
                   <p className="ml-[287px] text-[13px]">Back</p>
                 </Link>
@@ -183,7 +185,7 @@ const VoucherTypeAlter = () => {
                     >
                       <td className="w-[350px]">
                         <Link
-                          className={`text-[13px]`}
+                          className={`text-[12.5px]`}
                           to={`/alterVoucherTypeMaster/${vou.voucherTypeName}`}
                           tabIndex={0}
                           onFocus={() => setSelectedIndex(index + 2)}
@@ -208,7 +210,7 @@ const VoucherTypeAlter = () => {
                     >
                       <td className="w-[350px]">
                         <Link
-                          className="text-[13px]"
+                          className="text-[12.5px]"
                           to={`/displayVoucherType/${vou.voucherType}`}
                           tabIndex={0}
                           onFocus={() =>

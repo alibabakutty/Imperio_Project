@@ -145,6 +145,7 @@ const DisplayExecutiveMaster = () => {
           Object.keys(inputRefs.current).length;
         const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
         prevInputRef.focus();
+        pulseCursor(prevInputRef);
       }
     }
   };
@@ -172,6 +173,10 @@ const DisplayExecutiveMaster = () => {
   const handleModalConfirm = () => {
     navigate("/display/executiveFilter");
   };
+
+  const handleNavigation = () => {
+    navigate("/display/executiveFilter");
+  }
 
   return (
     <div>
@@ -308,18 +313,9 @@ const DisplayExecutiveMaster = () => {
             </form>
           </div>
 
-          <div className="mt-[345px] ml-[30px]">
-            <Link
-              to={"/display/executiveFilter"}
-              id="backButton"
-              ref={(button) => {
-                backButtonRef.current = button;
-                inputRefs.current.backButton = button;
-              }}
-              className="border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 "
-            >
-              Q: Quit
-            </Link>
+          <div className="mt-[330px] ml-[270px]">
+            <input type="button" id="backButton" ref={(button) => {backButtonRef.current = button; inputRefs.current.backButton = button;}} onKeyDown={(e) => {if (e.key === 'Backspace'){e.preventDefault(); if (inputRefs.current.status && inputRefs.current.status.focus){inputRefs.current.status.focus()}}}} className="px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800" value={': Quit'} onClick={handleNavigation} />
+            <span className="text-sm underline decoration-black absolute left-[987px] top-[598px]" style={{textDecorationThickness: '2px'}}>Q</span>
           </div>
         </div>
       </div>

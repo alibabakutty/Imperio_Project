@@ -32,8 +32,6 @@ const VoucherTypeMaster = () => {
   const [printingVoucherAfterSaving, setPrintingVoucherAfterSaving] =
     useState("no");
   const [nameOfClass, setNameOfClass] = useState("");
-
-  const [errors, setErrors] = useState({});
   const [voucherTypeSuggestions, setVoucherTypeSuggestions] = useState("");
   const [filteredVoucherTypeSuggestions, setFilteredVoucherTypeSuggestions] =
     useState("");
@@ -144,6 +142,12 @@ const VoucherTypeMaster = () => {
           if (subFormCancelButtonRef.current) {
             subFormCancelButtonRef.current.click();
           }
+        } else if (event.key === 'ArrowLeft'){
+          event.preventDefault();
+          subFormSaveButtonRef.current.focus();
+        } else if (event.key === 'ArrowRight'){
+          event.preventDefault();
+          subFormCancelButtonRef.current.focus();
         }
       }
     };
@@ -188,6 +192,10 @@ const VoucherTypeMaster = () => {
     switch (keyCode) {
       case 13: // Enter key
         event.preventDefault();
+        if(target.id === 'voucherTypeName' && !voucherTypeName.trim()){
+          // if voucher type is empty, do not proceed to the next input
+          return;
+        }
         const currentInputIndex = Object.keys(inputRefs.current).findIndex(
           (key) => key === target.id
         );
@@ -235,7 +243,7 @@ const VoucherTypeMaster = () => {
 
       case 8: // Backspace key
         if (
-          target.id !== "voucherTypeName" &&
+          (target.id !== "voucherTypeName" && target.id !== 'startingNumber') &&
           target.selectionStart === 0 &&
           target.selectionEnd === 0
         ) {
@@ -271,7 +279,7 @@ const VoucherTypeMaster = () => {
           if (keyCode === 89 || keyCode === 121) {
             // Y or y
             event.preventDefault();
-            setAlterAdditionalNumberingDetails("yes");
+            setAlterAdditionalNumberingDetails("no");
             setShowSubFormModal(true);
           } else if (keyCode === 78 || keyCode === 110) {
             // N or n
@@ -360,18 +368,6 @@ const VoucherTypeMaster = () => {
     setFilteredVoucherTypeSuggestions([]);
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!voucherTypeName.trim()) {
-      newErrors.voucherTypeName = "Voucher Type Name is required.";
-    }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
-
   const saveVoucherTypeMaster = (e) => {
     e.preventDefault();
 
@@ -404,7 +400,7 @@ const VoucherTypeMaster = () => {
       .then((response) => {
         console.log(response.data);
 
-        // navigate('/addedVoucherType');
+        navigate('/create');
       })
       .catch((error) => {
         console.error("Error creating voucher type:", error);
@@ -694,11 +690,7 @@ const VoucherTypeMaster = () => {
                 className="w-[300px] ml-2 mt-3 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
                 autoComplete="off"
               />
-              {errors.voucherTypeName && (
-                <p className="text-red-500 text-xs ml-2">
-                  {errors.voucherTypeName}
-                </p>
-              )}
+              
             </div>
 
             <div className="flex text-sm h-[75vh]">
@@ -1163,22 +1155,11 @@ const VoucherTypeMaster = () => {
                             </div>
 
                             <div>
-                              <button
-                                type="submit"
-                                onClick={handleSubFormSave}
-                                ref={subFormSaveButtonRef}
-                                className="text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[315px]"
-                              >
-                                S: Save
-                              </button>
-                              <button
-                                type="button"
-                                onClick={handleSubFormCancel}
-                                ref={subFormCancelButtonRef}
-                                className="text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[260px]"
-                              >
-                                C: Cancel
-                              </button>
+                              <input type="button" value={': Save'} onClick={handleSubFormSave} ref={subFormSaveButtonRef} onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.suffixDetailsParticulars && inputRefs.current.suffixDetailsParticulars.focus()){inputRefs.current.suffixDetailsParticulars.focus();}}}} className="text-sm bg-slate-600 hover:bg-slate-800 px-8 py-1 ml-[315px] relative" />
+                              <span className="text-sm absolute top-[609px] left-[338px] underline decoration-black" style={{textDecorationThickness: '2px'}}>S</span>
+                              
+                              <input type="button" value={': Cancel'} onClick={handleSubFormCancel} ref={subFormCancelButtonRef} className="text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[260px] relative" />
+                              <span className="text-sm absolute top-[609px] left-[700px] underline decoration-black" style={{textDecorationThickness: '2px'}}>C</span>
                             </div>
                           </div>
                         </form>

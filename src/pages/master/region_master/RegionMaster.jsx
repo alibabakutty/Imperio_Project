@@ -8,9 +8,6 @@ const RegionMaster = () => {
   const [regionName, setRegionName] = useState("");
   const [regionState, setRegionState] = useState("");
   const [country, setCountry] = useState("");
-
-  const [errors, setErrors] = useState({});
-
   const [showModal, setShowModal] = useState(false);
 
   const inputRefs = useRef({
@@ -93,9 +90,12 @@ const RegionMaster = () => {
 
   const handleKeyDown = (event) => {
     const { keyCode, target } = event;
-
     if (keyCode === 13) {
       event.preventDefault();
+      if (target.id === 'regionMasterId' && !regionMasterId.trim()){
+        // if regionmasterid is empty, do not proceed to the next input
+        return;
+      }
       const currentInputIndex = Object.keys(inputRefs.current).findIndex(
         (key) => key === target.id
       );
@@ -127,23 +127,8 @@ const RegionMaster = () => {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!regionMasterId.trim()) {
-      newErrors.regionMasterId = "Region Master Id is required.";
-    }
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
-
   const saveRegionMaster = (e) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
 
     const region = { regionMasterId, regionName, regionState, country };
 
@@ -152,7 +137,7 @@ const RegionMaster = () => {
     createNewRegionMaster(region)
       .then((response) => {
         console.log(response.data);
-        // navigate('/addedRegion');
+        navigate('/create');
       })
       .catch((error) => {
         console.error("Error creating region master:", error);
@@ -174,7 +159,7 @@ const RegionMaster = () => {
 
   return (
     <>
-      <div className="w-1/2 border h-[100vh]" onClick={() => inputRefs.current.regionMasterId.focus()}>
+      <div id="primary-div" className="w-1/2 border h-[100vh]">
         <div className="w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[750px] mt-10 border border-gray-500 border-b-0">
           <h2 className="ml-[200px]">Region Master</h2>
           <span className="cursor-pointer mt-[5px] mr-2">
@@ -204,11 +189,7 @@ const RegionMaster = () => {
                 className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
                 autoComplete="off"
               />
-              {errors.regionMasterId && (
-                <p className="text-red-500 text-xs ml-2">
-                  {errors.regionMasterId}
-                </p>
-              )}
+              
             </div>
 
             <div className="input-ldgr">

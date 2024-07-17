@@ -49,7 +49,7 @@ const RegionFilter = () => {
           navigate("/create/region");
           e.preventDefault();
         } else if (selectedIndex === 1) {
-          navigate("/display");
+          navigate("/alter");
           e.preventDefault();
         } else if (
           region.length > 20 &&
@@ -63,6 +63,8 @@ const RegionFilter = () => {
             }`
           ); //Navigate to the selected region
         }
+      } else if(e.key === 'Escape'){
+        navigate('/alter');
       }
     };
 

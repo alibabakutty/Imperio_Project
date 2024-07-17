@@ -218,11 +218,10 @@ const DisplayLedgerMaster = () => {
           </div>
 
           <div className="mt-[450px] ml-[900px]">
-            {/* <Link to={"/ledgerAlter"} id='backButton' ref={(input) => {backButtonRef.current = input; inputRefs.current.backButton = input; }} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800 '>Q:Quit</Link> */}
             <input
               type="button"
               id="backButton"
-              className="text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800"
+              className="text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 relative"
               onKeyDown={(e) => {
                 if (e.key === "Backspace") {
                   e.preventDefault();
@@ -234,12 +233,13 @@ const DisplayLedgerMaster = () => {
                   }
                 }
               }}
-              value={"Q: Quit"}
+              value={": Quit"}
               ref={(button) => {
                 backButtonRef.current = button;
               }}
               onClick={handleNavigation}
             />
+            <span className="text-sm absolute left-[925px] top-[602px] underline decoration-black" style={{textDecorationThickness: '2px'}}>Q</span>
           </div>
         </div>
       </div>

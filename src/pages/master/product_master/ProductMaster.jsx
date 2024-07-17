@@ -14,8 +14,6 @@ const ProductMaster = () => {
   const [sellingPrice, setSellingPrice] = useState("");
   const [discount, setDiscount] = useState("");
 
-  const [errors, setErrors] = useState({});
-
   const [unitsSuggestions, setUnitsSuggestions] = useState([]);
   const [filteredUnitsSuggestions, setFilteredUnitsSuggestions] = useState([]);
   const [uomFocused, setUomFocused] = useState(false);
@@ -137,6 +135,10 @@ const ProductMaster = () => {
     if (keyCode === 13) {
       // Handle Enter key
       event.preventDefault();
+      if (target.id === 'productCode' && !productCode.trim()){
+        // if productcode is empty, do not proceed to the next input
+        return;
+      }
       if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
         acceptButtonRef.current.focus();
       } else {
@@ -272,18 +274,6 @@ const ProductMaster = () => {
     navigate("/create");
   };
 
-  const validateForm = () => {
-    const validationErrors = {};
-
-    if (!productCode.trim()) {
-      validationErrors.productCode = "Product Code is required";
-    }
-
-    setErrors(validationErrors);
-
-    return Object.keys(validationErrors).length === 0;
-  };
-
   const saveProductMaster = (e) => {
     e.preventDefault();
 
@@ -298,8 +288,7 @@ const ProductMaster = () => {
       discount,
     };
 
-    if (validateForm()) {
-      createNewProductMaster(product)
+    createNewProductMaster(product)
         .then((response) => {
           console.log(response.data);
           // navigate('/addedProduct');
@@ -312,7 +301,6 @@ const ProductMaster = () => {
         .catch((error) => {
           console.error("Error creating product master:", error);
         });
-    }
   };
 
   return (
@@ -347,11 +335,6 @@ const ProductMaster = () => {
                 className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
                 autoComplete="off"
               />
-              {errors.productCode && (
-                <p className="text-red-500 text-xs ml-2">
-                  {errors.productCode}
-                </p>
-              )}
             </div>
 
             <div className="input-ldgr">

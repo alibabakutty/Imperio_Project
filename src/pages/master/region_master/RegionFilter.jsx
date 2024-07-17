@@ -46,7 +46,7 @@ const RegionFilter = () => {
         e.preventDefault();
       } else if (e.key === "Enter") {
         if (selectedIndex === 0) {
-          navigate("/list/region");
+          navigate("/create/region");
           e.preventDefault();
         } else if (selectedIndex === 1) {
           navigate("/display");
@@ -63,6 +63,8 @@ const RegionFilter = () => {
             }`
           ); // Navigate to the selected region
         }
+      } else if (e.key === 'Escape'){
+        navigate("/display");
       }
     };
 
@@ -130,7 +132,7 @@ const RegionFilter = () => {
                     className={`block text-center text-[13px] ${
                       selectedIndex === 0 ? "bg-[#FEB941]" : ""
                     }`}
-                    to={"/region"}
+                    to={"/create/region"}
                   >
                     <p className="ml-[285px] text-[13px]">Create</p>
                   </Link>

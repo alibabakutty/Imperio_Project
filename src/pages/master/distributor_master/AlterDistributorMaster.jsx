@@ -27,9 +27,7 @@ const AlterDistributorMaster = () => {
     distributorOwnerName: null,
     mobileNo: null,
     executiveCode: null,
-    // executiveMaster: null,
     regionCode: null,
-    // regionMaster: null,
     contactPersonName: null,
     contactMobileNo: null,
     acceptButton: null,
@@ -53,7 +51,6 @@ const AlterDistributorMaster = () => {
   const [regionFocused, setRegionFocused] = useState(false);
   const [highlightedExecutiveIndex, setHighlightedExecutiveIndex] = useState(0);
   const [highlightedRegionIndex, setHighlightedRegionIndex] = useState(0);
-  const [showOtherRegionDropdown, setShowOtherRegionDropdown] = useState(0);
 
   const pulseCursor = (input) => {
     const value = input.value;
@@ -209,13 +206,6 @@ const AlterDistributorMaster = () => {
         region.regionMasterId.toLowerCase().includes(regionValue.toLowerCase())
       );
       setFilteredRegionSuggestions(filtered);
-
-      // Check if there are more than 25 regions
-      if (filtered.length > 25) {
-        setShowOtherRegionDropdown(true);
-      } else {
-        setShowOtherRegionDropdown(false);
-      }
       
     } else {
       setFilteredRegionSuggestions([]);
@@ -240,8 +230,10 @@ const AlterDistributorMaster = () => {
     if (keyCode === 13) {
       // Enter key
       event.preventDefault();
-
-      if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
+      // Check if the current input is contactmobilenumber
+      if (target.id === 'contactMobileNo'){
+        acceptButtonRef.current.focus();
+      }else if (currentInputIndex === Object.keys(inputRefs.current).length - 2) {
         acceptButtonRef.current.focus();
       } else {
         const nextInputRef = Object.values(inputRefs.current)[
@@ -319,7 +311,7 @@ const AlterDistributorMaster = () => {
     const { id } = e.target;
     if (id === "regionCode") {
       setRegionFocused(true);
-      setFilteredRegionSuggestions(regionSuggestions.slice(0, 25));
+      setFilteredRegionSuggestions(regionSuggestions);
     } else {
       setRegionFocused(false);
       setFilteredRegionSuggestions([]);
@@ -369,10 +361,10 @@ const AlterDistributorMaster = () => {
 
   return (
     <>
-      <div className="flex">
+      <div className="flex" onClick={() => inputRefs.current.distributorCode.focus()}>
         <div className="w-1/2 h-[100vh] border border-bg-gray-500"></div>
 
-        <div className="w-1/2 border border-bg-gray-500">
+        <div className="w-1/2 border border-bg-gray-500" >
           <div className="w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[80px] mt-10 border border-gray-500 border-b-0">
             <h2 className="ml-[200px]">Distributor Master</h2>
             <span className="cursor-pointer mt-[5px] mr-2">
@@ -588,8 +580,8 @@ const AlterDistributorMaster = () => {
                       <p>List Of Region Master</p>
                     </div>
 
-                    <div className="suggestions-dropdown">
-                      <ul className="suggestions w-full h-[50vh] text-left mt-2 text-[13px]" onMouseDown={(e) => e.preventDefault()}>
+                    <div className="suggestions-dropdown overflow-y-scroll">
+                      <ul className="suggestions w-full h-[80vh] text-left mt-2 text-[13px]" onMouseDown={(e) => e.preventDefault()}>
                         {filteredRegionSuggestions
                           .map((region, index) => (
                             <li

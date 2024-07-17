@@ -183,8 +183,8 @@ const AlterGodownMaster = () => {
   };
 
   return (
-    <div>
-      <div className="flex">
+    <>
+      <div className="flex" onClick={() => inputRefs.current.godownCode.focus()}>
         <div className=" h-[100vh] border border-gray-500"></div>
 
         <div className="w-1/2 border h-[100vh]">
@@ -324,7 +324,7 @@ const AlterGodownMaster = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

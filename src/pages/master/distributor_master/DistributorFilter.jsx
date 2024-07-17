@@ -46,7 +46,7 @@ const DistributorFilter = () => {
         );
       } else if (e.key === "Enter") {
         if (selectedIndex === 0) {
-          navigate("/list/distributor");
+          navigate("/create/distributor");
           e.preventDefault();
         } else if (selectedIndex === 1) {
           navigate("/display");
@@ -57,6 +57,8 @@ const DistributorFilter = () => {
             }`
           );
         }
+      } else if (e.key === 'Escape'){
+        navigate("/display");
       }
     };
 
@@ -119,7 +121,7 @@ const DistributorFilter = () => {
                     className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${
                       selectedIndex === 0 ? "bg-[#FEB941]" : ""
                     }`}
-                    to={"/distributor"}
+                    to={"/create/distributor"}
                   >
                     <p className="ml-[285px] text-[14px]">Create</p>
                   </Link>

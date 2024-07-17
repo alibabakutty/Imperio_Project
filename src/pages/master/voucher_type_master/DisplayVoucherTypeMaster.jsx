@@ -94,10 +94,33 @@ const DisplayVoucherTypeMaster = () => {
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
+    const handleSubFormShortCuts = (event) => {
+      if(showSubFormModal){
+        if(event.ctrlKey && event.key === 's'){
+          event.preventDefault();
+          if(subFormSaveButtonRef.current){
+            subFormSaveButtonRef.current.click();
+          }
+        } else if (event.ctrlKey && event.key === 'c'){
+          event.preventDefault();
+          if(subFormCancelButtonRef.current){
+            subFormCancelButtonRef.current.click();
+          }
+        } else if (event.key === 'ArrowLeft'){
+          event.preventDefault();
+          subFormSaveButtonRef.current.focus();
+        } else if (event.key === 'ArrowRight'){
+          event.preventDefault();
+          subFormCancelButtonRef.current.focus();
+        }
+      }
+    }
 
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleSubFormShortCuts);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleSubFormShortCuts);
     };
   }, [voucherTypeName, voucherType, showSubFormModal]);
 
@@ -174,7 +197,7 @@ const DisplayVoucherTypeMaster = () => {
     } else if (keyCode === 27) {
       // Escape key
       setShowModal(true);
-    } else if (keyCode === 8 && target.id !== "voucherTypeName") {
+    } else if (keyCode === 8 && (target.id !== "voucherTypeName" && target.id !== 'startingNumber')) {
       // Backspace key
       if (target.selectionStart === 0 && target.selectionEnd === 0) {
         event.preventDefault();
@@ -299,7 +322,7 @@ const DisplayVoucherTypeMaster = () => {
   };
 
   return (
-    <div>
+    <>
       <div className="#FFF5E1 w-[90%] h-[95vh]">
         <div className="text-[12px] flex justify-between bg-[#80C4E9]">
           <p className="ml-1 mt-[1px]">Voucher Type Display</p>
@@ -312,7 +335,7 @@ const DisplayVoucherTypeMaster = () => {
 
         <div className="text-sm border border-slate-500">
           <form action="">
-            <div className="w-[100%] h-[10vh] border border-b-slate-500">
+            <div className="w-[100%] h-[10vh] border border-b-slate-500" onClick={() => inputRefs.current.voucherTypeName.focus()}>
               <label htmlFor="voucherTypeName" className="mr-5 mt-3 ml-1">
                 Name
               </label>
@@ -682,22 +705,11 @@ const DisplayVoucherTypeMaster = () => {
                             </div>
 
                             <div>
-                              <button
-                                type="submit"
-                                onClick={handleSubFormSave}
-                                ref={subFormSaveButtonRef}
-                                className="text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[315px]"
-                              >
-                                Save
-                              </button>
-                              <button
-                                type="button"
-                                onClick={handleSubFormCancel}
-                                ref={subFormCancelButtonRef}
-                                className="text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[260px]"
-                              >
-                                Cancel
-                              </button>
+                              <input type="button" value={': Save'} onClick={handleSubFormSave} ref={subFormSaveButtonRef} onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.suffixDetailsParticulars && inputRefs.current.suffixDetailsParticulars.focus()){inputRefs.current.suffixDetailsParticulars.focus();}}}} className="text-sm bg-slate-600 hover:bg-slate-800 px-8 py-1 ml-[315px] relative" />
+                              <span className="text-sm absolute top-[609px] left-[338px] underline decoration-black" style={{textDecorationThickness: '2px'}}>S</span>
+                              
+                              <input type="button" value={': Cancel'} onClick={handleSubFormCancel} ref={subFormCancelButtonRef} className="text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[260px] relative" />
+                              <span className="text-sm absolute top-[609px] left-[700px] underline decoration-black" style={{textDecorationThickness: '2px'}}>C</span>
                             </div>
                           </div>
                         </form>
@@ -755,12 +767,11 @@ const DisplayVoucherTypeMaster = () => {
           </form>
         </div>
 
-        <div>
-          {/* <Link to={"/voucherTypeFilter"} id='backButton' ref={(button) => {backButtonRef.current = button; inputRefs.current.backButton = button; }} className='border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800  ml-[600px]' >Q: Quit</Link> */}
+        <div className="ml-[55%]">
           <input
             type="button"
             id="backButton"
-            className="text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800"
+            className="text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800 relative"
             onKeyDown={(e) => {
               if (e.key === "Backspace") {
                 e.preventDefault();
@@ -772,12 +783,13 @@ const DisplayVoucherTypeMaster = () => {
                 }
               }
             }}
-            value={"Q: Quit"}
+            value={": Quit"}
             ref={(button) => {
               backButtonRef.current = button;
             }}
             onClick={handleNavigation}
           />
+          <span className="text-sm absolute top-[583px] left-[698px] underline decoration-black" style={{textDecorationThickness: '2px'}}>Q</span>
         </div>
       </div>
 
@@ -839,7 +851,7 @@ const DisplayVoucherTypeMaster = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

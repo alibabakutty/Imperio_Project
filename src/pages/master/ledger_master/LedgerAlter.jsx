@@ -61,6 +61,8 @@ const LedgerAlter = () => {
             }`
           );
         }
+      } else if (e.key === 'Escape'){
+        navigate("/alter");
       }
     };
 

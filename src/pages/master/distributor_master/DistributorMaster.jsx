@@ -22,15 +22,12 @@ const DistributorMaster = () => {
     distributorOwnerName: null,
     mobileNo: null,
     executiveCode: null,
-    // executiveMaster: null,
     regionCode: null,
-    // regionMaster: null,
     contactPersonName: null,
     contactMobileNo: null,
     acceptButton: null,
   });
 
-  const [errors, setErrors] = useState({});
   const [executiveSuggestions, setExecutiveSuggestions] = useState([]);
   const [regionSuggestions, setRegionSuggestions] = useState([]);
   const [filteredExecutiveSuggestions, setFilteredExecutiveSuggestions] =
@@ -43,7 +40,6 @@ const DistributorMaster = () => {
   const [regionFocused, setRegionFocused] = useState(false);
   const [highlightedExecutiveIndex, setHighlightedExecutiveIndex] = useState(0);
   const [highlightedRegionIndex, setHighlightedRegionIndex] = useState(0);
-  const [showOtherRegionDropdown, setShowOtherRegionDropdown] = useState(false);
 
   const acceptButtonRef = useRef(null);
   const yesQuitButtonRef = useRef(null);
@@ -233,7 +229,7 @@ const DistributorMaster = () => {
     createNewDistributorMaster(distributor)
       .then((response) => {
         console.log(response.data);
-        // navigator("/addedDistributor");
+        navigator("/create");
       })
       .catch((error) => {
         console.error("Error catching distributor master:", error);
@@ -245,6 +241,10 @@ const DistributorMaster = () => {
 
     if (keyCode === 13) {
       event.preventDefault();
+      if (target.id === 'distributorCode' && !distributorCode.trim()){
+        // if distributorcode is empty, do not proceed to the next input
+        return;
+      }
       const currentInputIndex = Object.keys(inputRefs.current).findIndex(
         (key) => key === target.id
       );
@@ -335,9 +335,6 @@ const DistributorMaster = () => {
   };
 
   const handleRegionKeyDown = (e) => {
-    // Handle key events specific to region input
-    // Example: navigate through suggestions using arrow keys
-    // and select with Enter key
     if (e.key === "ArrowDown") {
       e.preventDefault();
       const newIndex = highlightedRegionIndex + 1;
@@ -354,12 +351,6 @@ const DistributorMaster = () => {
       e.preventDefault();
       selectRegion(filteredRegionSuggestions[highlightedRegionIndex]);
     }
-  };
-
-  const handleDropDownRegionChange = (e) => {
-    const { value } = e.target;
-    setRegionCode(value);
-    setRegionFocused(false);
   };
 
   return (
@@ -399,11 +390,7 @@ const DistributorMaster = () => {
                 className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
                 autoComplete="off"
               />
-              {errors.distributorCode && (
-                <p className="text-red-500 text-xs ml-2">
-                  {errors.distributorCode}
-                </p>
-              )}
+              
             </div>
 
             <div className="input-ldgr    ">
@@ -549,8 +536,8 @@ const DistributorMaster = () => {
                 onChange={(e) => {
                   setExecutiveMaster(e.target.value);
                 }}
-                onKeyDown={handleKeyDown}
-                ref={(input) => (inputRefs.current.executiveMaster = input)}
+                // onKeyDown={handleKeyDown}
+                // ref={(input) => (inputRefs.current.executiveMaster = input)}
                 className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none"
                 autoComplete="off"
               />
@@ -632,8 +619,8 @@ const DistributorMaster = () => {
                   handleRegionInputChange(e);
                   setRegionMaster(e.target.value);
                 }}
-                onKeyDown={handleKeyDown}
-                ref={(input) => (inputRefs.current.regionMaster = input)}
+                // onKeyDown={handleKeyDown}
+                // ref={(input) => (inputRefs.current.regionMaster = input)}
                 className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200  focus:border focus:border-blue-500 focus:outline-none"
                 autoComplete="off"
               />

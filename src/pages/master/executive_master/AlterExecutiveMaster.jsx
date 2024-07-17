@@ -220,8 +220,8 @@ const AlterExecutiveMaster = () => {
   };
 
   return (
-    <div>
-      <div className="flex">
+    <>
+      <div className="flex" onClick={() => inputRefs.current.executiveCode.focus()}>
         <div className="w-1/2 h-[100vh] border border-bg-gray-500"></div>
         <div className="w-1/2 border border-bg-gray-500">
           <div className="w-[550px] h-[30px] flex justify-between text-[20px] bg-[#F1E5D1] ml-[80px] mt-10 border border-gray-500 border-b-0">
@@ -446,7 +446,7 @@ const AlterExecutiveMaster = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

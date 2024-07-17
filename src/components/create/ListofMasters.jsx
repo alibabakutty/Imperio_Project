@@ -36,6 +36,11 @@ const ListofMasters = () => {
         event.preventDefault();
         const prevIndex = (currentIndex - 1 + links.length) % links.length;
         links[prevIndex].current.focus();
+      } else if (event.key === 'Escape'){
+        event.preventDefault();
+        if(backButtonRef.current){
+          backButtonRef.current.click();
+        }
       }
     };
 

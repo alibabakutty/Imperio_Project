@@ -61,6 +61,8 @@ const ProductAlter = () => {
             }`
           ); //Navigate to the selected product
         }
+      } else if (e.key === 'Escape'){
+        navigate("/alter");
       }
     };
 

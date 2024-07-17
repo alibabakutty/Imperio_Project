@@ -54,6 +54,8 @@ const ExecutiveAlter = () => {
             }`
           );
         }
+      } else if(e.key === 'Escape'){
+        navigate('/alter');
       }
     };
 

@@ -7,8 +7,6 @@ const GodownMaster = () => {
   const [godownCode, setGodownCode] = useState("");
   const [godownName, setGodownName] = useState("");
 
-  const [errors, setErrors] = useState({});
-
   const [showModal, setShowModal] = useState(false);
 
   const inputRefs = useRef({
@@ -96,6 +94,10 @@ const GodownMaster = () => {
 
     if (keyCode === 13) {
       event.preventDefault();
+      if (target.id === 'godownCode' && !godownCode.trim()){
+        // if godown code is empty, do not proceed to the next input
+        return;
+      }
       const currentInputIndex = Object.keys(inputRefs.current).findIndex(
         (key) => key === target.id
       );
@@ -127,23 +129,8 @@ const GodownMaster = () => {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!godownCode.trim()) {
-      newErrors.godownCode = "Godown Code is required!.";
-    }
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
-
   function saveGodownMaster(e) {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
 
     const godown = { godownCode, godownName };
 
@@ -205,9 +192,6 @@ const GodownMaster = () => {
                 className="w-[300px] ml-2 h-5 capitalize font-medium pl-1 text-sm focus:bg-yellow-200 focus:border focus:border-blue-500 focus:outline-none"
                 autoComplete="off"
               />
-              {errors.godownCode && (
-                <p className="text-red-500 text-xs ml-2">{errors.godownCode}</p>
-              )}
             </div>
 
             <div className="input-ldgr">

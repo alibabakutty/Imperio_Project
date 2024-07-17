@@ -43,7 +43,7 @@ const ExecutiveFilter = () => {
         );
       } else if (e.key === "Enter") {
         if (selectedIndex === 0) {
-          navigate("/list/executive");
+          navigate("/create/executive");
           e.preventDefault();
         } else if (selectedIndex === 1) {
           navigate("/display");
@@ -54,6 +54,8 @@ const ExecutiveFilter = () => {
             }`
           );
         }
+      } else if (e.key === 'Escape'){
+        navigate("/display");
       }
     };
 
@@ -114,7 +116,7 @@ const ExecutiveFilter = () => {
                     className={`block text-center text-[13px] focus:bg-[#FEB941] outline-none ${
                       selectedIndex === 0 ? "bg-[#FEB941]" : ""
                     }`}
-                    to={"/executive"}
+                    to={"/create/executive"}
                   >
                     <p className="ml-[285px] text-[14px]">Create</p>
                   </Link>

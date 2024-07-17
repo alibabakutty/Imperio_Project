@@ -55,12 +55,24 @@ const AlterLedgerMaster = () => {
   };
 
   useEffect(() => {
+
+    const loadLedger = async () => {
+      try {
+        const result = await axios.get(
+          `http://localhost:9080/ledgerMasterApi/displayLedger/${ledgerCode}`
+        );
+        setLedger(result.data);
+      } catch (error) {
+        console.error("Error fetching the godown data", error);
+      }
+    };
+
+    loadLedger();
+
     if (inputRefs.current.ledgerCode) {
       inputRefs.current.ledgerCode.focus();
       pulseCursor(inputRefs.current.ledgerCode);
     }
-
-    loadLedger();
 
     const handleKeyDown = (event) => {
       const { ctrlKey, key } = event;
@@ -161,17 +173,6 @@ const AlterLedgerMaster = () => {
     }
   };
 
-  const loadLedger = async () => {
-    try {
-      const result = await axios.get(
-        `http://localhost:9080/ledgerMasterApi/displayLedger/${ledgerCode}`
-      );
-      setLedger(result.data);
-    } catch (error) {
-      console.error("Error fetching the godown data", error);
-    }
-  };
-
   const handleModalClose = () => {
     setShowModal(false);
 
@@ -187,7 +188,7 @@ const AlterLedgerMaster = () => {
 
   return (
     <div>
-      <div className="flex">
+      <div className="flex" onClick={() => inputRefs.current.ledgerCode.focus()}>
         <div className=" h-[100vh] border border-gray-500"></div>
 
         <div className="w-1/2 border h-[100vh]">

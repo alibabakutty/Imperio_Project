@@ -153,6 +153,7 @@ const DisplayDistributorMaster = () => {
           Object.keys(inputRefs.current).length;
         const prevInputRef = Object.values(inputRefs.current)[prevInputIndex];
         prevInputRef.focus();
+        pulseCursor(prevInputRef);
       }
     }
   };
@@ -180,6 +181,10 @@ const DisplayDistributorMaster = () => {
   const handleModalConfirm = () => {
     navigate("/display/distributorFilter");
   };
+
+  const handleNavigation = () => {
+    navigate("/display/distributorFilter");
+  }
 
   return (
     <div>
@@ -275,18 +280,9 @@ const DisplayDistributorMaster = () => {
             </form>
           </div>
 
-          <div className="mt-[245px] ml-[30px]">
-            <Link
-              to={"/display/distributorFilter"}
-              id="backButton"
-              ref={(button) => {
-                backButtonRef.current = button;
-                inputRefs.current.backButton = button;
-              }}
-              className="border px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800"
-            >
-              Q: Quit
-            </Link>
+          <div className="mt-[234px] ml-[270px]">
+            <input type="button" id="backButton" ref={(button) => {backButtonRef.current = button; inputRefs.current.backButton = button;}} onKeyDown={(e) => {if (e.key === 'Backspace'){e.preventDefault(); if (inputRefs.current.contactMobileNo && inputRefs.current.contactMobileNo.focus){inputRefs.current.contactMobileNo.focus();}}}} className="px-11 py-[5px] text-sm bg-slate-600 hover:bg-slate-800" value={': Quit'} onClick={handleNavigation} />
+            <span className="text-sm underline decoration-black absolute left-[987px] top-[598px]" style={{textDecorationThickness: '2px'}}>Q</span>
           </div>
         </div>
       </div>

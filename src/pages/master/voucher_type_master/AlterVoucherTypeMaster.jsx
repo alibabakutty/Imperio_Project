@@ -131,12 +131,35 @@ const AlterVoucherTypeMaster = () => {
       }
     };
 
+    const handleSubFormShortCuts = (event) => {
+      if(showSubFormModal){
+        if(event.ctrlKey && event.key === 's'){
+          event.preventDefault();
+          if(subFormSaveButtonRef.current){
+            subFormSaveButtonRef.current.click();
+          }
+        } else if (event.ctrlKey && event.key === 'c'){
+          event.preventDefault();
+          if(subFormCancelButtonRef.current){
+            subFormCancelButtonRef.current.click();
+          }
+        } else if (event.key === 'ArrowLeft'){
+          event.preventDefault();
+          subFormSaveButtonRef.current.focus();
+        } else if (event.key === 'ArrowRight'){
+          event.preventDefault();
+          subFormCancelButtonRef.current.focus();
+        }
+      }
+    }
+
     document.addEventListener("keydown", handleKeyDown);
     document.addEventListener("keydown", handleCtrlA);
-
+    document.addEventListener("keydown", handleSubFormShortCuts);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("keydown", handleCtrlA);
+      document.removeEventListener("keydown", handleSubFormShortCuts);
     };
   }, [voucherTypeName, voucherType, showSubFormModal]);
 
@@ -164,6 +187,7 @@ const AlterVoucherTypeMaster = () => {
   }, [showModal]);
 
   const handleBackspace = (event, target) => {
+    
     if (target.selectionStart === 0 && target.selectionEnd === 0) {
       event.preventDefault();
 
@@ -255,7 +279,7 @@ const AlterVoucherTypeMaster = () => {
     } else if (keyCode === 27) {
       // Handle Escape key press
       setShowModal(true);
-    } else if (keyCode === 8 && target.id !== "voucherTypeName") {
+    } else if (keyCode === 8 && (target.id !== "voucherTypeName" && target.id !== 'startingNumber')) {
       // Handle Backspace key press
       handleBackspace(event, target);
     } else if (keyCode === 46) {
@@ -377,11 +401,12 @@ const AlterVoucherTypeMaster = () => {
         voucher
       );
       console.log("Response:", response.data); // Log response for debugging
-      // Optionally handle success scenario (e.g., show confirmation)
+      // Close the subform modal on success
+      setShowSubFormModal(false);
     } catch (error) {
       console.error("Error updating data:", error);
       // Optionally handle error scenario (e.g., show error message)
-      showSubFormModal(false);
+      
     }
   };
 
@@ -569,7 +594,7 @@ const AlterVoucherTypeMaster = () => {
 
         <div className="text-sm border border-slate-500">
           <form>
-            <div className="w-[100%] h-[10vh] border border-b-slate-500">
+            <div className="w-[100%] h-[10vh] border border-b-slate-500" onClick={() => inputRefs.current.voucherTypeName.focus()}>
               <label htmlFor="voucherTypeName" className="mr-5 mt-3 ml-1">
                 Name
               </label>
@@ -590,7 +615,7 @@ const AlterVoucherTypeMaster = () => {
             </div>
 
             <div className="flex text-sm h-[75vh]">
-              <div className="general w-[45%] border border-r-slate-500">
+              <div className="general w-[45%] border border-r-slate-500" onClick={() => inputRefs.current.voucherType.focus()}>
                 <p className="underline text-center">General</p>
 
                 <div>
@@ -1012,22 +1037,11 @@ const AlterVoucherTypeMaster = () => {
                             </div>
 
                             <div>
-                              <button
-                                type="submit"
-                                onClick={handleSubFormSave}
-                                ref={subFormSaveButtonRef}
-                                className="text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[315px]"
-                              >
-                                Save
-                              </button>
-                              <button
-                                type="button"
-                                onClick={handleSubFormCancel}
-                                ref={subFormCancelButtonRef}
-                                className="text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[260px]"
-                              >
-                                Cancel
-                              </button>
+                              <input type="button" value={': Save'} onClick={handleSubFormSave} ref={subFormSaveButtonRef} onKeyDown={(e) => {if(e.key === 'Backspace'){e.preventDefault(); if(inputRefs.current.suffixDetailsParticulars && inputRefs.current.suffixDetailsParticulars.focus()){inputRefs.current.suffixDetailsParticulars.focus();}}}} className="text-sm bg-slate-600 hover:bg-slate-800 px-8 py-1 ml-[315px] relative" />
+                              <span className="text-sm absolute top-[609px] left-[338px] underline decoration-black" style={{textDecorationThickness: '2px'}}>S</span>
+                              
+                              <input type="button" value={': Cancel'} onClick={handleSubFormCancel} ref={subFormCancelButtonRef} className="text-sm px-8 py-1 border bg-slate-600 hover:bg-slate-800 ml-[260px] relative" />
+                              <span className="text-sm absolute top-[609px] left-[700px] underline decoration-black" style={{textDecorationThickness: '2px'}}>C</span>
                             </div>
                           </div>
                         </form>
@@ -1037,7 +1051,7 @@ const AlterVoucherTypeMaster = () => {
                 </div>
               </div>
 
-              <div className="printing w-[30%] border border-r-slate-500">
+              <div className="printing w-[30%] border border-r-slate-500" onClick={() => inputRefs.current.printingVoucherAfterSaving.focus()}>
                 <p className="underline text-center">Printing</p>
 
                 <div>
@@ -1064,7 +1078,7 @@ const AlterVoucherTypeMaster = () => {
                 </div>
               </div>
 
-              <div className="nameOfClass w-[20%]">
+              <div className="nameOfClass w-[20%]" onClick={() => inputRefs.current.nameOfClass.focus()}>
                 <p className="underline text-center">Name of Class</p>
 
                 <div className="text-center">
@@ -1087,7 +1101,6 @@ const AlterVoucherTypeMaster = () => {
 
         <div>
           <div className="ml-[480px]">
-            {/* <button type='submit' id='acceptButton' onClick={(e) => onSubmit(e)} ref={(button) => { acceptButtonRef.current = button; inputRefs.current.acceptButton = button; }} className='text-sm px-8 py-1 mt-3 border bg-slate-600 hover:bg-slate-800' style={{position: 'absolute', top: '575px'}}>A: Accept</button> */}
             <input
               type="button"
               id="acceptButton"

@@ -36,6 +36,9 @@ const AlterofMasters = () => {
   
         const prevIndex = (currentIndex - 1 + links.length) % links.length;
         links[prevIndex].current.focus();
+      } else if (event.key === 'Escape'){
+        event.preventDefault();
+        backButtonRef.current.click();
       }
     };
 

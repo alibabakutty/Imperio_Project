@@ -10,8 +10,6 @@ const ExecutiveMaster = () => {
   const [mobileNo, setMobileNo] = useState("");
   const [emailId, setEmailId] = useState("");
   const [status, setStatus] = useState("");
-
-  const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
 
   const inputRefs = useRef({
@@ -103,6 +101,10 @@ const ExecutiveMaster = () => {
 
     if (keyCode === 13) {
       event.preventDefault();
+      if (target.id === 'executiveCode' && !executiveCode.trim()){
+        // executivecode is empty, do not proceed to the next input
+        return;
+      }
       const currentInputIndex = Object.keys(inputRefs.current).findIndex(
         (key) => key === target.id
       );
@@ -133,17 +135,6 @@ const ExecutiveMaster = () => {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!executiveCode.trim()) {
-      newErrors.executiveCode = "Executive Code is required!.";
-    }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
-
   function saveExecutiveMaster(e) {
     e.preventDefault();
 
@@ -165,7 +156,7 @@ const ExecutiveMaster = () => {
     createNewExecutiveMaster(executive)
       .then((response) => {
         console.log(response.data);
-        // navigator('/addedExecutive')
+        navigator('/create')
       })
       .catch((error) => {
         console.error("Error creating executive master:", error);
@@ -261,11 +252,6 @@ const ExecutiveMaster = () => {
                 autoComplete="off"
               />{" "}
               <br />
-              {errors.executiveCode && (
-                <p className="text-red-500 text-xs ml-2">
-                  {errors.executiveCode}
-                </p>
-              )}
             </div>
 
             <div className="input-ldgr  mr-4 mt-1 ">

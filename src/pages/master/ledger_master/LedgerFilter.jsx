@@ -59,6 +59,8 @@ const LedgerFilter = () => {
             `/displayLedger/${filteredLedgers[selectedIndex - 2].ledgerCode}`
           );
         }
+      } else if (e.key === 'Escape'){
+        navigate("/display");
       }
     };
 
