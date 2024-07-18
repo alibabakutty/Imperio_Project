@@ -5,7 +5,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 const DisplayLedgerMaster = () => {
   const { ledgerCode } = useParams();
-
   const navigate = useNavigate();
 
   const [ledger, setLedger] = useState({
@@ -47,12 +46,16 @@ const DisplayLedgerMaster = () => {
   };
 
   useEffect(() => {
-    if (inputRefs.current.ledgerCode) {
-      inputRefs.current.ledgerCode.focus();
-      pulseCursor(inputRefs.current.ledgerCode);
-    }
+    const focusAndPulseCursor = () => {
+      if (inputRefs.current.ledgerCode) {
+        inputRefs.current.ledgerCode.focus();
+        pulseCursor(inputRefs.current.ledgerCode);
+      }
+    };
 
     loadLedger();
+
+    setTimeout(focusAndPulseCursor, 100);
 
     const handleKeyDown = (event) => {
       const { ctrlKey, key } = event;
